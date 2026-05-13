@@ -8,23 +8,24 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { AgronomicApi } from "../infrastructure/agronomic-api.js";
 import { PlotAssembler } from "../infrastructure/plot.assembler.js";
-import { MonitoringSummaryAssembler } from "../infrastructure/monitoring-summary.assembler.js";
-import { IotDeviceAssembler } from "../infrastructure/iot-device.assembler.js";
+import { AgronomicRecordAssembler } from "../infrastructure/agronomic-record.assembler.js";
 import { WeatherSummaryAssembler } from "../infrastructure/weather-summary.assembler.js";
+import { YieldForecastAssembler } from "../infrastructure/yield-forecast.assembler.js";
+import { ChillHourRecordAssembler } from "../infrastructure/chill-hour-record.assembler.js";
+import { MonitoringSummaryAssembler } from "../infrastructure/monitoring-summary.assembler.js";
+import { AgronomicAnalysisAssembler } from "../infrastructure/agronomic-analysis.assembler.js";
+import { IotDeviceAssembler } from "../infrastructure/iot-device.assembler.js";
+import { DateTimeFormatter } from "../../shared/infrastructure/date-time.formatter.js";
 
 import { Plot } from "../domain/model/plot.entity.js";
 import { AgronomicRecord } from "../domain/model/agronomic-record.entity.js";
+import { WeatherSummary } from "../domain/model/weather-summary.entity.js";
+import { YieldForecast } from "../domain/model/yield-forecast.entity.js";
 import { ChillHourRecord } from "../domain/model/chill-hour-record.entity.js";
 import { MonitoringSummary } from "../domain/model/monitoring-summary.entity.js";
-import { OverallPlotHealth } from "../domain/model/overall-plot-health.entity.js";
-import { YieldForecast } from "../domain/model/yield-forecast.entity.js";
-import {DateTimeFormatter} from "../../shared/infrastructure/date-time.formatter.js";
-import {AgronomicAnalysisAssembler} from "../infrastructure/agronomic-analysis.assembler.js";
 import { IotDevice } from "../domain/model/iot-device.entity.js";
-import { WeatherSummary } from "../domain/model/weather-summary.entity.js";
 
 const agronomicApi = new AgronomicApi();
-const monitoringSummariesEndpointPath = import.meta.env.VITE_MONITORING_SUMMARIES_ENDPOINT_PATH;
 
 /**
  * Reactive store that exposes Agronomic commands and queries.
@@ -38,6 +39,71 @@ export const useAgronomicStore = defineStore('agronomic', () => {
      */
     const plots = ref([]);
 
+    /**
+     * Currently selected plot identifier for detailed overview.
+     * @type {import('vue').Ref<number|string|null>}
+     */
+    const selectedPlotId = ref(null);
+
+    /**
+     * List of telemetry record entities.
+     * @type {import('vue').Ref<AgronomicRecord[]>}
+     */
+    const agronomicRecords = ref([]);
+
+    /**
+     * Current weather summary entity.
+     * @type {import('vue').Ref<WeatherSummary|null>}
+     */
+    const weatherSummary = ref(null);
+
+    /**
+     * Current yield forecast entity.
+     * @type {import('vue').Ref<YieldForecast|null>}
+     */
+    const yieldForecast = ref(null);
+
+    /**
+     * Current chill hour accumulation entity.
+     * @type {import('vue').Ref<ChillHourRecord|null>}
+     */
+    const chillHourRecord = ref(null);
+
+    /**
+     * Global monitoring summary for the dashboard.
+     * @type {import('vue').Ref<MonitoringSummary|null>}
+     */
+    const monitoringSummary = ref(null);
+
+    /**
+     * List of errors encountered during API operations.
+     * @type {import('vue').Ref<Error[]>}
+     */
+    const errors = ref([]);
+
+    /**
+     * List of IoT devices.
+     * @type {import('vue').Ref<IotDevice[]>}
+     */
+    const iotDevices = ref([]);
+
+    /**
+     * Whether IoT devices have been loaded.
+     * @type {import('vue').Ref<boolean>}
+     */
+    const iotDevicesLoaded = ref(false);
+
+    /**
+     * Whether plots have been loaded from the API.
+     * @type {import('vue').Ref<boolean>}
+     */
+    const plotsLoaded = ref(false);
+
+    /**
+     * Whether the monitoring summary has been loaded.
+     * @type {import('vue').Ref<boolean>}
+     */
+    const summaryLoaded = ref(false);
 
     /**
      * Selected plot identifier for the independent Analysis Module.
@@ -65,18 +131,14 @@ export const useAgronomicStore = defineStore('agronomic', () => {
      */
     const analysisLoading = ref(false);
 
-
     /**
-     * Currently selected plot identifier for detailed overview.
-     * @type {import('vue').Ref<number|string|null>}
+     * Returns the full Plot entity based on the current selected ID.
+     * @type {import('vue').ComputedRef<Plot|null>}
      */
-    const selectedPlotId = ref(null);
+    const selectedPlot = computed(() => {
+        return plots.value.find(p => p.id === selectedPlotId.value) || null;
+    });
 
-    /**
-     * Current weather summary entity.
-     * @type {import('vue').Ref<WeatherSummary|null>}
-     */
-    const weatherSummary = ref(null);
     /**
      * Number of loaded plots.
      * @type {import('vue').ComputedRef<number>}
@@ -86,59 +148,11 @@ export const useAgronomicStore = defineStore('agronomic', () => {
     });
 
     /**
-     * List of errors encountered during API operations.
-     * @type {import('vue').Ref<Error[]>}
+     * Number of loaded telemetry records.
+     * @type {import('vue').ComputedRef<number>}
      */
-    const errors = ref([]);
-
-    /**
-     * Whether plots have been loaded from the API.
-     * @type {import('vue').Ref<boolean>}
-     */
-    const plotsLoaded = ref(false);
-
-    /**
-     * Dashboard monitoring aggregate for the summary cards.
-     * @type {import('vue').Ref<MonitoringSummary|null>}
-     */
-    const monitoringSummary = ref(null);
-
-    /**
-     * Overall Plot Health card entity.
-     * @type {import('vue').Ref<OverallPlotHealth>}
-     */
-    const overallPlotHealth = ref(new OverallPlotHealth({}));
-
-    /**
-     * NDVI Status card entity.
-     * @type {import('vue').Ref<AgronomicRecord>}
-     */
-    const ndviStatus = ref(new AgronomicRecord({}));
-
-    /**
-     * Chill Accumulation card entity.
-     * @type {import('vue').Ref<ChillHourRecord>}
-     */
-    const chillAccumulation = ref(new ChillHourRecord({}));
-
-    /**
-     * Yield Forecast card entity.
-     * @type {import('vue').Ref<YieldForecast>}
-     */
-    const yieldForecast = ref(new YieldForecast({}));
-
-    /**
-     * Whether the dashboard summary cards have been loaded from the API.
-     * @type {import('vue').Ref<boolean>}
-     */
-    const monitoringSummaryLoaded = ref(false);
-
-    /**
-     * Returns the full Plot entity based on the current selected ID.
-     * @type {import('vue').ComputedRef<Plot|null>}
-     */
-    const selectedPlot = computed(() => {
-        return plots.value.find(p => p.id === selectedPlotId.value) || null;
+    const recordsCount = computed(() => {
+        return agronomicRecords.value.length;
     });
 
     /**
@@ -149,50 +163,6 @@ export const useAgronomicStore = defineStore('agronomic', () => {
         return DateTimeFormatter.formatRelativeTime(selectedPlot.value?.lastUpdate);
     });
 
-    /**
-     * UI-facing props for the Overall Plot Health card.
-     * @type {import('vue').ComputedRef<Object>}
-     */
-    const overallPlotHealthCard = computed(() => {
-        const normalizedStatus = overallPlotHealth.value.status.toLowerCase();
-
-        return {
-            status: overallPlotHealth.value.status,
-            isHealthy: normalizedStatus === 'healthy' && !overallPlotHealth.value.isCritical,
-            healthyPlotsCount: overallPlotHealth.value.healthyPlotsCount,
-            reviewPlotsCount: overallPlotHealth.value.reviewPlotsCount
-        };
-    });
-
-    /**
-     * UI-facing props for the NDVI Status card.
-     * @type {import('vue').ComputedRef<Object>}
-     */
-    const ndviStatusCard = computed(() => ({
-        value: ndviStatus.value.ndviIndex,
-        trend: ndviStatus.value.ndviTrend,
-        statusLabel: ndviStatus.value.ndviStatusLabel
-    }));
-
-    /**
-     * UI-facing props for the Chill Accumulation card.
-     * @type {import('vue').ComputedRef<Object>}
-     */
-    const chillAccumulationCard = computed(() => ({
-        value: chillAccumulation.value.accumulatedChillPortions,
-        weeklyDiff: chillAccumulation.value.weeklyDiff,
-        threshold: chillAccumulation.value.threshold
-    }));
-
-    /**
-     * UI-facing props for the Yield Forecast card.
-     * @type {import('vue').ComputedRef<Object>}
-     */
-    const yieldForecastCard = computed(() => ({
-        tonnes: yieldForecast.value.tonnes,
-        riskLevel: yieldForecast.value.riskLevel,
-        description: yieldForecast.value.description
-    }));
     /**
      * Computed property that prepares analysis data for the PrimeVue Chart component.
      * Transforms backend analysis entities into Chart.js compatible data objects.
@@ -240,18 +210,23 @@ export const useAgronomicStore = defineStore('agronomic', () => {
             ]
         };
     });
-    /**
-     * List of IoT devices.
-     * @type {import('vue').Ref<IotDevice[]>}
-     */
-    const iotDevices = ref([]);
 
     /**
-     * Whether IoT devices have been loaded.
-     * @type {import('vue').Ref<boolean>}
+     * Loads the global farm summary from infrastructure.
+     * @param {string} [period='current'] - Filter period.
+     * @returns {void}
      */
-    const iotDevicesLoaded = ref(false);
-
+    function fetchMonitoringSummary(period = 'current') {
+        errors.value = [];
+        agronomicApi.getSummaries(period).then(response => {
+            const entity = MonitoringSummaryAssembler.toEntityFromResponse(response);
+            monitoringSummary.value = entity;
+            summaryLoaded.value = true;
+        }).catch(error => {
+            console.error("Error loading monitoring summary:", error);
+            errors.value.push(error);
+        });
+    }
 
     /**
      * Loads plots from infrastructure and updates the application state.
@@ -267,37 +242,6 @@ export const useAgronomicStore = defineStore('agronomic', () => {
             }
         }).catch(error => {
             console.error("Error loading plots:", error);
-            errors.value.push(error);
-        });
-    }
-
-    function fetchWeather(city = 'Tacna') {
-        agronomicApi.getWeather({ city }).then(response => {
-            const entities = WeatherSummaryAssembler.toEntitiesFromResponse(response);
-            weatherSummary.value = entities.length > 0 ? entities[0] : null;
-        }).catch(error => {
-            errors.value.push(error);
-        });
-    }
-
-
-    /**
-     * Loads the dashboard monitoring summary and hydrates the four independent card entities.
-     * @returns {void}
-     */
-    function fetchMonitoringSummary() {
-        errors.value = [];
-        agronomicApi.http.get(monitoringSummariesEndpointPath).then(response => {
-            const summary = MonitoringSummaryAssembler.toEntityFromResponse(response);
-
-            monitoringSummary.value = summary;
-            overallPlotHealth.value = summary?.overallPlotHealth || new OverallPlotHealth({});
-            ndviStatus.value = summary?.latestNdvi || new AgronomicRecord({});
-            chillAccumulation.value = summary?.chillHourRecord || new ChillHourRecord({});
-            yieldForecast.value = summary?.yieldForecast || new YieldForecast({});
-            monitoringSummaryLoaded.value = true;
-        }).catch(error => {
-            console.error("Error loading monitoring summary:", error);
             errors.value.push(error);
         });
     }
@@ -353,6 +297,66 @@ export const useAgronomicStore = defineStore('agronomic', () => {
     }
 
     /**
+     * Loads telemetry records for a plot and calculates yield based on area.
+     * @param {number|string} plotId - Target plot identifier.
+     * @param {string} [period='30d'] - Time span.
+     * @returns {void}
+     */
+    function fetchRecords(plotId, period = '30d') {
+        const plotIdNum = typeof plotId === 'string' ? parseInt(plotId) : plotId;
+        const plot = plots.value.find(p => p.id === plotIdNum);
+        const areaSize = plot ? plot.areaSize : 0;
+
+        agronomicApi.getRecords({ plotId, period }).then(response => {
+            agronomicRecords.value = AgronomicRecordAssembler.toEntitiesFromResponse(response);
+        }).catch(error => {
+            errors.value.push(error);
+        });
+    }
+
+    /**
+     * Loads current weather information for the specified city.
+     * @param {string} [city='Tacna'] - Target city.
+     * @returns {void}
+     */
+    function fetchWeather(city = 'Tacna') {
+        agronomicApi.getWeather({ city }).then(response => {
+            const entities = WeatherSummaryAssembler.toEntitiesFromResponse(response);
+            weatherSummary.value = entities.length > 0 ? entities[0] : null;
+        }).catch(error => {
+            errors.value.push(error);
+        });
+    }
+
+    /**
+     * Loads yield predictions for a specific plot.
+     * @param {number|string} plotId - Plot identifier.
+     * @returns {void}
+     */
+    function fetchYieldForecast(plotId) {
+        agronomicApi.getYieldForecastByPlot(plotId).then(response => {
+            const entities = YieldForecastAssembler.toEntitiesFromResponse(response);
+            yieldForecast.value = entities.length > 0 ? entities[0] : null;
+        }).catch(error => {
+            errors.value.push(error);
+        });
+    }
+
+    /**
+     * Loads thermal accumulation summary for the dashboard.
+     * @param {string} [period='current'] - Filter period.
+     * @returns {void}
+     */
+    function fetchChillHourSummary(period = 'current') {
+        agronomicApi.getSummaries(period).then(response => {
+            const entities = ChillHourRecordAssembler.toEntitiesFromResponse(response);
+            chillHourRecord.value = entities.length > 0 ? entities[0] : null;
+        }).catch(error => {
+            errors.value.push(error);
+        });
+    }
+
+    /**
      * Fetches all IoT devices.
      */
     function fetchIotDevices() {
@@ -366,7 +370,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
 
     /**
      * Gets an IoT device by ID from the local state.
-     * @param {number|string} id 
+     * @param {number|string} id
      * @returns {IotDevice|null}
      */
     function getIotDeviceById(id) {
@@ -375,7 +379,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
 
     /**
      * Adds a new IoT device.
-     * @param {IotDevice} device 
+     * @param {IotDevice} device
      */
     function addIotDevice(device) {
         const resource = IotDeviceAssembler.toResourceFromEntity(device);
@@ -389,7 +393,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
 
     /**
      * Updates an existing IoT device.
-     * @param {IotDevice} device 
+     * @param {IotDevice} device
      */
     function updateIotDevice(device) {
         const resource = IotDeviceAssembler.toResourceFromEntity(device);
@@ -405,7 +409,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
 
     /**
      * Deletes an IoT device.
-     * @param {IotDevice} device 
+     * @param {IotDevice} device
      */
     function deleteIotDevice(device) {
         agronomicApi.deleteIotDevice(device.id).then(() => {
@@ -415,41 +419,55 @@ export const useAgronomicStore = defineStore('agronomic', () => {
         });
     }
 
+    /**
+     * Resets temporary telemetry and summary states.
+     * @returns {void}
+     */
+    function clearTelemetry() {
+        agronomicRecords.value = [];
+        chillHourRecord.value = null;
+        yieldForecast.value = null;
+        monitoringSummary.value = null;
+        summaryLoaded.value = false;
+    }
+
     return {
         plots,
         selectedPlotId,
         selectedPlot,
-        monitoringSummary,
-        overallPlotHealth,
-        ndviStatus,
-        chillAccumulation,
+        agronomicRecords,
+        weatherSummary,
         yieldForecast,
-        overallPlotHealthCard,
-        ndviStatusCard,
-        chillAccumulationCard,
-        yieldForecastCard,
+        chillHourRecord,
+        monitoringSummary,
         errors,
         plotsLoaded,
-        monitoringSummaryLoaded,
-        fetchPlots,
+        summaryLoaded,
+        plotsCount,
+        recordsCount,
         fetchMonitoringSummary,
+        fetchPlots,
         selectPlot,
+        fetchRecords,
+        fetchWeather,
+        fetchYieldForecast,
+        fetchChillHourSummary,
+        clearTelemetry,
         selectedPlotTimeElapsed,
         analysisPlotId,
         analysisTimeRange,
         analysisData,
         analysisLoading,
+        analysisChartData,
         setAnalysisPlot,
         setAnalysisTimeRange,
         fetchAnalysisStatistics,
-        analysisChartData,
         iotDevices,
         iotDevicesLoaded,
         fetchIotDevices,
         getIotDeviceById,
         addIotDevice,
         updateIotDevice,
-        weatherSummary,
         deleteIotDevice
     };
 });

@@ -16,9 +16,9 @@ onMounted(async () => {
   await agronomicStore.fetchWeather('Tacna');
 });
 
-/** 
+/**
  * Theme configuration (icons and gradients) based on weather conditions.
- * @type {import('vue').ComputedRef<Object>} 
+ * @type {import('vue').ComputedRef<Object>}
  */
 const weatherTheme = computed(() => {
   const condition = agronomicStore.weatherSummary?.condition || 'Clear';
@@ -39,18 +39,18 @@ const weatherTheme = computed(() => {
   return themes[condition] || themes['Partly cloudy'];
 });
 
-/** 
+/**
  * Localized or formatted last update time.
- * @type {import('vue').ComputedRef<string>} 
+ * @type {import('vue').ComputedRef<string>}
  */
 const currentTime = computed(() => {
   if (!agronomicStore.weatherSummary?.lastUpdate) return '2:34 pm';
   return agronomicStore.weatherSummary.lastUpdate;
 });
 
-/** 
+/**
  * Visual styles for the thermal range bar based on current and forecast temperatures.
- * @type {import('vue').ComputedRef<Object>} 
+ * @type {import('vue').ComputedRef<Object>}
  */
 const rangeProgressStyles = computed(() => {
   if (!agronomicStore.weatherSummary) return { width: '0%' };
@@ -63,9 +63,9 @@ const rangeProgressStyles = computed(() => {
   return { width: `${Math.max(width, 20)}%` };
 });
 
-/** 
+/**
  * Color code for climate risk levels.
- * @type {import('vue').ComputedRef<string>} 
+ * @type {import('vue').ComputedRef<string>}
  */
 const riskColor = computed(() => {
   const risk = agronomicStore.weatherSummary?.climateRisk;
@@ -84,7 +84,7 @@ const riskColor = computed(() => {
             <h2 class="widget-title">{{ t('dashboard.weather-summary-title') }}</h2>
             <i class="pi pi-cloud cloud-icon"></i>
           </div>
-          
+
           <div class="main-gradient-box" :style="{ background: weatherTheme.gradient }">
             <div class="box-left">
               <i :class="weatherTheme.icon" class="weather-status-icon"></i>
@@ -99,7 +99,7 @@ const riskColor = computed(() => {
 
           <div class="details-body">
             <h3 class="forecast-section-title">{{ t('dashboard.forecast-title') }}</h3>
-            
+
             <div class="forecast-item-row">
               <span class="day-label">{{ t('dashboard.today-label') }}</span>
               <span class="range-min">{{ Math.round(agronomicStore.weatherSummary.currentTemp) }}°C</span>
