@@ -107,7 +107,9 @@ const secondaryItems = computed(() => [
  */
 const getIconStyle = (path) => {
   return {
-    '--icon-url': `url("${path}")`
+    backgroundColor: 'currentColor',
+    mask: `url("${path}") center / contain no-repeat`,
+    WebkitMask: `url("${path}") center / contain no-repeat`
   };
 };
 
@@ -128,7 +130,7 @@ const isRouteActive = (targetPath) => {
     </button>
 
     <div class="sidebar-brand">
-      <img src="/assets/icons/dashboard/viora-isotipo-green.png" alt="Viora Logo" class="brand-logo" />
+      <img src="/favicon.svg" alt="Viora Logo" class="brand-logo" />
       <strong v-if="!collapsed">VIORA</strong>
     </div>
 
@@ -310,9 +312,6 @@ const isRouteActive = (targetPath) => {
   width: 21px;
   height: 21px;
   flex-shrink: 0;
-  background: currentColor;
-  mask: var(--icon-url) center / contain no-repeat;
-  -webkit-mask: var(--icon-url) center / contain no-repeat;
 }
 
 .nav-label {

@@ -49,6 +49,7 @@ export class AgronomicApi extends BaseApi {
         return this.#weatherEndpoint.getAll(params);
     }
 
+    /**
      * Fetches pre-calculated agronomic statistics for analysis.
      * @param {Object} [params={}] - Filter parameters (e.g., { plotId: 'all', timeRange: '30days' }).
      */
