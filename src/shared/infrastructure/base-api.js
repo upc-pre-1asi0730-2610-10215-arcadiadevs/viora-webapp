@@ -1,5 +1,5 @@
 ﻿import axios from 'axios';
-const platformApi = import.meta.env.VITE_LEARNING_PLATFORM_API_URL;
+const platformApi = import.meta.env.VITE_VIORA_PLATFORM_API_URL;
 
 /**
  * Shared infrastructure API client factory for bounded contexts.

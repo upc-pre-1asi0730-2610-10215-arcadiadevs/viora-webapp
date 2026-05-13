@@ -15,11 +15,12 @@ export class BaseEndpoint {
     }
 
     /**
-     * Requests all resources from the endpoint.
+     * Requests all resources from the endpoint, optionally filtered by parameters.
+     * @param {Object} [params={}] - Query parameters for filtering.
      * @returns {Promise<import('axios').AxiosResponse<Array<TResource>|Object>>} HTTP response.
      */
-    getAll() {
-        return this.http.get(this.endpointPath);
+    getAll(params = {}) {
+        return this.http.get(this.endpointPath, { params });
     }
 
     /**
