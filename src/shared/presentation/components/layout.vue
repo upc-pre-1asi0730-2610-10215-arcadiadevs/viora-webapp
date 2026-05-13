@@ -86,8 +86,6 @@ const breadcrumbs = computed(() => {
       <main class="main-content">
         <router-view />
       </main>
-
-      <footer-content />
     </div>
   </div>
 </template>
