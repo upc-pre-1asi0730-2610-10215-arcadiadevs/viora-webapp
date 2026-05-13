@@ -10,7 +10,7 @@ import { AgronomicApi } from "../infrastructure/agronomic-api.js";
 import { PlotAssembler } from "../infrastructure/plot.assembler.js";
 import { MonitoringSummaryAssembler } from "../infrastructure/monitoring-summary.assembler.js";
 import { IotDeviceAssembler } from "../infrastructure/iot-device.assembler.js";
-
+import { WeatherSummaryAssembler } from "../infrastructure/weather-summary.assembler.js";
 
 import { Plot } from "../domain/model/plot.entity.js";
 import { AgronomicRecord } from "../domain/model/agronomic-record.entity.js";
@@ -21,7 +21,7 @@ import { YieldForecast } from "../domain/model/yield-forecast.entity.js";
 import {DateTimeFormatter} from "../../shared/infrastructure/date-time.formatter.js";
 import {AgronomicAnalysisAssembler} from "../infrastructure/agronomic-analysis.assembler.js";
 import { IotDevice } from "../domain/model/iot-device.entity.js";
-
+import { WeatherSummary } from "../domain/model/weather-summary.entity.js";
 
 const agronomicApi = new AgronomicApi();
 const monitoringSummariesEndpointPath = import.meta.env.VITE_MONITORING_SUMMARIES_ENDPOINT_PATH;
@@ -73,6 +73,10 @@ export const useAgronomicStore = defineStore('agronomic', () => {
     const selectedPlotId = ref(null);
 
     /**
+     * Current weather summary entity.
+     * @type {import('vue').Ref<WeatherSummary|null>}
+     */
+    const weatherSummary = ref(null);
      * Number of loaded plots.
      * @type {import('vue').ComputedRef<number>}
      */
@@ -264,6 +268,16 @@ export const useAgronomicStore = defineStore('agronomic', () => {
         });
     }
 
+    function fetchWeather(city = 'Tacna') {
+        agronomicApi.getWeather({ city }).then(response => {
+            const entities = WeatherSummaryAssembler.toEntitiesFromResponse(response);
+            weatherSummary.value = entities.length > 0 ? entities[0] : null;
+        }).catch(error => {
+            errors.value.push(error);
+        });
+    }
+
+
     /**
      * Loads the dashboard monitoring summary and hydrates the four independent card entities.
      * @returns {void}
@@ -428,6 +442,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
         getIotDeviceById,
         addIotDevice,
         updateIotDevice,
+        weatherSummary,
         deleteIotDevice
     };
 });
