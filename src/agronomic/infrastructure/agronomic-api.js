@@ -2,6 +2,7 @@
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
 
 const plotsEndpointPath = import.meta.env.VITE_PLOTS_ENDPOINT_PATH;
+const statisticsEndpointPath = import.meta.env.VITE_AGRONOMIC_STATISTICS_ENDPOINT_PATH;
 
 /**
  * Infrastructure service gateway for the Agronomic bounded-context endpoints.
@@ -11,12 +12,14 @@ const plotsEndpointPath = import.meta.env.VITE_PLOTS_ENDPOINT_PATH;
  */
 export class AgronomicApi extends BaseApi {
     #plotsEndpoint;
+    #statisticsEndpoint;
 
     /** * Initializes all internal endpoints using environment variable paths.
      */
     constructor() {
         super();
         this.#plotsEndpoint = new BaseEndpoint(this, plotsEndpointPath);
+        this.#statisticsEndpoint = new BaseEndpoint(this, statisticsEndpointPath);
     }
 
     /**
@@ -33,5 +36,13 @@ export class AgronomicApi extends BaseApi {
      */
     getPlotById(id) {
         return this.#plotsEndpoint.getById(id);
+    }
+
+    /**
+     * Fetches pre-calculated agronomic statistics for analysis.
+     * @param {Object} [params={}] - Filter parameters (e.g., { plotId: 'all', timeRange: '30days' }).
+     */
+    getStatistics(params = {}) {
+        return this.#statisticsEndpoint.getAll(params);
     }
 }
