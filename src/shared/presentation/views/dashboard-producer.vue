@@ -23,15 +23,15 @@ import RecentAlertsWidget from "../../../surveillance/presentation/components/re
 const agronomicStore = useAgronomicStore();
 const { t } = useI18n();
 
-/** 
+/**
  * Current time range selected for the KPI summary.
- * @type {import('vue').Ref<string>} 
+ * @type {import('vue').Ref<string>}
  */
 const summaryTimeRange = ref('current');
 
-/** 
+/**
  * Localized options for the summary time range selector.
- * @type {import('vue').ComputedRef<Array<{label: string, value: string}>>} 
+ * @type {import('vue').ComputedRef<Array<{label: string, value: string}>>}
  */
 const summaryRangeOptions = computed(() => [
   { label: t('dashboard.time-range-7days'), value: '7days' },
@@ -39,22 +39,22 @@ const summaryRangeOptions = computed(() => [
   { label: t('dashboard.time-range-current'), value: 'current' }
 ]);
 
-/** 
+/**
  * Relative time string indicating when the data was last updated.
- * @type {import('vue').ComputedRef<string>} 
+ * @type {import('vue').ComputedRef<string>}
  */
 const lastUpdatedText = computed(() => {
   return DateTimeFormatter.formatRelativeTime(summary.value?.updatedAt);
 });
 
-/** 
+/**
  * Triggers a manual refresh of the monitoring summary.
  */
 const onRefreshSummary = () => {
   agronomicStore.fetchMonitoringSummary(summaryTimeRange.value);
 };
 
-/** 
+/**
  * Updates the summary data when the time range selection changes.
  * @param {Object} event - SelectButton change event.
  */
@@ -64,9 +64,9 @@ const onSummaryRangeChange = (event) => {
   }
 };
 
-/** 
+/**
  * Computed reference to the hydrated domain monitoring summary entity.
- * @type {import('vue').ComputedRef<Object|null>} 
+ * @type {import('vue').ComputedRef<Object|null>}
  */
 const summary = computed(() => {
   return agronomicStore.monitoringSummary;
@@ -153,8 +153,8 @@ onMounted(() => {
     </div>
 
     <section class="w-full max-w-[1200px] mx-auto flex flex-wrap lg:flex-nowrap items-center justify-center lg:justify-start gap-6 px-4 lg:px-0"
-     :style="{ marginBottom : '26px' }"
-     >
+             :style="{ marginBottom : '26px' }"
+    >
       <div class="flex-1 min-w-[350px]">
         <PlotOverviewWidget
             v-if="agronomicStore.plotsLoaded"
