@@ -7,7 +7,7 @@
  */
 import LanguageSwitcher from "./language-switcher.vue";
 import NavigationSidebar from "./navigation-sidebar.vue";
-import FooterContent from "./footer-content.vue";
+// import FooterContent from "./footer-content.vue";
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
