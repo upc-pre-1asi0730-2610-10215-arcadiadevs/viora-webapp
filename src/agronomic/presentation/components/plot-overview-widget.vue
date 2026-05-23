@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 /**
  * PlotOverviewWidget component.
  * Provides a satellite-view map and KPI summary for a selected plot.
@@ -181,7 +181,8 @@ const tooltipContent = t('dashboard.ndvi-risk-tooltip');
 
 .plot-overview-container {
   width: 100%;
-  height: 380px;
+  height: 100%;
+  min-height: 380px;
   border-radius: 12px;
   border: 1px solid #F0F0F3;
   background-color: #ffffff;

@@ -75,7 +75,46 @@
       "settings": "Settings",
       "subscription": "Subscription",
       "support": "Support"
+    },
+    "scope": {
+      "allPlots": "All plots"
+    },
+    "addIotDevice": "Add IoT Device"
+  },
+  "toolbar": {
+    "iotDevices": "IoT Devices",
+    "plotOverview": "Plot Overview",
+    "weather": "Weather",
+    "selectScope": "Select scope"
+  },
+  "cards": {
+    "iot": {
+      "title": "IoT Devices",
+      "devicesOnline": "Devices Online",
+      "sensorsOnline": "Sensors Online",
+      "plotsWithIot": "Plots connected",
+      "selectedPlotScope": "{plot}",
+      "selectedScope": "Selected Scope",
+      "loading": "Loading devices...",
+      "waterStress": "Water Stress",
+      "soilTemperature": "Soil temperature",
+      "soilMoisture": "Soil moisture",
+      "temperatureHigh": "Temperature may increase water stress.",
+      "temperatureMedium": "Watch temperature exposure.",
+      "temperatureLow": "Temperature is within expected range.",
+      "moistureHigh": "Irrigation attention required.",
+      "moistureMedium": "Monitor soil moisture trend.",
+      "moistureLow": "Moisture conditions are stable.",
+      "iotScope": "IoT Scope"
     }
+  },
+  "common": {
+    "risk": "Risk"
+  },
+  "risk": {
+    "High": "High",
+    "Medium": "Medium",
+    "Low": "Low"
   },
   "iot-devices": {
     "title": "IoT Devices",
