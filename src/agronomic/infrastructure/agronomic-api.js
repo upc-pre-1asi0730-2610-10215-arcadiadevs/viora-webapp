@@ -8,6 +8,7 @@ const weatherEndpointPath = import.meta.env.VITE_WEATHER_SUMMARIES_ENDPOINT_PATH
 const forecastsEndpointPath = import.meta.env.VITE_YIELD_FORECASTS_ENDPOINT_PATH;
 const statisticsEndpointPath = import.meta.env.VITE_AGRONOMIC_STATISTICS_ENDPOINT_PATH;
 const iotDevicesEndpointPath = import.meta.env.VITE_IOT_DEVICES_ENDPOINT_PATH;
+const iotDevicesSummariesEndpointPath = import.meta.env.VITE_IOT_DEVICE_SUMMARIES_ENDPOINT_PATH;
 
 /**
  * Infrastructure service gateway for the Agronomic bounded-context endpoints.
@@ -23,6 +24,7 @@ export class AgronomicApi extends BaseApi {
     #forecastsEndpoint;
     #statisticsEndpoint;
     #iotDevicesEndpoint;
+    #iotDevicesSummariesEndpoint;
 
     /** * Initializes all internal endpoints using environment variable paths.
      */
@@ -35,6 +37,7 @@ export class AgronomicApi extends BaseApi {
         this.#forecastsEndpoint = new BaseEndpoint(this, forecastsEndpointPath);
         this.#statisticsEndpoint = new BaseEndpoint(this, statisticsEndpointPath);
         this.#iotDevicesEndpoint = new BaseEndpoint(this, iotDevicesEndpointPath);
+        this.#iotDevicesSummariesEndpoint = new BaseEndpoint(this, iotDevicesSummariesEndpointPath);
     }
 
     /**
@@ -99,6 +102,24 @@ export class AgronomicApi extends BaseApi {
      */
     getIotDevices() {
         return this.#iotDevicesEndpoint.getAll();
+    }
+
+    /**
+     * Retrieves summaries for IoT devices, optionally filtered by plot.
+     * @param {Object}
+     * @returns {Promise<Object>}
+     */
+    getIotDeviceSummaries() {
+        return this.#iotDevicesSummariesEndpoint.getAll();
+    }
+
+    /**
+     * Retrieves summaries for IoT devices, optionally filtered by plot.
+     * @param {string|number} plotId
+     * @returns {Promise<Object>}
+     */
+    getIotDeviceSummariesByPlot(plotId) {
+        return this.#iotDevicesSummariesEndpoint.getById(plotId);
     }
 
     /**
