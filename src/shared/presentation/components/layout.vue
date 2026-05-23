@@ -1,10 +1,4 @@
 <script setup>
-/**
- * Main Layout component.
- * Provides the application structure including sidebar, header with breadcrumbs, and footer.
- *
- * @component
- */
 import LanguageSwitcher from "./language-switcher.vue";
 import NavigationSidebar from "./navigation-sidebar.vue";
 import FooterContent from "./footer-content.vue";
@@ -16,11 +10,6 @@ const { t } = useI18n();
 const route = useRoute();
 const sidebarCollapsed = ref(false);
 
-/**
- * Computed breadcrumb trail based on the current route hierarchy and meta information.
- * Supports a single parent level via the `parent` and `parentRoute` meta fields.
- * @returns {Array<{title: string, to: Object|null}>} Array of breadcrumb objects.
- */
 const breadcrumbs = computed(() => {
   const crumbs = [];
 
@@ -44,10 +33,10 @@ const breadcrumbs = computed(() => {
   <pv-toast />
   <pv-confirm-dialog />
 
-  <div class="layout-container">
+  <section class="app-layout">
     <navigation-sidebar v-model:collapsed="sidebarCollapsed" />
 
-    <div class="content-wrapper">
+    <section class="layout-main">
       <header class="app-header">
         <div class="header-content">
           <div class="left-section">
@@ -83,39 +72,38 @@ const breadcrumbs = computed(() => {
         </div>
       </header>
 
-      <main class="main-content">
+      <main class="layout-content">
         <router-view />
       </main>
 
       <footer-content />
-    </div>
-  </div>
+    </section>
+  </section>
 </template>
 
 <style scoped>
-.layout-container {
-  display: flex;
+.app-layout {
   min-height: 100vh;
+  display: flex;
   background-color: #F8F4ED;
-  padding-left: 80px;
 }
 
-.content-wrapper {
+.layout-main {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  border: none;
+  outline: none;
 }
 
 .app-header {
   height: 80px;
-  background-color: #F8F4ED;
+  background-color: transparent;
   padding: 0 32px;
   display: flex;
   align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  border-bottom: none;
 }
 
 .header-content {
@@ -182,8 +170,23 @@ const breadcrumbs = computed(() => {
   line-height: 1.2;
 }
 
-.main-content {
+.layout-content {
   flex: 1;
-  padding: 24px 32px;
+  min-width: 0;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.layout-content > * {
+  width: 100%;
+  max-width: 1200px;
+}
+
+@media (max-width: 900px) {
+  .layout-content {
+    padding: 24px 18px 24px 96px;
+  }
 }
 </style>

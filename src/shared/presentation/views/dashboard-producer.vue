@@ -1,12 +1,14 @@
 <script setup>
 /**
  * ProducerDashboardView component.
- * Main dashboard for agricultural producers, orchestrating real-time surveillance and agronomic monitoring.
- *
- * @component
+ * Integración completa que replica la arquitectura de Angular:
+ * - Toolbar y Acciones en cabecera superior.
+ * - Grid de KPIs adaptativo.
+ * - Grid de IoT (Dispositivos + Sensores con filtros de plot).
+ * - Sección de Contenido Inferior (Plot Overview y Weather).
  */
 
-import { onMounted, computed, ref } from 'vue';
+import { onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAgronomicStore } from '../../../agronomic/application/agronomic.store.js';
 import { DateTimeFormatter } from '../../infrastructure/date-time.formatter.js';
@@ -19,159 +21,122 @@ import PlotOverviewWidget from "../../../agronomic/presentation/components/plot-
 import AgronomicAnalysisWidget from "../../../agronomic/presentation/components/agronomic-analysis-widget.vue";
 import WeatherSummary from "../../../agronomic/presentation/components/weather-summary.vue";
 import RecentAlertsWidget from "../../../surveillance/presentation/components/recent-alerts-widget.vue";
+import DashboardToolbar from "../components/dashboard-toolbar.vue";
+import IotDevicesCard from '../../../agronomic/presentation/components/iot-devices-card.vue';
+import IotSensorCard from '../../../agronomic/presentation/components/iot-sensor-card.vue';
 
 const agronomicStore = useAgronomicStore();
 const { t } = useI18n();
 
-/**
- * Current time range selected for the KPI summary.
- * @type {import('vue').Ref<string>}
- */
-const summaryTimeRange = ref('current');
-
-/**
- * Localized options for the summary time range selector.
- * @type {import('vue').ComputedRef<Array<{label: string, value: string}>>}
- */
-const summaryRangeOptions = computed(() => [
-  { label: t('dashboard.time-range-7days'), value: '7days' },
-  { label: t('dashboard.time-range-30days'), value: '30days' },
-  { label: t('dashboard.time-range-current'), value: 'current' }
+const viewOptions = computed(() => [
+  { id: 'iot-devices', label: 'IoT Devices', labelKey: 'toolbar.iotDevices', route: '/agronomic/iot-devices', icon: 'wifi' },
+  { id: 'plot-overview', label: 'Plot Overview', labelKey: 'toolbar.plotOverview', icon: 'map' },
+  { id: 'weather', label: 'Weather', labelKey: 'toolbar.weather', icon: 'cloud' }
 ]);
 
-/**
- * Relative time string indicating when the data was last updated.
- * @type {import('vue').ComputedRef<string>}
- */
-const lastUpdatedText = computed(() => {
-  return DateTimeFormatter.formatRelativeTime(summary.value?.updatedAt);
+const scopeOptions = computed(() => {
+  const options = [{ value: 'all', label: t('dashboard.scope.allPlots'), badge: agronomicStore.plotsCount }];
+  agronomicStore.plots.forEach(plot => options.push({ value: plot.id, label: plot.name }));
+  return options;
 });
 
-/**
- * Triggers a manual refresh of the monitoring summary.
- */
-const onRefreshSummary = () => {
-  agronomicStore.fetchMonitoringSummary(summaryTimeRange.value);
-};
+const timeRangeOptions = computed(() => [
+  { label: t('dashboard.time-range-current'), value: 'current' },
+  { label: t('dashboard.time-range-7days'), value: '7days' },
+  { label: t('dashboard.time-range-30days'), value: '30days' }
+]);
 
-/**
- * Updates the summary data when the time range selection changes.
- * @param {Object} event - SelectButton change event.
- */
-const onSummaryRangeChange = (event) => {
-  if (event.value) {
-    agronomicStore.fetchMonitoringSummary(event.value);
-  }
-};
+const lastUpdatedText = computed(() => DateTimeFormatter.formatRelativeTime(agronomicStore.monitoringSummary?.updatedAt));
 
-/**
- * Computed reference to the hydrated domain monitoring summary entity.
- * @type {import('vue').ComputedRef<Object|null>}
- */
-const summary = computed(() => {
-  return agronomicStore.monitoringSummary;
-});
+const onScopeChange = (newScope) => agronomicStore.setDashboardScope(newScope);
+const onTimeRangeChange = (newRange) => agronomicStore.setDashboardTimeRange(newRange);
+const onRefreshSummary = () => agronomicStore.refreshDashboardData();
+
+const onViewChange = (viewId) => {
+  const sectionIds = { 'plot-overview': 'plot-overview-section', 'weather': 'weather-section' };
+  const sectionId = sectionIds[viewId];
+  if (sectionId) document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 onMounted(() => {
-  agronomicStore.fetchPlots();
-  agronomicStore.fetchMonitoringSummary('current');
+  agronomicStore.refreshDashboardData();
 });
 </script>
 
 <template>
-  <div class="producer-dashboard-container bg-[#F8F4ED] min-h-screen">
 
-    <div class="dashboard-toolbar mb-4">
-      <div class="toolbar-side hidden lg:flex"></div>
+  <div class="producer-dashboard-container">
 
-      <div class="toolbar-center">
-        <pv-select-button
-            v-model="summaryTimeRange"
-            :options="summaryRangeOptions"
-            optionLabel="label"
-            optionValue="value"
-            class="segmented-control-viora"
-            @change="onSummaryRangeChange"
-        />
-      </div>
-
-      <div class="toolbar-side right-align">
+    <div class="dashboard-actions-row">
+      <div class="dashboard-actions">
         <div class="status-sync-box">
           <span class="status-label">{{ t('dashboard.updated-label') }}</span>
           <span class="status-time">{{ lastUpdatedText }}</span>
         </div>
-        <pv-button
-            icon="pi pi-refresh"
-            class="refresh-btn-viora"
-            @click="onRefreshSummary"
-        />
+        <pv-button icon="pi pi-refresh" class="refresh-btn-viora" @click="onRefreshSummary" />
       </div>
     </div>
 
-    <div
-        v-if="agronomicStore.summaryLoaded && summary"
-        class="kpi-grid-container mx-auto mb-[26px]"
-    >
+    <div class="dashboard-header-row">
+      <DashboardToolbar
+          class="toolbar-flex"
+          :view-options="viewOptions"
+          :scope-options="scopeOptions"
+          :selected-scope="agronomicStore.dashboardScope"
+          :time-range-options="timeRangeOptions"
+          :selected-time-range="agronomicStore.dashboardTimeRange"
+          @update:selected-scope="onScopeChange"
+          @update:selected-time-range="onTimeRangeChange"
+          @viewChange="onViewChange"
+      />
+    </div>
+
+    <section v-if="agronomicStore.summaryLoaded" class="kpi-grid-container">
       <OverallPlotHealthCard
-          :status="summary.overallPlotHealth.status"
-          :is-healthy="!summary.overallPlotHealth.isCritical"
-          :healthy-plots-count="summary.overallPlotHealth.healthyPlotsCount"
-          :review-plots-count="summary.overallPlotHealth.reviewPlotsCount"
+          :status="agronomicStore.adaptiveHealth?.status || 'Stable'"
+          :is-healthy="!(agronomicStore.adaptiveHealth?.isCritical)"
+          :healthy-plots-count="agronomicStore.adaptiveHealth?.healthyPlotsCount || 0"
+          :review-plots-count="agronomicStore.adaptiveHealth?.reviewPlotsCount || 0"
       />
-
       <NdviStatusCard
-          :value="summary.latestNdvi.ndviIndex"
-          :trend="summary.latestNdvi.ndviTrend"
-          :status-label="summary.latestNdvi.ndviStatusLabel"
+          :value="agronomicStore.adaptiveNdvi?.ndviIndex || 0"
+          :trend="agronomicStore.adaptiveNdvi?.ndviTrend || 'stable'"
+          :status-label="agronomicStore.adaptiveNdvi?.ndviStatusLabel || ''"
       />
-
       <ChillAccumulationCard
-          :value="summary.chillHourRecord.accumulatedChillPortions"
-          :weekly-diff="summary.chillHourRecord.weeklyDiff"
-          :threshold="summary.chillHourRecord.threshold"
+          :value="agronomicStore.adaptiveChill?.accumulatedChillPortions || 0"
+          :weekly-diff="agronomicStore.adaptiveChill?.weeklyDiff || 0"
+          :threshold="agronomicStore.adaptiveChill?.threshold || 600"
       />
-
       <YieldForecastCard
-          :tonnes="summary.yieldForecast.tonnes"
-          :risk-level="summary.yieldForecast.riskLevel"
+          :tonnes="agronomicStore.adaptiveYield?.tonnes || 0"
+          :risk-level="agronomicStore.adaptiveYield?.riskLevel || 'Low'"
       />
-    </div>
+    </section>
 
-    <div v-else-if="agronomicStore.summaryLoaded && !summary" class="kpi-empty-state mx-auto mb-[26px]">
-      <div class="empty-card-viora">
-        <i class="pi pi-exclamation-circle text-gray-300 text-3xl"></i>
-        <p>{{ t('dashboard.insufficient-records-msg') }}</p>
+    <section class="iot-grid">
+      <IotDevicesCard />
+      <IotSensorCard
+          v-for="sensor in agronomicStore.dashboardInsightCards"
+          :key="sensor.id"
+          :sensor="sensor"
+      />
+      <div class="add-iot-card">
+        <h2>{{ t('dashboard.addIotDevice') }}</h2>
+        <router-link to="/agronomic/iot-devices/new" aria-label="Add Device">
+          +
+        </router-link>
       </div>
-    </div>
+    </section>
 
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-full mx-auto mb-[26px] px-4 lg:px-0">
-      <div
-          v-for="i in 4"
-          :key="i"
-          class="h-[172px] w-full w-[280px] bg-white/50 animate-pulse rounded-xl border border-gray-100 shadow-sm"
-      ></div>
-    </div>
-
-    <section class="w-full max-w-[1200px] mx-auto flex flex-wrap lg:flex-nowrap items-center justify-center lg:justify-start gap-6 px-4 lg:px-0"
-             :style="{ marginBottom : '26px' }"
-    >
-      <div class="flex-1 min-w-[350px]">
-        <PlotOverviewWidget
-            v-if="agronomicStore.plotsLoaded"
-            :plots="agronomicStore.plots"
-            :selected-plot="agronomicStore.selectedPlot"
-            @update:selected-plot="(plot) => agronomicStore.selectPlot(plot.id)"
-        />
-
-        <div v-else class="h-[380px] w-full bg-white rounded-xl flex items-center justify-center border border-gray-100 shadow-sm">
-          <div class="flex flex-col items-center gap-3">
-            <i class="pi pi-spin pi-spinner text-3xl text-green-600"></i>
-            <span class="text-gray-400 font-poppins font-medium">{{ t('dashboard.loading-telemetry') }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex-shrink-0 ml-0 lg:ml-0 mx-auto lg:mx-0" style="width: 323px; max-width: 100%;">
+    <section class="lower-grid" :style="{ marginBottom : '26px' }">
+      <PlotOverviewWidget
+          v-if="agronomicStore.plotsLoaded"
+          :plots="agronomicStore.plots"
+          :selected-plot="agronomicStore.selectedPlot"
+          @update:selected-plot="(plot) => agronomicStore.selectPlot(plot.id)"
+      />
+      <div id="weather-section" class="weather-container">
         <WeatherSummary />
       </div>
     </section>
@@ -186,44 +151,82 @@ onMounted(() => {
     <section class="w-full max-w-full mx-auto px-4 lg:px-0 pb-10">
       <AgronomicAnalysisWidget />
     </section>
-
   </div>
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-.font-poppins {
+.add-iot-card {
+  height: 186px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  border-radius: 4px;
+}
+
+.add-iot-card h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #1f2523;
   font-family: 'Poppins', sans-serif;
+}
+
+.add-iot-card a {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid #2E4A3A;
+  background: transparent;
+  color: #2E4A3A;
+  font-size: 32px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.add-iot-card a:hover {
+  background: #2E4A3A;
+  color: #ffffff;
 }
 
 .producer-dashboard-container {
   width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 16px;
 }
 
-.dashboard-toolbar {
-  max-width: 1200px;
-  margin: 0 auto;
+.dashboard-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.dashboard-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 0 4px;
-}
-
-.toolbar-side {
-  flex: 1;
-  display: flex;
-}
-
-.toolbar-side.right-align {
-  justify-content: flex-end;
   gap: 12px;
 }
 
-.toolbar-center {
+.dashboard-header-row {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.toolbar-flex { flex: 1; }
+
+.dashboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .status-sync-box {
@@ -238,103 +241,41 @@ onMounted(() => {
   height: 42px;
 }
 
-.status-label {
-  color: #8C877F;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-time {
-  color: #2E4A3A;
-  font-size: 12px;
-  font-weight: 600;
-}
+.status-label { color: #8C877F; font-size: 12px; font-weight: 500; }
+.status-time { color: #2E4A3A; font-size: 12px; font-weight: 600; }
 
 .refresh-btn-viora {
   background: transparent !important;
   border: 1.5px solid #2E4A3A !important;
   color: #2E4A3A !important;
   border-radius: 8px !important;
-  width: 42px;
-  height: 42px;
+  width: 42px; height: 42px;
   padding: 0 !important;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-}
-
-.refresh-btn-viora:hover {
-  background: #2E4A3A !important;
-  color: #ffffff !important;
-}
-
-:deep(.segmented-control-viora) {
-  background: #ffffff;
-  border: 1.5px solid #EBEBF0;
-  border-radius: 8px;
-  padding: 2px;
-  display: flex;
-  gap: 2px;
-}
-
-:deep(.segmented-control-viora .p-togglebutton) {
-  border: none;
-  background: transparent;
-  color: #8C877F;
-  font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 6px 12px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-:deep(.segmented-control-viora .p-togglebutton-checked) {
-  background: #F2F2F5 !important;
-  color: #2E4A3A !important;
 }
 
 .kpi-grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 26px;
-  max-width: 1200px;
-  justify-items: start;
   margin-bottom: 26px;
 }
 
-.kpi-empty-state {
-  max-width: 1200px;
-  width: 100%;
+.iot-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 1.35fr) repeat(3, minmax(220px, 1fr));
+  gap: 24px;
   margin-bottom: 26px;
 }
 
-.empty-card-viora {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px dashed #EBEBF0;
-  height: 172px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  color: #8C877F;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+.lower-grid {
+  display: grid;
+  grid-template-columns: 1fr 323px;
+  gap: 24px;
 }
 
-@media (min-width: 1024px) {
-  .kpi-grid-container {
-    grid-template-columns: 300px 240px 240px 240px;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 1023px) and (min-width: 640px) {
-  .kpi-grid-container {
-    grid-template-columns: 300px 240px;
-    justify-content: center;
-  }
+@media (max-width: 1100px) {
+  .lower-grid { grid-template-columns: 1fr; }
+  .iot-grid { grid-template-columns: repeat(2, 1fr); }
+  .kpi-grid-container { grid-template-columns: repeat(2, 1fr); }
 }
 </style>
