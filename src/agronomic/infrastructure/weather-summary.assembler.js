@@ -1,4 +1,4 @@
-﻿import { WeatherSummary } from "../domain/model/weather-summary.entity.js";
+import { WeatherSummary } from "../domain/model/weather-summary.entity.js";
 
 /**
  * Maps weather resources into WeatherSummary domain entities.
@@ -10,7 +10,23 @@ export class WeatherSummaryAssembler {
      * @returns {WeatherSummary} WeatherSummary entity.
      */
     static toEntityFromResource(resource) {
-        return new WeatherSummary({ ...resource });
+        return new WeatherSummary({
+            id: resource?.id ?? null,
+            city: resource?.city ?? '',
+            currentTemp: resource?.currentTemp ?? 0,
+            condition: resource?.condition ?? '',
+            lastUpdate: resource?.lastUpdate ?? '',
+            icon: resource?.icon ?? '',
+            backgroundImage: resource?.backgroundImage ?? '',
+            forecast3Days: (resource?.forecast3Days ?? []).map(day => ({
+                dayLabel: day.dayLabel ?? '',
+                minTemp: day.minTemp ?? 0,
+                maxTemp: day.maxTemp ?? 0,
+                condition: day.condition ?? ''
+            })),
+            temperatureAnomaly: resource?.temperatureAnomaly ?? 0,
+            climateRisk: resource?.climateRisk ?? 'Low'
+        });
     }
 
     /**

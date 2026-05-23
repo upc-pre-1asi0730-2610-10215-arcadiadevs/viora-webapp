@@ -43,9 +43,7 @@ export const useSurveillanceStore = defineStore('surveillance', () => {
     async function fetchRecentAlerts(limit = 3) {
         try {
             const params = {
-                _limit: limit,
-                _sort: 'date',
-                _order: 'desc'
+                limit: limit
             };
             const response = await surveillanceApi.getAlerts(params);
             alerts.value = AlertAssembler.toEntitiesFromResponse(response);
