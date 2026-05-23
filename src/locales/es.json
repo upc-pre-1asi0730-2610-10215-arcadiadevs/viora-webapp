@@ -74,7 +74,46 @@
       "settings": "Configuración",
       "subscription": "Suscripción",
       "support": "Soporte"
+    },
+    "scope": {
+      "allPlots": "Todas las parcelas"
+    },
+    "addIotDevice": "Añadir Dispositivo IoT"
+  },
+  "toolbar": {
+    "iotDevices": "Dispositivos IoT",
+    "plotOverview": "Vista de Parcelas",
+    "weather": "Clima",
+    "selectScope": "Seleccionar alcance"
+  },
+  "cards": {
+    "iot": {
+      "title": "Sincronización IoT",
+      "devicesOnline": "Dispositivos en línea",
+      "sensorsOnline": "Sensores en línea",
+      "plotsWithIot": "Parcelas conectadas",
+      "selectedPlotScope": "{plot}",
+      "selectedScope": "Alcance seleccionado",
+      "loading": "Cargando dispositivos...",
+      "waterStress": "Estrés Hídrico",
+      "soilTemperature": "Temperatura del suelo",
+      "soilMoisture": "Humedad del suelo",
+      "temperatureHigh": "La temperatura puede aumentar el estrés hídrico.",
+      "temperatureMedium": "Vigilar exposición a la temperatura.",
+      "temperatureLow": "La temperatura está dentro del rango esperado.",
+      "moistureHigh": "Requiere atención de riego.",
+      "moistureMedium": "Monitorear tendencia de humedad.",
+      "moistureLow": "Las condiciones de humedad son estables.",
+      "iotScope": "Alcance IoT"
     }
+  },
+  "common": {
+    "risk": "Riesgo"
+  },
+  "risk": {
+    "High": "Alto",
+    "Medium": "Medio",
+    "Low": "Bajo"
   },
   "iot-devices": {
     "title": "Dispositivos IoT",
