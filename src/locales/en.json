@@ -87,6 +87,25 @@
     "weather": "Weather",
     "selectScope": "Select scope"
   },
+  "sidebar": {
+    "brand": "Viora Dashboard",
+    "navigation": "Dashboard navigation",
+    "expand": "Expand sidebar",
+    "collapse": "Collapse sidebar",
+    "dashboard": "Dashboard",
+    "myPlots": "My Plots",
+    "iotDevices": "IoT Devices",
+    "alerts": "Alerts",
+    "dynamicNutrition": "Dynamic Nutrition",
+    "pestSurveillance": "Pest Surveillance",
+    "expertAssistance": "Expert Assistance",
+    "expenseHistory": "Expense History",
+    "settings": "Settings",
+    "subscription": "Subscription",
+    "support": "Support",
+    "welcomeBack": "Welcome back",
+    "openProfile": "Open profile"
+  },
   "cards": {
     "iot": {
       "title": "IoT Devices",

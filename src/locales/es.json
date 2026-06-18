@@ -86,6 +86,25 @@
     "weather": "Clima",
     "selectScope": "Seleccionar alcance"
   },
+  "sidebar": {
+    "brand": "Viora Dashboard",
+    "navigation": "Navegación del dashboard",
+    "expand": "Expandir sidebar",
+    "collapse": "Colapsar sidebar",
+    "dashboard": "Dashboard",
+    "myPlots": "Mis Parcelas",
+    "iotDevices": "Dispositivos IoT",
+    "alerts": "Alertas",
+    "dynamicNutrition": "Nutrición Dinámica",
+    "pestSurveillance": "Vigilancia de Plagas",
+    "expertAssistance": "Asistencia de Expertos",
+    "expenseHistory": "Historial de Gastos",
+    "settings": "Configuración",
+    "subscription": "Suscripción",
+    "support": "Soporte",
+    "welcomeBack": "Bienvenido de nuevo",
+    "openProfile": "Abrir perfil"
+  },
   "cards": {
     "iot": {
       "title": "Sincronización IoT",

@@ -37,43 +37,44 @@ const toggleSidebar = () => {
  */
 const mainItems = computed(() => [
   {
-    label: t('dashboard.sidebar.dashboard'),
+    label: t('sidebar.dashboard'),
     route: '/dashboard',
-    iconPath: '/assets/icons/dashboard/grid-outline.svg'
+    iconPath: '/assets/icons/dashboard/grid-outline.svg',
+    exact: true
   },
   {
-    label: t('dashboard.sidebar.my-plots'),
-    route: '/plots',
+    label: t('sidebar.myPlots'),
+    route: '/agronomic/plots',
     iconPath: '/assets/icons/dashboard/file-tray-stacked-outline.svg'
   },
   {
-    label: t('dashboard.sidebar.iot-devices'),
+    label: t('sidebar.iotDevices'),
     route: '/agronomic/iot-devices',
     iconPath: '/assets/icons/dashboard/construct-outline.svg'
   },
   {
-    label: t('dashboard.sidebar.alerts'),
-    route: '/alerts',
+    label: t('sidebar.alerts'),
+    route: '/surveillance/alerts',
     iconPath: '/assets/icons/dashboard/megaphone-outline.svg'
   },
   {
-    label: t('dashboard.sidebar.dynamic-nutrition'),
-    route: '/dynamic-nutrition',
+    label: t('sidebar.dynamicNutrition'),
+    route: '/agronomic/dynamic-nutrition',
     iconPath: '/assets/icons/dashboard/leaf-outline.svg'
   },
   {
-    label: t('dashboard.sidebar.pest-surveillance'),
-    route: '/pest-surveillance',
+    label: t('sidebar.pestSurveillance'),
+    route: '/surveillance/pest-surveillance',
     iconPath: '/assets/icons/dashboard/bug-outline.svg'
   },
   {
-    label: t('dashboard.sidebar.expert-assistance'),
-    route: '/expert-assistance',
+    label: t('sidebar.expertAssistance'),
+    route: '/assistance/expert-assistance',
     iconPath: '/assets/icons/dashboard/people-outline.svg'
   },
   {
-    label: t('dashboard.sidebar.expense-history'),
-    route: '/expense-history',
+    label: t('sidebar.expenseHistory'),
+    route: '/billing/expense-history',
     iconPath: '/assets/icons/dashboard/sync-outline.svg'
   }
 ]);
@@ -84,17 +85,17 @@ const mainItems = computed(() => [
  */
 const secondaryItems = computed(() => [
   {
-    label: t('dashboard.sidebar.settings'),
+    label: t('sidebar.settings'),
     route: '/settings',
     iconPath: '/assets/icons/dashboard/settings-outline.svg'
   },
   {
-    label: t('dashboard.sidebar.subscription'),
-    route: '/subscription',
+    label: t('sidebar.subscription'),
+    route: '/billing/subscription',
     iconPath: '/assets/icons/dashboard/diamond-outline.svg'
   },
   {
-    label: t('dashboard.sidebar.support'),
+    label: t('sidebar.support'),
     route: '/support',
     iconPath: '/assets/icons/dashboard/information-circle-outline.svg'
   }
@@ -116,30 +117,36 @@ const getIconStyle = (path) => {
  * @param {string} targetPath - The path to check against the current route.
  * @returns {boolean} True if the path is active.
  */
-const isRouteActive = (targetPath) => {
-  return route.path === targetPath;
+const isRouteActive = (targetPath, exact = false) => {
+  return exact ? route.path === targetPath : route.path === targetPath || route.path.startsWith(`${targetPath}/`);
 };
 </script>
 
 <template>
   <aside class="dashboard-sidebar" :class="{ 'is-collapsed': collapsed }">
-    <button class="collapse-button" @click="toggleSidebar">
+    <button
+        class="collapse-button"
+        type="button"
+        :aria-label="collapsed ? t('sidebar.expand') : t('sidebar.collapse')"
+        @click="toggleSidebar"
+    >
       <span class="pi" :class="collapsed ? 'pi-chevron-right' : 'pi-chevron-left'"></span>
     </button>
 
     <div class="sidebar-brand">
-      <img src="/assets/icons/dashboard/viora-isotipo-green.png" alt="Viora Logo" class="brand-logo" />
-      <strong v-if="!collapsed">VIORA</strong>
+      <img src="/assets/icons/dashboard/viora-isotipo-green.png" alt="Viora" class="brand-logo" />
+      <strong v-if="!collapsed">{{ t('sidebar.brand') }}</strong>
     </div>
 
-    <nav class="sidebar-nav">
+    <nav class="sidebar-nav" :aria-label="t('sidebar.navigation')">
       <div class="nav-group">
         <router-link
             v-for="item in mainItems"
             :key="item.route"
             :to="item.route"
             class="nav-item"
-            :class="{ 'is-active': isRouteActive(item.route) }"
+            :class="{ 'is-active': isRouteActive(item.route, item.exact) }"
+            :aria-label="item.label"
         >
           <div class="nav-icon" :style="getIconStyle(item.iconPath)"></div>
           <span v-if="!collapsed" class="nav-label">{{ item.label }}</span>
@@ -153,6 +160,7 @@ const isRouteActive = (targetPath) => {
             :to="item.route"
             class="nav-item"
             :class="{ 'is-active': isRouteActive(item.route) }"
+            :aria-label="item.label"
         >
           <div class="nav-icon" :style="getIconStyle(item.iconPath)"></div>
           <span v-if="!collapsed" class="nav-label">{{ item.label }}</span>
@@ -161,15 +169,13 @@ const isRouteActive = (targetPath) => {
     </nav>
 
     <div class="sidebar-user">
-      <div class="user-avatar-placeholder">
-        <i class="pi pi-user"></i>
-      </div>
+      <img class="user-avatar" src="/assets/images/dashboard/user-avatar.png" alt="User avatar" />
       <div v-if="!collapsed" class="user-info">
-        <strong>Jane Doe</strong>
-        <span>Producer</span>
+        <span>{{ t('sidebar.welcomeBack') }}</span>
+        <strong>DaronCameloft</strong>
       </div>
-      <router-link v-if="!collapsed" to="/profile" class="user-action">
-        <i class="pi pi-ellipsis-v"></i>
+      <router-link v-if="!collapsed" to="/profile" class="user-action" :aria-label="t('sidebar.openProfile')">
+        <i class="pi pi-chevron-right"></i>
       </router-link>
     </div>
   </aside>
@@ -177,31 +183,24 @@ const isRouteActive = (targetPath) => {
 
 <style scoped>
 .dashboard-sidebar {
-  --sidebar-width: 272px;
-  --sidebar-collapsed-width: 80px;
-  --sidebar-bg: #ffffff;
-  --dashboard-bg: #f8f4ed;
-  --active-color: #2e4a3a;
-  --inactive-color: #4f4f4f;
-
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1100;
-  width: var(--sidebar-width);
+  width: var(--viora-sidebar-width);
   height: 100vh;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  background: var(--sidebar-bg);
+  background: var(--viora-surface);
   border-radius: 0 18px 18px 0;
-  box-shadow: 0 16px 40px rgba(31, 37, 35, 0.08);
-  color: var(--inactive-color);
+  box-shadow: var(--viora-shadow);
+  color: var(--viora-text-muted);
   transition: width 220ms ease;
   overflow: visible;
 }
 
 .dashboard-sidebar.is-collapsed {
-  width: var(--sidebar-collapsed-width);
+  width: var(--viora-sidebar-collapsed-width);
 }
 
 .collapse-button {
@@ -213,10 +212,10 @@ const isRouteActive = (targetPath) => {
   height: 28px;
   display: grid;
   place-items: center;
-  border: 1px solid #edf0ec;
+  border: 1px solid var(--viora-border);
   border-radius: 999px;
-  background: #ffffff;
-  color: var(--active-color);
+  background: var(--viora-surface);
+  color: var(--viora-primary);
   box-shadow: 0 8px 18px rgba(31, 37, 35, 0.08);
   cursor: pointer;
 }
@@ -227,7 +226,7 @@ const isRouteActive = (targetPath) => {
   align-items: center;
   gap: 12px;
   padding: 22px 22px 16px;
-  color: #18221d;
+  color: var(--viora-primary-dark);
 }
 
 .dashboard-sidebar.is-collapsed .sidebar-brand {
@@ -243,10 +242,11 @@ const isRouteActive = (targetPath) => {
 }
 
 .sidebar-brand strong {
-  font-family: 'Poppins', sans-serif;
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-family: var(--viora-font);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.1;
   white-space: nowrap;
 }
 
@@ -265,7 +265,7 @@ const isRouteActive = (targetPath) => {
 .nav-group.secondary {
   margin-top: 18px;
   padding-top: 24px;
-  border-top: 1px solid #edf0ec;
+  border-top: 1px solid var(--viora-border);
 }
 
 .dashboard-sidebar.is-collapsed .nav-group {
@@ -279,9 +279,9 @@ const isRouteActive = (targetPath) => {
   gap: 14px;
   padding: 0 16px;
   border-radius: 999px;
-  color: var(--inactive-color);
+  color: var(--viora-text-muted);
   text-decoration: none;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--viora-font);
   font-size: 14px;
   font-weight: 600;
   transition: all 180ms ease;
@@ -294,8 +294,8 @@ const isRouteActive = (targetPath) => {
 
 .nav-item:hover,
 .nav-item.is-active {
-  background: var(--dashboard-bg);
-  color: var(--active-color);
+  background: var(--viora-bg);
+  color: var(--viora-primary);
 }
 
 .nav-item:hover {
@@ -325,7 +325,7 @@ const isRouteActive = (targetPath) => {
   align-items: center;
   gap: 12px;
   padding: 14px 22px;
-  border-top: 1px solid #edf0ec;
+  border-top: 1px solid var(--viora-border);
 }
 
 .dashboard-sidebar.is-collapsed .sidebar-user {
@@ -333,15 +333,12 @@ const isRouteActive = (targetPath) => {
   padding-inline: 0;
 }
 
-.user-avatar-placeholder {
+.user-avatar {
   width: 38px;
   height: 38px;
   border-radius: 999px;
-  background: #f2f2f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #8C877F;
+  object-fit: cover;
+  background: var(--viora-surface-soft);
   flex-shrink: 0;
 }
 
@@ -349,24 +346,25 @@ const isRouteActive = (targetPath) => {
   min-width: 0;
   display: grid;
   gap: 2px;
-  font-family: 'Poppins', sans-serif;
 }
 
 .user-info span {
   color: #8a9c92;
+  font-family: var(--viora-font);
   font-size: 12px;
 }
 
 .user-info strong {
-  color: #18221d;
+  color: var(--viora-primary-dark);
+  font-family: var(--viora-font);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   white-space: nowrap;
 }
 
 .user-action {
   margin-left: auto;
-  color: #18221d;
+  color: var(--viora-primary-dark);
   text-decoration: none;
 }
 

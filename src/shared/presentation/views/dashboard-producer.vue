@@ -1,11 +1,11 @@
 <script setup>
 /**
  * ProducerDashboardView component.
- * Integración completa que replica la arquitectura de Angular:
- * - Toolbar y Acciones en cabecera superior.
- * - Grid de KPIs adaptativo.
- * - Grid de IoT (Dispositivos + Sensores con filtros de plot).
- * - Sección de Contenido Inferior (Plot Overview y Weather).
+ * Coordinates the producer dashboard surface:
+ * - Toolbar and top actions.
+ * - Adaptive KPI grid.
+ * - IoT device and sensor grid with plot filters.
+ * - Plot overview, weather, alerts, and trend sections.
  */
 
 import { onMounted, computed } from 'vue';
@@ -237,12 +237,12 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--viora-font);
   height: 42px;
 }
 
 .status-label { color: #8C877F; font-size: 12px; font-weight: 500; }
-.status-time { color: #2E4A3A; font-size: 12px; font-weight: 600; }
+.status-time { color: #2E4A3A; font-size: 12px; font-weight: 500; }
 
 .refresh-btn-viora {
   background: transparent !important;
