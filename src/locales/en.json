@@ -6,6 +6,7 @@
   },
   "dashboard": {
     "title": "Producer Dashboard",
+    "overview": "Overview",
     "subtitle": "Real-time surveillance and agronomic vision",
     "header-description": "Monitor your plots, health indicators and active agricultural risks",
     "loading-telemetry": "Synchronizing satellite telemetry...",
@@ -104,7 +105,24 @@
     "subscription": "Subscription",
     "support": "Support",
     "welcomeBack": "Welcome back",
-    "openProfile": "Open profile"
+    "openProfile": "Profile"
+  },
+  "comingSoon": {
+    "title": "Coming Soon",
+    "message": "This producer workspace is being prepared. We are wiring it to the Viora platform and it will be available shortly.",
+    "section": "This section",
+    "subtitle": "This producer workspace is being prepared.",
+    "backToDashboard": "Back to Dashboard",
+    "subtitle-my-plots": "Manage and review your registered plots.",
+    "subtitle-dynamic-nutrition": "Plan and certify dynamic nutrition recommendations.",
+    "subtitle-alerts": "Track active agricultural alerts across your plots.",
+    "subtitle-pest-surveillance": "Monitor pest and disease surveillance reports.",
+    "subtitle-expert-assistance": "Connect with specialists for producer support.",
+    "subtitle-expense-history": "Review agricultural expenses and production cost history.",
+    "subtitle-subscription": "Manage plan details and billing configuration.",
+    "subtitle-settings": "Configure your dashboard and workspace preferences.",
+    "subtitle-support": "Access help resources for the producer dashboard.",
+    "subtitle-profile": "Manage account details and preferences."
   },
   "cards": {
     "iot": {
