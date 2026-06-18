@@ -1,8 +1,9 @@
 import { BaseApi } from "../../shared/infrastructure/base-api.js";
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
-import { hasConfiguredApiUrl, mockVioraResponses } from "../../shared/infrastructure/mock-viora-resources.js";
 
-const alertsEndpointPath = import.meta.env.VITE_ALERTS_ENDPOINT_PATH;
+// Surveillance alerts are not yet served by the Viora platform backend, so they
+// are routed to the mock API target (json-server), mirroring the OS frontend.
+const alertsEndpointPath = import.meta.env.VITE_ALERTS_ENDPOINT_PATH || "/alerts";
 
 /**
  * Infrastructure service gateway for the Surveillance bounded-context endpoints.
@@ -17,17 +18,15 @@ export class SurveillanceApi extends BaseApi {
      */
     constructor() {
         super();
-        this.#alertsEndpoint = new BaseEndpoint(this, alertsEndpointPath);
+        this.#alertsEndpoint = new BaseEndpoint(this, alertsEndpointPath, { mock: true });
     }
 
     /**
-     * Fetches all alerts, typically sorted by date.
+     * Fetches alerts, typically the most recent ones for the dashboard.
      * @param {Object} [params={}] - Query parameters (e.g., { _limit: 3, _sort: 'date', _order: 'desc' }).
      * @returns {Promise<import('axios').AxiosResponse>}
      */
     getAlerts(params = {}) {
-        if (!hasConfiguredApiUrl()) return mockVioraResponses.alerts(params);
-
         return this.#alertsEndpoint.getAll(params);
     }
 
