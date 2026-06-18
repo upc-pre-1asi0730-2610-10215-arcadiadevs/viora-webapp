@@ -99,7 +99,6 @@ defineProps({
 
 .custom-summary-card {
   width: 100%;
-  max-width: 240px;
   height: 172px;
   border-radius: 12px;
   border: none;

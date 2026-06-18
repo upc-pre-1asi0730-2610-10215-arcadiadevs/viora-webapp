@@ -22,11 +22,21 @@ import AgronomicAnalysisWidget from "../../../agronomic/presentation/components/
 import WeatherSummary from "../../../agronomic/presentation/components/weather-summary.vue";
 import RecentAlertsWidget from "../../../surveillance/presentation/components/recent-alerts-widget.vue";
 import DashboardToolbar from "../components/dashboard-toolbar.vue";
+import LanguageSwitcher from "../components/language-switcher.vue";
 import IotDevicesCard from '../../../agronomic/presentation/components/iot-devices-card.vue';
 import IotSensorCard from '../../../agronomic/presentation/components/iot-sensor-card.vue';
 
 const agronomicStore = useAgronomicStore();
 const { t } = useI18n();
+
+/**
+ * Human label for the active dashboard scope, used in the breadcrumb trail.
+ * @type {import('vue').ComputedRef<string>}
+ */
+const scopeLabel = computed(() => {
+  if (agronomicStore.dashboardScope === 'all') return t('dashboard.scope.allPlots');
+  return agronomicStore.selectedDashboardPlot?.name || t('dashboard.scope.allPlots');
+});
 
 const viewOptions = computed(() => [
   { id: 'iot-devices', label: 'IoT Devices', labelKey: 'toolbar.iotDevices', route: '/agronomic/iot-devices', icon: 'wifi' },
@@ -67,15 +77,27 @@ onMounted(() => {
 
   <div class="producer-dashboard-container">
 
-    <div class="dashboard-actions-row">
+    <header class="dashboard-header-bar">
+      <div class="header-left">
+        <nav class="dashboard-breadcrumb" aria-label="Page breadcrumb">
+          <router-link to="/dashboard" class="breadcrumb-item">{{ t('sidebar.dashboard') }}</router-link>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item">{{ t('dashboard.overview') }}</span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item is-current">{{ scopeLabel }}</span>
+        </nav>
+        <p class="header-subtitle">{{ t('dashboard.header-description') }}</p>
+      </div>
+
       <div class="dashboard-actions">
         <div class="status-sync-box">
           <span class="status-label">{{ t('dashboard.updated-label') }}</span>
           <span class="status-time">{{ lastUpdatedText }}</span>
         </div>
+        <LanguageSwitcher />
         <pv-button icon="pi pi-refresh" class="refresh-btn-viora" @click="onRefreshSummary" />
       </div>
-    </div>
+    </header>
 
     <div class="dashboard-header-row">
       <DashboardToolbar
@@ -196,38 +218,76 @@ onMounted(() => {
 
 .producer-dashboard-container {
   width: 100%;
-  max-width: 1440px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0;
 }
 
-.dashboard-actions-row {
+.dashboard-header-bar {
   display: flex;
-  justify-content: flex-end;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.header-left {
+  min-width: 0;
+}
+
+.dashboard-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.breadcrumb-item {
+  color: #8c877f;
+  font-family: var(--viora-font);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+a.breadcrumb-item:hover {
+  color: #2e4a3a;
+}
+
+.breadcrumb-item.is-current {
+  color: #1f2523;
+}
+
+.breadcrumb-separator {
+  color: #c8c2b8;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.header-subtitle {
+  margin: 6px 0 0;
+  color: #8c877f;
+  font-family: var(--viora-font);
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .dashboard-actions {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .dashboard-header-row {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 26px;
 }
 
 .toolbar-flex { flex: 1; }
-
-.dashboard-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
 
 .status-sync-box {
   background: transparent;
@@ -262,15 +322,16 @@ onMounted(() => {
 
 .iot-grid {
   display: grid;
-  grid-template-columns: minmax(300px, 1.35fr) repeat(3, minmax(220px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 26px;
   margin-bottom: 26px;
+  align-items: stretch;
 }
 
 .lower-grid {
   display: grid;
-  grid-template-columns: 1fr 323px;
-  gap: 24px;
+  grid-template-columns: 2fr 1fr;
+  gap: 26px;
 }
 
 @media (max-width: 1100px) {
