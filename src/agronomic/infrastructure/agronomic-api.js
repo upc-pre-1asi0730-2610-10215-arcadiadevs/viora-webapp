@@ -1,136 +1,202 @@
-﻿import { BaseApi } from "../../shared/infrastructure/base-api.js";
+import { BaseApi } from "../../shared/infrastructure/base-api.js";
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
 
-const plotsEndpointPath = import.meta.env.VITE_PLOTS_ENDPOINT_PATH;
-const recordsEndpointPath = import.meta.env.VITE_AGRONOMIC_RECORDS_ENDPOINT_PATH;
-const summariesEndpointPath = import.meta.env.VITE_MONITORING_SUMMARIES_ENDPOINT_PATH;
-const weatherEndpointPath = import.meta.env.VITE_WEATHER_SUMMARIES_ENDPOINT_PATH;
-const forecastsEndpointPath = import.meta.env.VITE_YIELD_FORECASTS_ENDPOINT_PATH;
-const statisticsEndpointPath = import.meta.env.VITE_AGRONOMIC_STATISTICS_ENDPOINT_PATH;
-const iotDevicesEndpointPath = import.meta.env.VITE_IOT_DEVICES_ENDPOINT_PATH;
+// Endpoint paths are relative to the API base URL (which already includes the
+// `/api/v1` prefix), matching the OS frontend convention.
+const plotsEndpointPath = import.meta.env.VITE_PLOTS_ENDPOINT_PATH || "/plots";
+const plotsOverviewEndpointPath = import.meta.env.VITE_PLOTS_OVERVIEW_ENDPOINT_PATH || "/plots/overview";
+const recordsEndpointPath = import.meta.env.VITE_AGRONOMIC_RECORDS_ENDPOINT_PATH || "/agronomic-statistics/series";
+const currentSummaryEndpointPath = import.meta.env.VITE_MONITORING_SUMMARY_CURRENT_ENDPOINT_PATH || "/monitoring-summaries/current";
+const statisticsEndpointPath = import.meta.env.VITE_AGRONOMIC_STATISTICS_ENDPOINT_PATH || "/agronomic-statistics";
+const statisticsSeriesEndpointPath = import.meta.env.VITE_AGRONOMIC_STATISTICS_SERIES_ENDPOINT_PATH || "/agronomic-statistics/series";
+const nutritionPlansEndpointPath = import.meta.env.VITE_DYNAMIC_NUTRITION_PLANS_ENDPOINT_PATH || "/dynamic-nutrition-plans";
+// IoT sensor telemetry and the dashboard insight cards are not yet served by the
+// Viora platform backend, so they are routed to the mock API target (json-server),
+// mirroring the OS frontend.
+const iotDevicesEndpointPath = import.meta.env.VITE_IOT_DEVICES_ENDPOINT_PATH || "/iot-devices";
+const iotDeviceSummariesEndpointPath = import.meta.env.VITE_IOT_DEVICE_SUMMARIES_ENDPOINT_PATH || "/iot-device-summaries";
 
 /**
  * Infrastructure service gateway for the Agronomic bounded-context endpoints.
- * Manages multiple specific endpoints for agronomic entities.
- * * @class AgronomicApi
+ *
+ * Every method targets the Viora platform contracts directly. While the C# .NET
+ * backend is under construction the contracts are served by json-server from
+ * `server/db.json` (see `VITE_VIORA_PLATFORM_API_URL` / `VITE_MOCK_API_URL`);
+ * switching to the real backend only requires changing those URLs.
+ *
+ * @class AgronomicApi
  * @extends BaseApi
  */
 export class AgronomicApi extends BaseApi {
     #plotsEndpoint;
+    #plotsOverviewEndpoint;
     #recordsEndpoint;
-    #summariesEndpoint;
-    #weatherEndpoint;
-    #forecastsEndpoint;
+    #currentSummaryEndpoint;
     #statisticsEndpoint;
+    #statisticsSeriesEndpoint;
+    #nutritionPlansEndpoint;
     #iotDevicesEndpoint;
+    #iotDeviceSummariesEndpoint;
 
-    /** * Initializes all internal endpoints using environment variable paths.
-     */
     constructor() {
         super();
         this.#plotsEndpoint = new BaseEndpoint(this, plotsEndpointPath);
+        this.#plotsOverviewEndpoint = new BaseEndpoint(this, plotsOverviewEndpointPath);
         this.#recordsEndpoint = new BaseEndpoint(this, recordsEndpointPath);
-        this.#summariesEndpoint = new BaseEndpoint(this, summariesEndpointPath);
-        this.#weatherEndpoint = new BaseEndpoint(this, weatherEndpointPath);
-        this.#forecastsEndpoint = new BaseEndpoint(this, forecastsEndpointPath);
+        this.#currentSummaryEndpoint = new BaseEndpoint(this, currentSummaryEndpointPath);
         this.#statisticsEndpoint = new BaseEndpoint(this, statisticsEndpointPath);
-        this.#iotDevicesEndpoint = new BaseEndpoint(this, iotDevicesEndpointPath);
+        this.#statisticsSeriesEndpoint = new BaseEndpoint(this, statisticsSeriesEndpointPath);
+        this.#nutritionPlansEndpoint = new BaseEndpoint(this, nutritionPlansEndpointPath);
+        this.#iotDevicesEndpoint = new BaseEndpoint(this, iotDevicesEndpointPath, { mock: true });
+        this.#iotDeviceSummariesEndpoint = new BaseEndpoint(this, iotDeviceSummariesEndpointPath, { mock: true });
     }
 
-    /**
-     * Fetches all plot resources.
-     * @returns {Promise<import('axios').AxiosResponse>}
-     */
+    #plotPath(plotId, suffix = "") {
+        return `${this.#plotsEndpoint.endpointPath}/${plotId}${suffix}`;
+    }
+
+    #toBackendTimeRange(timeRange = "LAST_30_DAYS") {
+        const value = String(timeRange || "").trim();
+        const ranges = {
+            current: "LAST_30_DAYS",
+            "7days": "LAST_7_DAYS",
+            "30days": "LAST_30_DAYS",
+            campaign: "CAMPAIGN"
+        };
+
+        return ranges[value] || value.toUpperCase();
+    }
+
+    #withBackendTimeRange(params = {}) {
+        return {
+            ...params,
+            timeRange: this.#toBackendTimeRange(params.timeRange)
+        };
+    }
+
     getPlots() {
-        return this.#plotsEndpoint.getAll();
+        return this.#plotsEndpoint.getAll({ includeCurrentImagery: true });
     }
 
-    /**
-     * Fetches a plot by its unique identifier.
-     * @param {number|string} id - Plot identifier.
-     */
+    getPlotsOverview() {
+        return this.#plotsOverviewEndpoint.getAll();
+    }
+
     getPlotById(id) {
         return this.#plotsEndpoint.getById(id);
     }
 
-    /**
-     * Fetches telemetry records, typically filtered by plotId or period.
-     * @param {Object} [params={}] - Query parameters (e.g., { plotId: 1, period: '30d' }).
-     */
+    createPlot(plot) {
+        return this.#plotsEndpoint.create(plot);
+    }
+
+    updatePlot(plotId, plot) {
+        return this.#plotsEndpoint.update(plotId, plot);
+    }
+
+    deletePlot(plotId) {
+        return this.#plotsEndpoint.delete(plotId);
+    }
+
+    configureChillRequirement(plotId, chillRequirement) {
+        return this.http.put(this.#plotPath(plotId, "/chill-requirement"), chillRequirement);
+    }
+
+    resetChillRequirement(plotId) {
+        return this.http.delete(this.#plotPath(plotId, "/chill-requirement"));
+    }
+
+    getPlotDetail(plotId) {
+        return this.http.get(this.#plotPath(plotId, "/detail"));
+    }
+
     getRecords(params = {}) {
-        return this.#recordsEndpoint.getAll(params);
+        return this.#recordsEndpoint.getAll(this.#withBackendTimeRange(params));
     }
 
-    /**
-     * Fetches monitoring summaries (KPIs) for the dashboard.
-     * @param {string} period - Filter period ('7d', '30d', or 'current').
-     */
-    getSummaries(period) {
-        return this.#summariesEndpoint.getAll({ period });
+    getSummaries() {
+        return this.#currentSummaryEndpoint.getAll();
     }
 
-    /**
-     * Fetches weather information for the weather widget.
-     * @param {Object} [params={}] - Filter parameters (e.g., { city: 'Tacna' }).
-     */
+    getPlotMonitoringSummary(plotId) {
+        return this.http.get(this.#plotPath(plotId, "/monitoring-summary"));
+    }
+
+    getCurrentNdviTile(plotId, zoom, x, y) {
+        return this.http.get(this.#plotPath(plotId, `/imagery/tile/${zoom}/${x}/${y}`), {
+            responseType: "blob"
+        });
+    }
+
     getWeather(params = {}) {
-        return this.#weatherEndpoint.getAll(params);
+        const plotId = params.plotId || 1;
+        return this.getPlotWeatherForecast(plotId);
     }
 
-    /**
-     * Fetches yield predictions.
-     * @param {number|string} plotId - Plot identifier to get forecast for.
-     */
+    getPlotWeatherForecast(plotId) {
+        return this.http.get(this.#plotPath(plotId, "/weather-forecast"));
+    }
+
     getYieldForecastByPlot(plotId) {
-        return this.#forecastsEndpoint.getAll({ plotId });
+        return this.getPlotMonitoringSummary(plotId);
     }
 
-    /**
-     * Fetches pre-calculated agronomic statistics for analysis.
-     * @param {Object} [params={}] - Filter parameters (e.g., { plotId: 'all', timeRange: '30days' }).
-     */
     getStatistics(params = {}) {
-        return this.#statisticsEndpoint.getAll(params);
+        return this.#statisticsEndpoint.getAll(this.#withBackendTimeRange(params));
     }
 
-    /**
-     * Fetches all IoT devices.
-     * @returns {Promise<import('axios').AxiosResponse>}
-     */
-    getIotDevices() {
-        return this.#iotDevicesEndpoint.getAll();
+    getStatisticsSeries(params = {}) {
+        return this.#statisticsSeriesEndpoint.getAll(this.#withBackendTimeRange(params));
     }
 
-    /**
-     * Fetches an IoT device by its ID.
-     * @param {number|string} id - Device identifier.
-     */
+    ingestAgronomicStatistics(snapshot) {
+        return this.http.post(`${this.#statisticsEndpoint.endpointPath}/ingest`, snapshot);
+    }
+
+    generateNutritionPlan(params = {}) {
+        return this.#nutritionPlansEndpoint.http.post(this.#nutritionPlansEndpoint.endpointPath, null, { params });
+    }
+
+    getActiveNutritionPlan(params = {}) {
+        return this.#nutritionPlansEndpoint.http.get(`${this.#nutritionPlansEndpoint.endpointPath}/active`, { params });
+    }
+
+    certifyNutritionPlan(planId, certification) {
+        return this.#nutritionPlansEndpoint.http.post(
+            `${this.#nutritionPlansEndpoint.endpointPath}/${planId}/certification`,
+            certification
+        );
+    }
+
+    getIotDevices(plotId) {
+        return this.#iotDevicesEndpoint.getAll(plotId ? { plotId } : {});
+    }
+
+    getIotDevicesByPlot(plotId) {
+        return this.#iotDevicesEndpoint.getAll({ plotId });
+    }
+
+    getIotDeviceSummaries() {
+        return this.#iotDeviceSummariesEndpoint.getAll();
+    }
+
+    getIotDeviceSummariesByPlot(plotId) {
+        return this.#iotDeviceSummariesEndpoint.getAll({ plotId });
+    }
+
     getIotDeviceById(id) {
         return this.#iotDevicesEndpoint.getById(id);
     }
 
-    /**
-     * Creates a new IoT device.
-     * @param {Object} device - Device data.
-     */
     createIotDevice(device) {
         return this.#iotDevicesEndpoint.create(device);
     }
 
-    /**
-     * Updates an existing IoT device.
-     * @param {number|string} id - Device identifier.
-     * @param {Object} device - Updated device data.
-     */
     updateIotDevice(id, device) {
         return this.#iotDevicesEndpoint.update(id, device);
     }
 
-    /**
-     * Deletes an IoT device.
-     * @param {number|string} id - Device identifier.
-     */
-    deleteIotDevice(id) {
+    deleteIotDevice(id, plotId) {
         return this.#iotDevicesEndpoint.delete(id);
     }
 }

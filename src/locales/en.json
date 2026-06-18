@@ -6,6 +6,7 @@
   },
   "dashboard": {
     "title": "Producer Dashboard",
+    "overview": "Overview",
     "subtitle": "Real-time surveillance and agronomic vision",
     "header-description": "Monitor your plots, health indicators and active agricultural risks",
     "loading-telemetry": "Synchronizing satellite telemetry...",
@@ -75,7 +76,82 @@
       "settings": "Settings",
       "subscription": "Subscription",
       "support": "Support"
+    },
+    "scope": {
+      "allPlots": "All plots"
+    },
+    "addIotDevice": "Add IoT Device"
+  },
+  "toolbar": {
+    "iotDevices": "IoT Devices",
+    "plotOverview": "Plot Overview",
+    "weather": "Weather",
+    "selectScope": "Select scope"
+  },
+  "sidebar": {
+    "brand": "Viora Dashboard",
+    "navigation": "Dashboard navigation",
+    "expand": "Expand sidebar",
+    "collapse": "Collapse sidebar",
+    "dashboard": "Dashboard",
+    "myPlots": "My Plots",
+    "iotDevices": "IoT Devices",
+    "alerts": "Alerts",
+    "dynamicNutrition": "Dynamic Nutrition",
+    "pestSurveillance": "Pest Surveillance",
+    "expertAssistance": "Expert Assistance",
+    "expenseHistory": "Expense History",
+    "settings": "Settings",
+    "subscription": "Subscription",
+    "support": "Support",
+    "welcomeBack": "Welcome back",
+    "openProfile": "Profile"
+  },
+  "comingSoon": {
+    "title": "Coming Soon",
+    "message": "This producer workspace is being prepared. We are wiring it to the Viora platform and it will be available shortly.",
+    "section": "This section",
+    "subtitle": "This producer workspace is being prepared.",
+    "backToDashboard": "Back to Dashboard",
+    "subtitle-my-plots": "Manage and review your registered plots.",
+    "subtitle-dynamic-nutrition": "Plan and certify dynamic nutrition recommendations.",
+    "subtitle-alerts": "Track active agricultural alerts across your plots.",
+    "subtitle-pest-surveillance": "Monitor pest and disease surveillance reports.",
+    "subtitle-expert-assistance": "Connect with specialists for producer support.",
+    "subtitle-expense-history": "Review agricultural expenses and production cost history.",
+    "subtitle-subscription": "Manage plan details and billing configuration.",
+    "subtitle-settings": "Configure your dashboard and workspace preferences.",
+    "subtitle-support": "Access help resources for the producer dashboard.",
+    "subtitle-profile": "Manage account details and preferences."
+  },
+  "cards": {
+    "iot": {
+      "title": "IoT Devices",
+      "devicesOnline": "Devices Online",
+      "sensorsOnline": "Sensors Online",
+      "plotsWithIot": "Plots connected",
+      "selectedPlotScope": "{plot}",
+      "selectedScope": "Selected Scope",
+      "loading": "Loading devices...",
+      "waterStress": "Water Stress",
+      "soilTemperature": "Soil temperature",
+      "soilMoisture": "Soil moisture",
+      "temperatureHigh": "Temperature may increase water stress.",
+      "temperatureMedium": "Watch temperature exposure.",
+      "temperatureLow": "Temperature is within expected range.",
+      "moistureHigh": "Irrigation attention required.",
+      "moistureMedium": "Monitor soil moisture trend.",
+      "moistureLow": "Moisture conditions are stable.",
+      "iotScope": "IoT Scope"
     }
+  },
+  "common": {
+    "risk": "Risk"
+  },
+  "risk": {
+    "High": "High",
+    "Medium": "Medium",
+    "Low": "Low"
   },
   "iot-devices": {
     "title": "IoT Devices",

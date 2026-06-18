@@ -1,5 +1,6 @@
 ﻿import { createRouter, createWebHistory } from "vue-router";
 import agronomicRoutes from "./agronomic/presentation/agronomic-routes.js";
+import workspaceRoutes from "./shared/presentation/workspace-routes.js";
 
 const producerDashboard = () => import('./shared/presentation/views/dashboard-producer.vue');
 
@@ -16,14 +17,15 @@ const routes = [
             description: 'dashboard.header-description'
         }
     },
-    { 
-        path: '/agronomic', 
-        name: 'agronomic', 
-        children: agronomicRoutes 
+    {
+        path: '/agronomic',
+        name: 'agronomic',
+        children: agronomicRoutes
     },
-    { 
-        path: '/', 
-        redirect: '/dashboard' 
+    ...workspaceRoutes,
+    {
+        path: '/',
+        redirect: '/dashboard'
     }
 ];
 

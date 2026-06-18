@@ -17,7 +17,7 @@ export class AgronomicAnalysisAssembler {
             timeRange: resource.timeRange,
             labels: resource.labels || [],
             ndviSeries: resource.ndviSeries || [],
-            cpSeries: resource.cpSeries || [],
+            cpSeries: resource.cpSeries || resource.chillHoursSeries || [],
             threshold: resource.threshold || 600,
             observation: resource.observation,
             trend: resource.trend,
@@ -34,11 +34,8 @@ export class AgronomicAnalysisAssembler {
     static toEntitiesFromResponse(response) {
         const data = response.data || response;
 
-        if (!Array.isArray(data)) {
-            console.warn("AgronomicAnalysisAssembler: Expected an array but received:", data);
-            return [];
-        }
+        const resources = Array.isArray(data) ? data : [data];
 
-        return data.map(resource => this.toEntityFromResource(resource));
+        return resources.map(resource => this.toEntityFromResource(resource));
     }
 }

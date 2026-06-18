@@ -2,268 +2,505 @@
   "plots": [
     {
       "id": 1,
+      "userId": 1,
       "name": "Santa Rosa",
       "polygonCoordinates": [
-        [
-          -3.785,
-          37.842
-        ],
-        [
-          -3.781,
-          37.842
-        ],
-        [
-          -3.781,
-          37.845
-        ],
-        [
-          -3.785,
-          37.845
-        ],
-        [
-          -3.785,
-          37.842
-        ]
+        [-70.2912, -18.0834],
+        [-70.2868, -18.0831],
+        [-70.2865, -18.0872],
+        [-70.2914, -18.0875],
+        [-70.2912, -18.0834]
       ],
       "areaSize": 12.5,
       "lastUpdate": "2026-05-04T21:00:00Z",
+      "cropType": "Olive",
+      "variety": "Sevillana",
+      "location": "La Yarada - Los Palos",
+      "campaign": "2026 campaign",
+      "notes": "Reference plot for the dashboard overview.",
+      "state": "enable",
       "healthStatus": "Healthy",
       "phenologicalRisk": "Low",
+      "includeCurrentImagery": true,
       "currentImagery": {
+        "id": "img-1",
+        "plotId": 1,
         "tileUrl": "https://api.agromonitoring.com/tile/1.0/{z}/{x}/{y}/1206594a380/69fe6599ca962770013c275a?appid=84a0344edca251f7366b099821006c05",
-        "captureDate": "2026-05-01",
+        "captureDate": "2026-05-01T00:00:00Z",
         "ndviMean": 0.62,
         "cloudPercentage": 2.5
       }
     },
     {
       "id": 2,
+      "userId": 1,
       "name": "El Olivar",
       "polygonCoordinates": [
-        [
-          -4.778,
-          37.885
-        ],
-        [
-          -4.774,
-          37.885
-        ],
-        [
-          -4.774,
-          37.888
-        ],
-        [
-          -4.778,
-          37.888
-        ],
-        [
-          -4.778,
-          37.885
-        ]
+        [-70.3038, -18.0711],
+        [-70.2995, -18.0708],
+        [-70.2992, -18.0746],
+        [-70.3041, -18.0749],
+        [-70.3038, -18.0711]
       ],
       "areaSize": 8.2,
       "lastUpdate": "2026-05-08T20:30:00Z",
+      "cropType": "Olive",
+      "variety": "Criolla",
+      "location": "Sama Inclán",
+      "campaign": "2026 campaign",
+      "notes": "Plot under review due to moderate water stress.",
+      "state": "enable",
       "healthStatus": "Under Review",
       "phenologicalRisk": "Medium",
+      "includeCurrentImagery": true,
       "currentImagery": {
+        "id": "img-2",
+        "plotId": 2,
         "tileUrl": "https://api.agromonitoring.com/tile/1.0/{z}/{x}/{y}/12065920080/69fe65be646c6502129fd662?appid=84a0344edca251f7366b099821006c05",
-        "captureDate": "2026-05-02",
+        "captureDate": "2026-05-02T00:00:00Z",
         "ndviMean": 0.45,
         "cloudPercentage": 15
       }
     }
   ],
-  "agronomic-records": [
-    {
-      "id": 1,
-      "plotId": 1,
-      "date": "2026-05-01T10:00:00Z",
-      "ndviIndex": 0.62,
-      "ndviTrend": "up",
-      "ndviStatusLabel": "Stable vegetation vigor",
-      "temp": 18.5,
-      "cp": 590
-    },
-    {
-      "id": 2,
-      "plotId": 1,
-      "date": "2026-05-04T15:30:00Z",
-      "ndviIndex": 0.68,
-      "ndviTrend": "up",
-      "ndviStatusLabel": "Growing vigor",
-      "temp": 22,
-      "cp": 602
-    },
-    {
-      "id": 3,
-      "plotId": 2,
-      "date": "2026-05-04T15:30:00Z",
-      "ndviIndex": 0.45,
-      "ndviTrend": "down",
-      "ndviStatusLabel": "Requires attention",
-      "temp": 21,
-      "cp": 450
-    }
-  ],
-  "monitoring-summaries": [
-    {
-      "id": 1,
-      "period": "current",
-      "updatedAt": "2026-05-04T21:00:00Z",
-      "ndvi": {
-        "ndviIndex": 0.55,
-        "ndviTrend": "down",
-        "ndviStatusLabel": "Stable"
+  "plots-overview": {
+    "registeredPlotCount": 2,
+    "monitoredAreaHectares": 20.7,
+    "climateLinkedPlotCount": 2,
+    "onlineDeviceCount": 3,
+    "plots": [
+      {
+        "id": 1,
+        "userId": 1,
+        "name": "Santa Rosa",
+        "location": "La Yarada - Los Palos",
+        "campaign": "2026 campaign",
+        "cropType": "Olive",
+        "variety": "Sevillana",
+        "polygonCoordinates": [
+          [-70.2912, -18.0834],
+          [-70.2868, -18.0831],
+          [-70.2865, -18.0872],
+          [-70.2914, -18.0875],
+          [-70.2912, -18.0834]
+        ],
+        "areaSizeHectares": 12.5,
+        "currentNdvi": 0.62,
+        "chillPortions": 602,
+        "healthStatus": "Healthy",
+        "phenologicalRisk": "Low",
+        "onlineDeviceCount": 2,
+        "activeAlertCount": 2,
+        "lastUpdatedAt": "2026-05-04T21:00:00Z",
+        "climateMonitoring": "Active",
+        "satelliteNdvi": "Active"
       },
-      "chillAccumulation": {
-        "accumulatedChillPortions": 72,
-        "weeklyDiff": 6,
-        "threshold": 600
-      },
-      "yieldForecast": {
-        "tonnes": 12.4,
-        "riskLevel": "Medium",
-        "description": "Risk of alternate bearing"
-      },
-      "overallHealth": {
-        "status": "Healthy",
-        "healthyPlotsCount": 2,
-        "reviewPlotsCount": 1
+      {
+        "id": 2,
+        "userId": 1,
+        "name": "El Olivar",
+        "location": "Sama Inclán",
+        "campaign": "2026 campaign",
+        "cropType": "Olive",
+        "variety": "Criolla",
+        "polygonCoordinates": [
+          [-70.3038, -18.0711],
+          [-70.2995, -18.0708],
+          [-70.2992, -18.0746],
+          [-70.3041, -18.0749],
+          [-70.3038, -18.0711]
+        ],
+        "areaSizeHectares": 8.2,
+        "currentNdvi": 0.45,
+        "chillPortions": 490,
+        "healthStatus": "Under Review",
+        "phenologicalRisk": "Medium",
+        "onlineDeviceCount": 1,
+        "activeAlertCount": 1,
+        "lastUpdatedAt": "2026-05-08T20:30:00Z",
+        "climateMonitoring": "Active",
+        "satelliteNdvi": "Active"
       }
-    }
-  ],
-  "weather-summaries": [
-    {
-      "id": 1,
-      "city": "Tacna",
-      "currentTemp": 22,
-      "condition": "Partly cloudy",
-      "lastUpdate": "2:34 pm",
-      "temperatureAnomaly": 1.5,
-      "climateRisk": "Medium",
-      "forecastTemp": 19
-    }
-  ],
-  "yield-forecasts": [
-    {
-      "id": 1,
-      "plotId": 1,
-      "tonnes": 12.4,
-      "riskLevel": "Medium",
-      "description": "High probability of alternate bearing this season."
-    }
-  ],
+    ]
+  },
+  "monitoring-summaries-current": {
+    "monitoringSummaryId": 1,
+    "userId": 1,
+    "generalHealthStatus": "Healthy",
+    "ndviValue": 0.55,
+    "accumulatedChillHours": 602,
+    "yieldForecast": 12.4,
+    "measurementDate": "2026-05-04",
+    "weatherSnapshot": {
+      "weatherStatus": "PARTLY_CLOUDY",
+      "measurementDate": "2026-05-04",
+      "climateRiskLevel": "Medium",
+      "temperature": 22
+    },
+    "climateRiskLevel": "Medium",
+    "mitigationRecommendations": [
+      "Keep the current monitoring cadence.",
+      "Review chill accumulation trend in plots under review."
+    ]
+  },
   "agronomic-statistics": [
     {
       "id": "all-30days",
       "plotId": "all",
-      "timeRange": "30days",
-      "labels": [
-        "01 May",
-        "05 May",
-        "10 May",
-        "15 May",
-        "20 May",
-        "25 May",
-        "30 May"
-      ],
-      "ndviSeries": [
-        0.55,
-        0.58,
-        0.62,
-        0.65,
-        0.61,
-        0.59,
-        0.63
-      ],
-      "cpSeries": [
-        450,
-        480,
-        510,
-        545,
-        580,
-        605,
-        620
-      ],
-      "threshold": 600,
-      "observation": "Slight recovery after the last low-vigor event",
-      "description": "Vegetation vigor remained stable during the last 30 days, with a slight improvement after the last update.",
-      "trend": "Stable",
-      "statusLabel": "Stable"
+      "measurementDate": "2026-05-30",
+      "ndviValue": 0.63,
+      "chillPortions": 620,
+      "chillHours": 620
     },
     {
       "id": "plot1-30days",
       "plotId": "1",
-      "timeRange": "30days",
-      "labels": [
-        "01 May",
-        "05 May",
-        "10 May",
-        "15 May",
-        "20 May",
-        "25 May",
-        "30 May"
-      ],
-      "ndviSeries": [
-        0.62,
-        0.64,
-        0.68,
-        0.7,
-        0.68,
-        0.67,
-        0.69
-      ],
-      "cpSeries": [
-        500,
-        520,
-        550,
-        580,
-        602,
-        615,
-        630
-      ],
-      "threshold": 600,
-      "observation": "Sustained growth above the critical threshold.",
-      "description": "The 'Santa Rosa' plot shows optimal development with increasing vigor indices.",
-      "trend": "Up",
-      "statusLabel": "Healthy"
+      "measurementDate": "2026-05-30",
+      "ndviValue": 0.69,
+      "chillPortions": 630,
+      "chillHours": 630
     },
     {
       "id": "plot2-30days",
       "plotId": "2",
-      "timeRange": "30days",
-      "labels": [
-        "01 May",
-        "05 May",
-        "10 May",
-        "15 May",
-        "20 May",
-        "25 May",
-        "30 May"
-      ],
-      "ndviSeries": [
-        0.42,
-        0.45,
-        0.44,
-        0.46,
-        0.45,
-        0.44,
-        0.45
-      ],
-      "cpSeries": [
-        400,
-        415,
-        430,
-        445,
-        460,
-        475,
-        490
-      ],
+      "measurementDate": "2026-05-30",
+      "ndviValue": 0.45,
+      "chillPortions": 490,
+      "chillHours": 490
+    }
+  ],
+  "agronomic-statistics-series": [
+    {
+      "id": "all-last-30-days",
+      "plotId": "all",
+      "timeRange": "LAST_30_DAYS",
+      "labels": ["01 May", "05 May", "10 May", "15 May", "20 May", "25 May", "30 May"],
+      "ndviSeries": [0.55, 0.58, 0.62, 0.65, 0.61, 0.59, 0.63],
+      "cpSeries": [450, 480, 510, 545, 580, 605, 620],
+      "chillHoursSeries": [450, 480, 510, 545, 580, 605, 620],
       "threshold": 600,
-      "observation": "Water stress detected, requires immediate review.",
-      "description": "The 'El Olivar' plot shows signs of moderate stress that impact the NDVI.",
+      "chillRequirementSource": "PLOT_CONFIGURATION",
+      "chillMetricModel": "DYNAMIC_MODEL",
+      "chillUnit": "CP",
+      "trend": "Stable",
+      "statusLabel": "Stable",
+      "observation": "Slight recovery after the last low-vigor event.",
+      "ndviTrend": { "currentValue": 0.63, "previousValue": 0.59, "change": 0.04, "changePercent": 6.8, "direction": "UP" },
+      "chillPortionsTrend": { "currentValue": 620, "previousValue": 605, "change": 15, "changePercent": 2.5, "direction": "UP" },
+      "chillHoursTrend": { "currentValue": 620, "previousValue": 605, "change": 15, "changePercent": 2.5, "direction": "UP" }
+    },
+    {
+      "id": "plot1-last-30-days",
+      "plotId": "1",
+      "timeRange": "LAST_30_DAYS",
+      "labels": ["01 May", "05 May", "10 May", "15 May", "20 May", "25 May", "30 May"],
+      "ndviSeries": [0.62, 0.64, 0.68, 0.7, 0.68, 0.67, 0.69],
+      "cpSeries": [500, 520, 550, 580, 602, 615, 630],
+      "chillHoursSeries": [500, 520, 550, 580, 602, 615, 630],
+      "threshold": 600,
+      "chillRequirementSource": "PLOT_CONFIGURATION",
+      "chillMetricModel": "DYNAMIC_MODEL",
+      "chillUnit": "CP",
+      "trend": "Up",
+      "statusLabel": "Healthy",
+      "observation": "Sustained growth above the critical threshold.",
+      "ndviTrend": { "currentValue": 0.69, "previousValue": 0.67, "change": 0.02, "changePercent": 3.0, "direction": "UP" },
+      "chillPortionsTrend": { "currentValue": 630, "previousValue": 615, "change": 15, "changePercent": 2.4, "direction": "UP" },
+      "chillHoursTrend": { "currentValue": 630, "previousValue": 615, "change": 15, "changePercent": 2.4, "direction": "UP" }
+    },
+    {
+      "id": "plot2-last-30-days",
+      "plotId": "2",
+      "timeRange": "LAST_30_DAYS",
+      "labels": ["01 May", "05 May", "10 May", "15 May", "20 May", "25 May", "30 May"],
+      "ndviSeries": [0.42, 0.45, 0.44, 0.46, 0.45, 0.44, 0.45],
+      "cpSeries": [400, 415, 430, 445, 460, 475, 490],
+      "chillHoursSeries": [400, 415, 430, 445, 460, 475, 490],
+      "threshold": 600,
+      "chillRequirementSource": "PLOT_CONFIGURATION",
+      "chillMetricModel": "DYNAMIC_MODEL",
+      "chillUnit": "CP",
       "trend": "Down",
-      "statusLabel": "Review"
+      "statusLabel": "Review",
+      "observation": "Water stress detected, requires immediate review.",
+      "ndviTrend": { "currentValue": 0.45, "previousValue": 0.44, "change": 0.01, "changePercent": 2.3, "direction": "STABLE" },
+      "chillPortionsTrend": { "currentValue": 490, "previousValue": 475, "change": 15, "changePercent": 3.2, "direction": "UP" },
+      "chillHoursTrend": { "currentValue": 490, "previousValue": 475, "change": 15, "changePercent": 3.2, "direction": "UP" }
+    }
+  ],
+  "plot-weather-forecasts": [
+    {
+      "id": 1,
+      "plotId": 1,
+      "userId": 1,
+      "plotName": "Santa Rosa",
+      "generatedAt": "2026-05-11T19:34:00Z",
+      "hourly": [
+        {
+          "timestamp": "2026-05-11T19:00:00Z",
+          "temperatureCelsius": 22,
+          "weatherStatus": "PARTLY_CLOUDY",
+          "humidityPercentage": 62,
+          "precipitationMillimeters": 0,
+          "windSpeedMetersPerSecond": 2.4,
+          "windGustMetersPerSecond": 4.1
+        },
+        {
+          "timestamp": "2026-05-11T21:00:00Z",
+          "temperatureCelsius": 21,
+          "weatherStatus": "CLEAR",
+          "humidityPercentage": 59,
+          "precipitationMillimeters": 0,
+          "windSpeedMetersPerSecond": 2.8,
+          "windGustMetersPerSecond": 4.6
+        }
+      ],
+      "daily": [
+        {
+          "date": "2026-05-11",
+          "minTemperatureCelsius": 19,
+          "maxTemperatureCelsius": 22,
+          "averageTemperatureCelsius": 20.5,
+          "dominantStatus": "PARTLY_CLOUDY",
+          "averageHumidityPercentage": 60,
+          "totalPrecipitationMillimeters": 0.2,
+          "maxWindGustMetersPerSecond": 4.6
+        },
+        {
+          "date": "2026-05-12",
+          "minTemperatureCelsius": 18,
+          "maxTemperatureCelsius": 23,
+          "averageTemperatureCelsius": 20.5,
+          "dominantStatus": "SUNNY_INTERVALS",
+          "averageHumidityPercentage": 58,
+          "totalPrecipitationMillimeters": 0,
+          "maxWindGustMetersPerSecond": 5.2
+        },
+        {
+          "date": "2026-05-13",
+          "minTemperatureCelsius": 17,
+          "maxTemperatureCelsius": 21,
+          "averageTemperatureCelsius": 19,
+          "dominantStatus": "BREEZY",
+          "averageHumidityPercentage": 57,
+          "totalPrecipitationMillimeters": 1.6,
+          "maxWindGustMetersPerSecond": 6.1
+        }
+      ],
+      "thermalAnomalyCelsius": 1.5,
+      "overallRisk": "Medium",
+      "warnings": [
+        {
+          "type": "THERMAL_ANOMALY",
+          "severity": "MEDIUM",
+          "date": "2026-05-12",
+          "message": "Moderate thermal anomaly expected for the selected plot."
+        }
+      ],
+      "source": {
+        "provider": "Mock climate forecast",
+        "availability": "AVAILABLE",
+        "lastReadingAt": "2026-05-11T19:34:00Z",
+        "updateFrequencyMinutes": 60
+      }
+    },
+    {
+      "id": 2,
+      "plotId": 2,
+      "userId": 1,
+      "plotName": "El Olivar",
+      "generatedAt": "2026-05-11T19:34:00Z",
+      "hourly": [
+        {
+          "timestamp": "2026-05-11T19:00:00Z",
+          "temperatureCelsius": 21,
+          "weatherStatus": "CLEAR",
+          "humidityPercentage": 55,
+          "precipitationMillimeters": 0,
+          "windSpeedMetersPerSecond": 3.1,
+          "windGustMetersPerSecond": 5.0
+        }
+      ],
+      "daily": [
+        {
+          "date": "2026-05-11",
+          "minTemperatureCelsius": 18,
+          "maxTemperatureCelsius": 24,
+          "averageTemperatureCelsius": 21,
+          "dominantStatus": "CLEAR",
+          "averageHumidityPercentage": 54,
+          "totalPrecipitationMillimeters": 0,
+          "maxWindGustMetersPerSecond": 5.0
+        },
+        {
+          "date": "2026-05-12",
+          "minTemperatureCelsius": 17,
+          "maxTemperatureCelsius": 25,
+          "averageTemperatureCelsius": 21,
+          "dominantStatus": "SUNNY_INTERVALS",
+          "averageHumidityPercentage": 52,
+          "totalPrecipitationMillimeters": 0,
+          "maxWindGustMetersPerSecond": 5.4
+        },
+        {
+          "date": "2026-05-13",
+          "minTemperatureCelsius": 16,
+          "maxTemperatureCelsius": 22,
+          "averageTemperatureCelsius": 19,
+          "dominantStatus": "BREEZY",
+          "averageHumidityPercentage": 50,
+          "totalPrecipitationMillimeters": 0.4,
+          "maxWindGustMetersPerSecond": 6.5
+        }
+      ],
+      "thermalAnomalyCelsius": 2.1,
+      "overallRisk": "Medium",
+      "warnings": [
+        {
+          "type": "WATER_STRESS",
+          "severity": "MEDIUM",
+          "date": "2026-05-12",
+          "message": "Soil moisture trend decreasing faster than expected."
+        }
+      ],
+      "source": {
+        "provider": "Mock climate forecast",
+        "availability": "AVAILABLE",
+        "lastReadingAt": "2026-05-11T19:34:00Z",
+        "updateFrequencyMinutes": 60
+      }
+    }
+  ],
+  "plot-monitoring-summaries": [
+    {
+      "id": 1,
+      "plotId": 1,
+      "userId": 1,
+      "plotName": "Santa Rosa",
+      "currentNdvi": 0.62,
+      "ndviTrend": {
+        "direction": "UP",
+        "changeRate": 0.03,
+        "series": [
+          { "timestamp": "2026-05-01T00:00:00Z", "mean": 0.6, "minimum": 0.52, "maximum": 0.68, "median": 0.61 },
+          { "timestamp": "2026-05-04T00:00:00Z", "mean": 0.62, "minimum": 0.55, "maximum": 0.7, "median": 0.63 }
+        ]
+      },
+      "chillPortions": 602,
+      "chillPortionsWeeklyDelta": 18,
+      "chillRequirementPortions": 600,
+      "chillRequirementSource": "PLOT_CONFIGURATION",
+      "chillMetricModel": "DYNAMIC_MODEL",
+      "chillUnit": "CP",
+      "healthStatus": "Healthy",
+      "phenologicalRisk": "Low",
+      "yieldForecastTonnes": 14.3,
+      "weather": {
+        "weatherStatus": "PARTLY_CLOUDY",
+        "measurementDate": "2026-05-04",
+        "climateRiskLevel": "Low",
+        "temperature": 22
+      },
+      "climateRiskLevel": "Low",
+      "lastUpdatedAt": "2026-05-04T21:00:00Z",
+      "recommendations": [
+        "Maintain irrigation rhythm for the next 48 hours.",
+        "Prioritize satellite review on plots with medium risk."
+      ],
+      "climateSource": {
+        "provider": "Mock climate snapshot",
+        "availability": "AVAILABLE",
+        "lastReadingAt": "2026-05-04T21:00:00Z",
+        "updateFrequencyMinutes": 60
+      },
+      "ndviSource": {
+        "provider": "Mock Sentinel NDVI",
+        "availability": "AVAILABLE",
+        "lastReadingAt": "2026-05-01T00:00:00Z",
+        "updateFrequencyMinutes": 1440
+      }
+    },
+    {
+      "id": 2,
+      "plotId": 2,
+      "userId": 1,
+      "plotName": "El Olivar",
+      "currentNdvi": 0.45,
+      "ndviTrend": {
+        "direction": "DOWN",
+        "changeRate": -0.02,
+        "series": [
+          { "timestamp": "2026-05-02T00:00:00Z", "mean": 0.47, "minimum": 0.4, "maximum": 0.55, "median": 0.46 },
+          { "timestamp": "2026-05-08T00:00:00Z", "mean": 0.45, "minimum": 0.38, "maximum": 0.52, "median": 0.44 }
+        ]
+      },
+      "chillPortions": 490,
+      "chillPortionsWeeklyDelta": 12,
+      "chillRequirementPortions": 600,
+      "chillRequirementSource": "PLOT_CONFIGURATION",
+      "chillMetricModel": "DYNAMIC_MODEL",
+      "chillUnit": "CP",
+      "healthStatus": "Under Review",
+      "phenologicalRisk": "Medium",
+      "yieldForecastTonnes": 6.8,
+      "weather": {
+        "weatherStatus": "CLEAR",
+        "measurementDate": "2026-05-08",
+        "climateRiskLevel": "Medium",
+        "temperature": 21
+      },
+      "climateRiskLevel": "Medium",
+      "lastUpdatedAt": "2026-05-08T20:30:00Z",
+      "recommendations": [
+        "Increase soil moisture monitoring frequency.",
+        "Evaluate supplementary irrigation this week."
+      ],
+      "climateSource": {
+        "provider": "Mock climate snapshot",
+        "availability": "AVAILABLE",
+        "lastReadingAt": "2026-05-08T20:30:00Z",
+        "updateFrequencyMinutes": 60
+      },
+      "ndviSource": {
+        "provider": "Mock Sentinel NDVI",
+        "availability": "AVAILABLE",
+        "lastReadingAt": "2026-05-02T00:00:00Z",
+        "updateFrequencyMinutes": 1440
+      }
+    }
+  ],
+  "iot-device-summaries": [
+    {
+      "id": 1,
+      "totalOnlineDevices": 3,
+      "plotsWithIot": 2,
+      "lastSync": "2026-05-09T13:20:00Z",
+      "sensorCards": [
+        {
+          "id": 1,
+          "plotId": 1,
+          "title": "Water Stress",
+          "sourceLabel": "IoT",
+          "metricLabel": "Soil moisture",
+          "metricValue": 28,
+          "metricUnit": "%",
+          "trend": "up",
+          "riskLevel": "Medium",
+          "recommendation": "Preventive irrigation suggested"
+        },
+        {
+          "id": 2,
+          "plotId": 1,
+          "title": "Water Stress",
+          "sourceLabel": "IoT",
+          "metricLabel": "Soil temperature",
+          "metricValue": 24,
+          "metricUnit": "°",
+          "trend": "up",
+          "riskLevel": "Medium",
+          "recommendation": "Preventive irrigation suggested"
+        }
+      ]
     }
   ],
   "alerts": [
@@ -310,8 +547,9 @@
   "iot-devices": [
     {
       "id": 1,
-      "name": "Soil Sensor Alpha-1",
       "plotId": 1,
+      "name": "Soil Sensor Alpha-1",
+      "deviceName": "Soil Sensor Alpha-1",
       "soilMoisture": 46,
       "temperature": 24,
       "leafHumidity": 62,
@@ -320,8 +558,9 @@
     },
     {
       "id": 2,
-      "name": "Soil Sensor Beta-2",
       "plotId": 1,
+      "name": "Soil Sensor Beta-2",
+      "deviceName": "Soil Sensor Beta-2",
       "soilMoisture": 12,
       "temperature": 28,
       "leafHumidity": 45,
@@ -330,8 +569,9 @@
     },
     {
       "id": 3,
-      "name": "Leaf Sensor Gamma-3",
       "plotId": 2,
+      "name": "Leaf Sensor Gamma-3",
+      "deviceName": "Leaf Sensor Gamma-3",
       "soilMoisture": 42,
       "temperature": 22,
       "leafHumidity": 70,

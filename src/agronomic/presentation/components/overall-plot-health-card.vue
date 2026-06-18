@@ -84,7 +84,6 @@ const tooltipContent = t('dashboard.ndvi-risk-tooltip');
 
 .surveillance-health-card {
   width: 100%;
-  max-width: 300px;
   height: 172px;
   border-radius: 12px;
   border: none;

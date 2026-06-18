@@ -5,30 +5,39 @@
 export class WeatherSummary {
     /**
      * @param {Object} params
+     * @param {number|null} [params.id=null] - Resource identifier.
      * @param {string} [params.city=''] - City name.
      * @param {number} [params.currentTemp=0] - Current temperature.
      * @param {string} [params.condition=''] - Weather condition text (e.g., 'Sunny').
-     * @param {number} [params.forecastTemp=0] - Expected forecast temperature.
+     * @param {string} [params.lastUpdate=''] - ISO timestamp of the last update.
+     * @param {string} [params.icon=''] - Path to the weather condition icon.
+     * @param {string} [params.backgroundImage=''] - Path to the hero background image.
+     * @param {Array<{dayLabel: string, minTemp: number, maxTemp: number, condition: string}>} [params.forecast3Days=[]] - 3-day forecast entries.
      * @param {number} [params.temperatureAnomaly=0] - Degree variation from historical avg.
      * @param {string} [params.climateRisk='Low'] - Categorized risk level.
-     * @param {string} [params.lastUpdate=''] - Formatted last update time.
      */
     constructor({
+                    id = null,
                     city = '',
                     currentTemp = 0,
                     condition = '',
-                    forecastTemp = 0,
+                    lastUpdate = '',
+                    icon = '',
+                    backgroundImage = '',
+                    forecast3Days = [],
                     temperatureAnomaly = 0,
-                    climateRisk = 'Low',
-                    lastUpdate = ''
+                    climateRisk = 'Low'
                 }) {
+        this.id = id;
         this.city = city;
         this.currentTemp = currentTemp;
         this.condition = condition;
-        this.forecastTemp = forecastTemp;
+        this.lastUpdate = lastUpdate;
+        this.icon = icon;
+        this.backgroundImage = backgroundImage;
+        this.forecast3Days = forecast3Days;
         this.temperatureAnomaly = temperatureAnomaly;
         this.climateRisk = climateRisk;
-        this.lastUpdate = lastUpdate;
     }
 
     /**
@@ -37,7 +46,7 @@ export class WeatherSummary {
      */
     get anomalyLabel() {
         const sign = this.temperatureAnomaly > 0 ? '+' : '-';
-        return `${sign}${this.temperatureAnomaly.toFixed(1)}°C`;
+        return `${sign}${Math.abs(this.temperatureAnomaly).toFixed(1)}°C`;
     }
 
     /**

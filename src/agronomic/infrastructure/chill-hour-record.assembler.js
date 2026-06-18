@@ -10,7 +10,16 @@ export class ChillHourRecordAssembler {
      * @returns {ChillHourRecord} ChillHourRecord entity.
      */
     static toEntityFromResource(resource) {
-        return new ChillHourRecord({ ...resource });
+        return new ChillHourRecord({
+            ...resource,
+            accumulatedChillPortions: resource?.accumulatedChillPortions
+                ?? resource?.accumulatedChillHours
+                ?? resource?.chillPortions
+                ?? 0,
+            weeklyDiff: resource?.weeklyDiff ?? resource?.chillPortionsWeeklyDelta ?? 0,
+            threshold: resource?.threshold ?? resource?.chillRequirementPortions ?? 600,
+            generatedAt: resource?.generatedAt ?? resource?.measurementDate ?? resource?.lastUpdatedAt
+        });
     }
 
     /**
