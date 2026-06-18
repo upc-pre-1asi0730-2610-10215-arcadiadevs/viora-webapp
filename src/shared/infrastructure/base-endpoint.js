@@ -8,9 +8,10 @@ export class BaseEndpoint {
     /**
      * @param {import('./base-api.js').BaseApi} baseApi - Infrastructure API client.
      * @param {string} endpointPath - Relative endpoint path within the API.
+     * @param {{mock?: boolean}} [options={}] - Endpoint target options.
      */
-    constructor(baseApi, endpointPath) {
-        this.http = baseApi.http;
+    constructor(baseApi, endpointPath, options = {}) {
+        this.http = options.mock ? baseApi.mockHttp : baseApi.http;
         this.endpointPath = endpointPath;
     }
 
@@ -48,7 +49,7 @@ export class BaseEndpoint {
      * @returns {Promise<import('axios').AxiosResponse<TResource|Object>>} HTTP response.
      */
     update(id, resource) {
-        return this.http.put(`${this.endpointPath}/${id}`, resource);
+        return this.http.patch(`${this.endpointPath}/${id}`, resource);
     }
 
     /**

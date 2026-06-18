@@ -1,5 +1,6 @@
 import { BaseApi } from "../../shared/infrastructure/base-api.js";
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
+import { hasConfiguredApiUrl, mockVioraResponses } from "../../shared/infrastructure/mock-viora-resources.js";
 
 const alertsEndpointPath = import.meta.env.VITE_ALERTS_ENDPOINT_PATH;
 
@@ -25,6 +26,8 @@ export class SurveillanceApi extends BaseApi {
      * @returns {Promise<import('axios').AxiosResponse>}
      */
     getAlerts(params = {}) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.alerts(params);
+
         return this.#alertsEndpoint.getAll(params);
     }
 

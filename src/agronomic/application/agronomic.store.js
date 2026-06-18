@@ -525,7 +525,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
     }
 
     function deleteIotDevice(device) {
-        agronomicApi.deleteIotDevice(device.id).then(() => {
+        agronomicApi.deleteIotDevice(device.id, device.plotId).then(() => {
             iotDevices.value = iotDevices.value.filter(d => d.id !== device.id);
         }).catch(error => {
             errors.value.push(error);

@@ -48,6 +48,9 @@ export class MonitoringSummary {
             ? overallHealth
             : new OverallPlotHealth(overallHealth || {});
 
+        this.ndvi = this.latestNdvi;
+        this.chillAccumulation = this.chillHourRecord;
+        this.overallHealth = this.overallPlotHealth;
         this.updatedAt = updatedAt;
     }
 }

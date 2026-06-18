@@ -1,157 +1,240 @@
-﻿import { BaseApi } from "../../shared/infrastructure/base-api.js";
+import { BaseApi } from "../../shared/infrastructure/base-api.js";
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
+import { hasConfiguredApiUrl, mockVioraResponses } from "../../shared/infrastructure/mock-viora-resources.js";
 
-const plotsEndpointPath = import.meta.env.VITE_PLOTS_ENDPOINT_PATH;
-const recordsEndpointPath = import.meta.env.VITE_AGRONOMIC_RECORDS_ENDPOINT_PATH;
-const summariesEndpointPath = import.meta.env.VITE_MONITORING_SUMMARIES_ENDPOINT_PATH;
-const weatherEndpointPath = import.meta.env.VITE_WEATHER_SUMMARIES_ENDPOINT_PATH;
-const forecastsEndpointPath = import.meta.env.VITE_YIELD_FORECASTS_ENDPOINT_PATH;
-const statisticsEndpointPath = import.meta.env.VITE_AGRONOMIC_STATISTICS_ENDPOINT_PATH;
-const iotDevicesEndpointPath = import.meta.env.VITE_IOT_DEVICES_ENDPOINT_PATH;
-const iotDevicesSummariesEndpointPath = import.meta.env.VITE_IOT_DEVICE_SUMMARIES_ENDPOINT_PATH;
+const plotsEndpointPath = import.meta.env.VITE_PLOTS_ENDPOINT_PATH || "/api/v1/plots";
+const plotsOverviewEndpointPath = import.meta.env.VITE_PLOTS_OVERVIEW_ENDPOINT_PATH || "/api/v1/plots/overview";
+const recordsEndpointPath = import.meta.env.VITE_AGRONOMIC_RECORDS_ENDPOINT_PATH || "/api/v1/agronomic-statistics/series";
+const currentSummaryEndpointPath = import.meta.env.VITE_MONITORING_SUMMARY_CURRENT_ENDPOINT_PATH || "/api/v1/monitoring-summaries/current";
+const statisticsEndpointPath = import.meta.env.VITE_AGRONOMIC_STATISTICS_ENDPOINT_PATH || "/api/v1/agronomic-statistics";
+const statisticsSeriesEndpointPath = import.meta.env.VITE_AGRONOMIC_STATISTICS_SERIES_ENDPOINT_PATH || "/api/v1/agronomic-statistics/series";
+const nutritionPlansEndpointPath = import.meta.env.VITE_DYNAMIC_NUTRITION_PLANS_ENDPOINT_PATH || "/api/v1/dynamic-nutrition-plans";
 
 /**
  * Infrastructure service gateway for the Agronomic bounded-context endpoints.
- * Manages multiple specific endpoints for agronomic entities.
- * * @class AgronomicApi
+ * Mirrors the OS Viora platform contracts while serving local data when no API
+ * URL is configured.
+ *
+ * @class AgronomicApi
  * @extends BaseApi
  */
 export class AgronomicApi extends BaseApi {
     #plotsEndpoint;
+    #plotsOverviewEndpoint;
     #recordsEndpoint;
-    #summariesEndpoint;
-    #weatherEndpoint;
-    #forecastsEndpoint;
+    #currentSummaryEndpoint;
     #statisticsEndpoint;
-    #iotDevicesEndpoint;
-    #iotDevicesSummariesEndpoint;
+    #statisticsSeriesEndpoint;
+    #nutritionPlansEndpoint;
 
-    /** * Initializes all internal endpoints using environment variable paths.
-     */
     constructor() {
         super();
         this.#plotsEndpoint = new BaseEndpoint(this, plotsEndpointPath);
+        this.#plotsOverviewEndpoint = new BaseEndpoint(this, plotsOverviewEndpointPath);
         this.#recordsEndpoint = new BaseEndpoint(this, recordsEndpointPath);
-        this.#summariesEndpoint = new BaseEndpoint(this, summariesEndpointPath);
-        this.#weatherEndpoint = new BaseEndpoint(this, weatherEndpointPath);
-        this.#forecastsEndpoint = new BaseEndpoint(this, forecastsEndpointPath);
+        this.#currentSummaryEndpoint = new BaseEndpoint(this, currentSummaryEndpointPath);
         this.#statisticsEndpoint = new BaseEndpoint(this, statisticsEndpointPath);
-        this.#iotDevicesEndpoint = new BaseEndpoint(this, iotDevicesEndpointPath);
-        this.#iotDevicesSummariesEndpoint = new BaseEndpoint(this, iotDevicesSummariesEndpointPath);
+        this.#statisticsSeriesEndpoint = new BaseEndpoint(this, statisticsSeriesEndpointPath);
+        this.#nutritionPlansEndpoint = new BaseEndpoint(this, nutritionPlansEndpointPath);
     }
 
-    /**
-     * Fetches all plot resources.
-     * @returns {Promise<import('axios').AxiosResponse>}
-     */
+    #plotPath(plotId, suffix = "") {
+        return `${this.#plotsEndpoint.endpointPath}/${plotId}${suffix}`;
+    }
+
+    #toBackendTimeRange(timeRange = "LAST_30_DAYS") {
+        const value = String(timeRange || "").trim();
+        const ranges = {
+            current: "LAST_30_DAYS",
+            "7days": "LAST_7_DAYS",
+            "30days": "LAST_30_DAYS",
+            campaign: "CAMPAIGN"
+        };
+
+        return ranges[value] || value.toUpperCase();
+    }
+
+    #withBackendTimeRange(params = {}) {
+        return {
+            ...params,
+            timeRange: this.#toBackendTimeRange(params.timeRange)
+        };
+    }
+
+    #toCreateIotDeviceResource(device = {}) {
+        return {
+            deviceName: device.deviceName || device.name || "",
+            status: String(device.status || "ACTIVE").toUpperCase()
+        };
+    }
+
+    #toUpdateIotDeviceResource(device = {}) {
+        return {
+            deviceName: device.deviceName || device.name || "",
+            iotDeviceStatus: String(device.iotDeviceStatus || device.status || "ACTIVE").toUpperCase()
+        };
+    }
+
     getPlots() {
-        return this.#plotsEndpoint.getAll();
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.plots();
+        return this.#plotsEndpoint.getAll({ includeCurrentImagery: true });
     }
 
-    /**
-     * Fetches a plot by its unique identifier.
-     * @param {number|string} id - Plot identifier.
-     */
+    getPlotsOverview() {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.plotsOverview();
+        return this.#plotsOverviewEndpoint.getAll();
+    }
+
     getPlotById(id) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.plotById(id);
         return this.#plotsEndpoint.getById(id);
     }
 
-    /**
-     * Fetches telemetry records, typically filtered by plotId or period.
-     * @param {Object} [params={}] - Query parameters (e.g., { plotId: 1, period: '30d' }).
-     */
+    createPlot(plot) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.createPlot(plot);
+        return this.#plotsEndpoint.create(plot);
+    }
+
+    updatePlot(plotId, plot) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.updatePlot(plotId, plot);
+        return this.#plotsEndpoint.update(plotId, plot);
+    }
+
+    deletePlot(plotId) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.deletePlot(plotId);
+        return this.#plotsEndpoint.delete(plotId);
+    }
+
+    configureChillRequirement(plotId, chillRequirement) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.configureChillRequirement(plotId, chillRequirement);
+        return this.http.put(this.#plotPath(plotId, "/chill-requirement"), chillRequirement);
+    }
+
+    resetChillRequirement(plotId) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.resetChillRequirement(plotId);
+        return this.http.delete(this.#plotPath(plotId, "/chill-requirement"));
+    }
+
+    getPlotDetail(plotId) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.plotDetail(plotId);
+        return this.http.get(this.#plotPath(plotId, "/detail"));
+    }
+
     getRecords(params = {}) {
-        return this.#recordsEndpoint.getAll(params);
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.records(params);
+        return this.#recordsEndpoint.getAll(this.#withBackendTimeRange(params));
     }
 
-    /**
-     * Fetches monitoring summaries (KPIs) for the dashboard.
-     * @param {string} period - Filter period ('7d', '30d', or 'current').
-     */
-    getSummaries(period) {
-        return this.#summariesEndpoint.getAll({ period });
+    getSummaries() {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.monitoringSummary();
+        return this.#currentSummaryEndpoint.getAll();
     }
 
-    /**
-     * Fetches weather information for the weather widget.
-     * @param {Object} [params={}] - Filter parameters (e.g., { city: 'Tacna' }).
-     */
+    getPlotMonitoringSummary(plotId) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.plotMonitoringSummary(plotId);
+        return this.http.get(this.#plotPath(plotId, "/monitoring-summary"));
+    }
+
+    getCurrentNdviTile(plotId, zoom, x, y) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.ndviTile(plotId, zoom, x, y);
+        return this.http.get(this.#plotPath(plotId, `/imagery/tile/${zoom}/${x}/${y}`), {
+            responseType: "blob"
+        });
+    }
+
     getWeather(params = {}) {
-        return this.#weatherEndpoint.getAll(params);
+        const plotId = params.plotId || 1;
+        return this.getPlotWeatherForecast(plotId);
     }
 
-    /**
-     * Fetches yield predictions.
-     * @param {number|string} plotId - Plot identifier to get forecast for.
-     */
+    getPlotWeatherForecast(plotId) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.plotWeatherForecast(plotId);
+        return this.http.get(this.#plotPath(plotId, "/weather-forecast"));
+    }
+
     getYieldForecastByPlot(plotId) {
-        return this.#forecastsEndpoint.getAll({ plotId });
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.yieldForecast(plotId);
+        return this.getPlotMonitoringSummary(plotId);
     }
 
-    /**
-     * Fetches pre-calculated agronomic statistics for analysis.
-     * @param {Object} [params={}] - Filter parameters (e.g., { plotId: 'all', timeRange: '30days' }).
-     */
     getStatistics(params = {}) {
-        return this.#statisticsEndpoint.getAll(params);
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.statistics(params);
+        return this.#statisticsEndpoint.getAll(this.#withBackendTimeRange(params));
     }
 
-    /**
-     * Fetches all IoT devices.
-     * @returns {Promise<import('axios').AxiosResponse>}
-     */
-    getIotDevices() {
-        return this.#iotDevicesEndpoint.getAll();
+    getStatisticsSeries(params = {}) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.statisticsSeries(params);
+        return this.#statisticsSeriesEndpoint.getAll(this.#withBackendTimeRange(params));
     }
 
-    /**
-     * Retrieves summaries for IoT devices, optionally filtered by plot.
-     * @param {Object}
-     * @returns {Promise<Object>}
-     */
+    ingestAgronomicStatistics(snapshot) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.ingestAgronomicStatistics(snapshot);
+        return this.http.post(`${this.#statisticsEndpoint.endpointPath}/ingest`, snapshot);
+    }
+
+    generateNutritionPlan(params = {}) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.generateNutritionPlan(params);
+        return this.#nutritionPlansEndpoint.http.post(this.#nutritionPlansEndpoint.endpointPath, null, { params });
+    }
+
+    getActiveNutritionPlan(params = {}) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.activeNutritionPlan(params);
+        return this.#nutritionPlansEndpoint.http.get(`${this.#nutritionPlansEndpoint.endpointPath}/active`, { params });
+    }
+
+    certifyNutritionPlan(planId, certification) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.certifyNutritionPlan(planId, certification);
+        return this.#nutritionPlansEndpoint.http.post(
+            `${this.#nutritionPlansEndpoint.endpointPath}/${planId}/certification`,
+            certification
+        );
+    }
+
+    getIotDevices(plotId) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.iotDevices(plotId);
+        if (!plotId) return Promise.reject(new Error("plotId is required by the IoT device contract."));
+        return this.getIotDevicesByPlot(plotId);
+    }
+
+    getIotDevicesByPlot(plotId) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.iotDevicesByPlot(plotId);
+        return this.http.get(this.#plotPath(plotId, "/iot-devices"));
+    }
+
     getIotDeviceSummaries() {
-        return this.#iotDevicesSummariesEndpoint.getAll();
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.iotDeviceSummaries();
+        return this.getPlotsOverview();
     }
 
-    /**
-     * Retrieves summaries for IoT devices, optionally filtered by plot.
-     * @param {string|number} plotId
-     * @returns {Promise<Object>}
-     */
     getIotDeviceSummariesByPlot(plotId) {
-        return this.#iotDevicesSummariesEndpoint.getById(plotId);
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.iotDeviceSummaries(plotId);
+        return this.getIotDevicesByPlot(plotId);
     }
 
-    /**
-     * Fetches an IoT device by its ID.
-     * @param {number|string} id - Device identifier.
-     */
     getIotDeviceById(id) {
-        return this.#iotDevicesEndpoint.getById(id);
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.iotDeviceById(id);
+        return Promise.reject(new Error("The platform contract lists IoT devices by plot, not by global device id."));
     }
 
-    /**
-     * Creates a new IoT device.
-     * @param {Object} device - Device data.
-     */
     createIotDevice(device) {
-        return this.#iotDevicesEndpoint.create(device);
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.createIotDevice(device);
+        return this.http.post(
+            this.#plotPath(device.plotId, "/iot-devices"),
+            this.#toCreateIotDeviceResource(device)
+        );
     }
 
-    /**
-     * Updates an existing IoT device.
-     * @param {number|string} id - Device identifier.
-     * @param {Object} device - Updated device data.
-     */
     updateIotDevice(id, device) {
-        return this.#iotDevicesEndpoint.update(id, device);
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.updateIotDevice(id, device);
+        return this.http.patch(
+            this.#plotPath(device.plotId, `/iot-devices/${id}`),
+            this.#toUpdateIotDeviceResource(device)
+        );
     }
 
-    /**
-     * Deletes an IoT device.
-     * @param {number|string} id - Device identifier.
-     */
-    deleteIotDevice(id) {
-        return this.#iotDevicesEndpoint.delete(id);
+    deleteIotDevice(id, plotId) {
+        if (!hasConfiguredApiUrl()) return mockVioraResponses.deleteIotDevice(id);
+        if (!plotId) return Promise.reject(new Error("plotId is required by the IoT delete contract."));
+        return this.http.delete(this.#plotPath(plotId, `/iot-devices/${id}`));
     }
 }

@@ -2,7 +2,7 @@
 import { AgronomicRecordAssembler } from "./agronomic-record.assembler.js";
 import { ChillHourRecordAssembler } from "./chill-hour-record.assembler.js";
 import { YieldForecastAssembler } from "./yield-forecast.assembler.js";
-import {OverallHealthAssembler} from "./overall-plot-health.assembler.js";
+import { OverallHealthAssembler } from "./overall-plot-health.assembler.js";
 
 /**
  * MonitoringSummaryAssembler class.
@@ -21,6 +21,46 @@ export class MonitoringSummaryAssembler {
      * @returns {MonitoringSummary} Hydrated MonitoringSummary entity.
      */
     static toEntityFromResource(resource) {
+        if (!resource) return null;
+
+        if (resource.monitoringSummaryId || resource.ndviValue !== undefined) {
+            const ndviEntity = AgronomicRecordAssembler.toEntityFromResource({
+                date: resource.measurementDate,
+                ndviIndex: resource.ndviValue,
+                ndviTrend: "stable",
+                ndviStatusLabel: resource.generalHealthStatus,
+                temp: resource.weatherSnapshot?.temperatureCelsius
+            });
+
+            const chillEntity = ChillHourRecordAssembler.toEntityFromResource({
+                accumulatedChillPortions: resource.accumulatedChillHours,
+                weeklyDiff: 0,
+                threshold: resource.chillRequirementPortions ?? 600,
+                generatedAt: resource.measurementDate
+            });
+
+            const yieldEntity = YieldForecastAssembler.toEntityFromResource({
+                tonnes: resource.yieldForecast,
+                riskLevel: resource.climateRiskLevel,
+                description: `Risk of alternate bearing: ${resource.climateRiskLevel ?? "Low"}`
+            });
+
+            const healthEntity = OverallHealthAssembler.toEntityFromResource({
+                status: resource.generalHealthStatus,
+                healthyPlotsCount: resource.healthyPlotsCount ?? 0,
+                reviewPlotsCount: resource.reviewPlotsCount ?? 0
+            });
+
+            return new MonitoringSummary({
+                period: "current",
+                ndvi: ndviEntity,
+                chillAccumulation: chillEntity,
+                yieldForecast: yieldEntity,
+                overallHealth: healthEntity,
+                updatedAt: resource.measurementDate || new Date().toISOString()
+            });
+        }
+
         // Delegate specific assembly logic to child assemblers
         const ndviEntity = resource.ndvi
             ? AgronomicRecordAssembler.toEntityFromResource(resource.ndvi)
