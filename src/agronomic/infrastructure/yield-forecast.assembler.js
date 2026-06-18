@@ -10,7 +10,11 @@ export class YieldForecastAssembler {
      * @returns {YieldForecast} YieldForecast entity.
      */
     static toEntityFromResource(resource) {
-        return new YieldForecast({ ...resource });
+        return new YieldForecast({
+            tonnes: resource?.tonnes ?? resource?.yieldForecastTonnes ?? resource?.yieldForecast ?? 0,
+            riskLevel: resource?.riskLevel ?? resource?.climateRiskLevel ?? "Low",
+            description: resource?.description ?? `Risk of alternate bearing: ${resource?.climateRiskLevel ?? "Low"}`
+        });
     }
 
     /**

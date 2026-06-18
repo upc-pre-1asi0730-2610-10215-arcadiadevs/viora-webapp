@@ -236,13 +236,15 @@ const riskColor = computed(() => {
 
 .weather-hero-icon {
   position: absolute;
-  left: -30px;
-  top: -38px;
-  z-index: 1;
-  width: 120px;
+  left: -16px;
+  top: -34px;
+  z-index: 2;
+  width: 116px;
   max-width: 48%;
   height: auto;
   object-fit: contain;
+  image-rendering: auto;
+  filter: drop-shadow(0 14px 18px rgba(16, 23, 94, 0.12));
   pointer-events: none;
 }
 

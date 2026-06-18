@@ -6,6 +6,7 @@
   },
   "dashboard": {
     "title": "Dashboard del Productor",
+    "overview": "Resumen",
     "subtitle": "Surveillance en tiempo real y visión agronómica",
     "header-description": "Monitoree sus parcelas, indicadores de salud y riesgos agrícolas activos",
     "loading-telemetry": "Sincronizando telemetría satelital...",
@@ -85,6 +86,42 @@
     "plotOverview": "Vista de Parcelas",
     "weather": "Clima",
     "selectScope": "Seleccionar alcance"
+  },
+  "sidebar": {
+    "brand": "Viora Dashboard",
+    "navigation": "Navegación del dashboard",
+    "expand": "Expandir sidebar",
+    "collapse": "Colapsar sidebar",
+    "dashboard": "Dashboard",
+    "myPlots": "Mis Parcelas",
+    "iotDevices": "Dispositivos IoT",
+    "alerts": "Alertas",
+    "dynamicNutrition": "Nutrición Dinámica",
+    "pestSurveillance": "Vigilancia de Plagas",
+    "expertAssistance": "Asistencia de Expertos",
+    "expenseHistory": "Historial de Gastos",
+    "settings": "Configuración",
+    "subscription": "Suscripción",
+    "support": "Soporte",
+    "welcomeBack": "Bienvenido de nuevo",
+    "openProfile": "Perfil"
+  },
+  "comingSoon": {
+    "title": "Próximamente",
+    "message": "Este espacio del productor está en preparación. Lo estamos conectando a la plataforma Viora y estará disponible pronto.",
+    "section": "Esta sección",
+    "subtitle": "Este espacio del productor está en preparación.",
+    "backToDashboard": "Volver al Panel",
+    "subtitle-my-plots": "Gestiona y revisa tus parcelas registradas.",
+    "subtitle-dynamic-nutrition": "Planifica y certifica recomendaciones de nutrición dinámica.",
+    "subtitle-alerts": "Monitorea las alertas agrícolas activas en tus parcelas.",
+    "subtitle-pest-surveillance": "Revisa los reportes de vigilancia de plagas y enfermedades.",
+    "subtitle-expert-assistance": "Conéctate con especialistas para soporte al productor.",
+    "subtitle-expense-history": "Revisa los gastos agrícolas y el historial de costos de producción.",
+    "subtitle-subscription": "Administra los detalles del plan y la configuración de facturación.",
+    "subtitle-settings": "Configura tu panel y preferencias del espacio de trabajo.",
+    "subtitle-support": "Accede a recursos de ayuda para el panel del productor.",
+    "subtitle-profile": "Administra los detalles y preferencias de tu cuenta."
   },
   "cards": {
     "iot": {

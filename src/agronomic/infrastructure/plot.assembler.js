@@ -23,9 +23,10 @@ export class PlotAssembler {
         return new Plot({
             id: resource.id,
             name: resource.name,
+            locationReference: resource.locationReference || resource.location,
             polygonCoordinates: resource.polygonCoordinates,
-            areaSize: resource.areaSize,
-            lastUpdate: resource.lastUpdate,
+            areaSize: resource.areaSize ?? resource.areaSizeHectares,
+            lastUpdate: resource.lastUpdate || resource.lastUpdatedAt,
             currentImagery: imagery,
             healthStatus: resource.healthStatus,
             phenologicalRisk: resource.phenologicalRisk

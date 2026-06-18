@@ -11,14 +11,18 @@ export class IotDeviceAssembler {
      * @returns {IotDevice}
      */
     static toEntityFromResource(resource) {
+        const status = resource.status
+            ? String(resource.status).toLowerCase()
+            : "active";
+
         return new IotDevice({
             id: resource.id,
-            name: resource.name,
+            name: resource.name || resource.deviceName,
             plotId: resource.plotId,
             soilMoisture: resource.soilMoisture,
             temperature: resource.temperature,
             leafHumidity: resource.leafHumidity,
-            status: resource.status,
+            status,
             lastUpdate: resource.lastUpdate
         });
     }
@@ -30,7 +34,9 @@ export class IotDeviceAssembler {
      */
     static toEntitiesFromResponse(response) {
         if (!response || !response.data) return [];
-        const resources = Array.isArray(response.data) ? response.data : [response.data];
+        const resources = Array.isArray(response.data)
+            ? response.data
+            : response.data.iotDevices || [response.data];
         return resources.map(resource => this.toEntityFromResource(resource));
     }
 
@@ -40,14 +46,18 @@ export class IotDeviceAssembler {
      * @returns {Object}
      */
     static toResourceFromEntity(entity) {
+        const status = String(entity.status || "active").toUpperCase();
+
         return {
             id: entity.id,
             name: entity.name,
+            deviceName: entity.name,
             plotId: entity.plotId,
             soilMoisture: entity.soilMoisture,
             temperature: entity.temperature,
             leafHumidity: entity.leafHumidity,
-            status: entity.status,
+            status,
+            iotDeviceStatus: status,
             lastUpdate: entity.lastUpdate
         };
     }
