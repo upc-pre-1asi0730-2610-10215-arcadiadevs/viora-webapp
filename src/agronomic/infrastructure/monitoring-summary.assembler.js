@@ -29,7 +29,7 @@ export class MonitoringSummaryAssembler {
                 ndviIndex: resource.ndviValue,
                 ndviTrend: "stable",
                 ndviStatusLabel: resource.generalHealthStatus,
-                temp: resource.weatherSnapshot?.temperatureCelsius
+                temp: resource.weatherSnapshot?.temperature ?? resource.weatherSnapshot?.temperatureCelsius
             });
 
             const chillEntity = ChillHourRecordAssembler.toEntityFromResource({

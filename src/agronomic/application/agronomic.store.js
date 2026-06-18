@@ -318,7 +318,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
             dashboardStatistics.value = null;
             return;
         }
-        agronomicApi.getStatistics({ plotId: String(plotId), timeRange: '30days' })
+        agronomicApi.getStatisticsSeries({ plotId: String(plotId), timeRange: '30days' })
             .then(response => {
                 const data = response.data || response;
                 const entities = AgronomicAnalysisAssembler.toEntitiesFromResponse(data);
@@ -330,7 +330,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
     function fetchDashboardStatistics(scope, timeRange) {
         const apiTimeRange = timeRange === 'current' ? '30days' : timeRange;
 
-        agronomicApi.getStatistics({ plotId: String(scope), timeRange: apiTimeRange })
+        agronomicApi.getStatisticsSeries({ plotId: String(scope), timeRange: apiTimeRange })
             .then(response => {
                 const data = response.data || response;
                 const entities = AgronomicAnalysisAssembler.toEntitiesFromResponse(data);
@@ -426,7 +426,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
     function fetchAnalysisStatistics() {
         analysisLoading.value = true;
         const params = { plotId: String(analysisPlotId.value), timeRange: analysisTimeRange.value };
-        agronomicApi.getStatistics(params).then(response => {
+        agronomicApi.getStatisticsSeries(params).then(response => {
             const data = response.data || response;
             const entities = AgronomicAnalysisAssembler.toEntitiesFromResponse(data);
             analysisData.value = entities.length > 0 ? entities[0] : null;
