@@ -1,3 +1,8 @@
 {
+  "/api/v1/plots/overview*": "/plots-overview",
+  "/api/v1/monitoring-summaries/current*": "/monitoring-summaries-current",
+  "/api/v1/agronomic-statistics/series*": "/agronomic-statistics-series$1",
+  "/api/v1/plots/:id/weather-forecast*": "/plot-weather-forecasts?plotId=:id",
+  "/api/v1/plots/:id/monitoring-summary*": "/plot-monitoring-summaries?plotId=:id",
   "/api/v1/*": "/$1"
 }
