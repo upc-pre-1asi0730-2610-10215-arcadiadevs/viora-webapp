@@ -1,5 +1,52 @@
 import { WeatherSummary } from "../domain/model/weather-summary.entity.js";
 
+const BACKGROUND_ROOT = "/assets/icons/backgrounds";
+
+// High-resolution hero illustration used for every condition, mirroring the OS
+// frontend (the condition only drives the background gradient image). The
+// per-condition `icons/weather/*` assets are low-resolution and distort when
+// scaled, so they are intentionally not used for the hero.
+const HERO_ICON = "/assets/icons/dashboard/weather-cloud.png";
+
+/**
+ * Resolves the hero background image asset from a weather condition, mirroring
+ * the OS frontend mapping. Accepts both human labels ("Partly cloudy") and
+ * platform enums ("PARTLY_CLOUDY").
+ *
+ * @param {string} condition - Raw weather condition or status.
+ * @returns {{icon: string, backgroundImage: string}}
+ */
+const resolveWeatherVisual = (condition = "") => {
+    const value = String(condition).replace(/_/g, " ").trim().toLowerCase();
+    let backgroundImage;
+
+    if (value.includes("thunder") || value.includes("storm")) {
+        backgroundImage = `${BACKGROUND_ROOT}/Thunderstorm.png`;
+    } else if (value.includes("rain") || value.includes("drizzle") || value.includes("shower") || value.includes("snow")) {
+        backgroundImage = `${BACKGROUND_ROOT}/rain.png`;
+    } else if (value.includes("breezy") || value.includes("wind") || value.includes("sand") || value.includes("dust")) {
+        backgroundImage = `${BACKGROUND_ROOT}/breezy.png`;
+    } else if (value.includes("clear") || value.includes("sunny") || value.includes("sun")) {
+        backgroundImage = `${BACKGROUND_ROOT}/clear.png`;
+    } else {
+        backgroundImage = `${BACKGROUND_ROOT}/party-cloudy.png`;
+    }
+
+    return { icon: HERO_ICON, backgroundImage };
+};
+
+/**
+ * Converts a weather status (label or enum) into a human-readable condition.
+ *
+ * @param {string} condition - Raw weather condition or status.
+ * @returns {string}
+ */
+const humanizeCondition = (condition = "") => {
+    const value = String(condition).replace(/_/g, " ").trim().toLowerCase();
+    if (!value) return "";
+    return value.charAt(0).toUpperCase() + value.slice(1);
+};
+
 /**
  * Maps weather resources into WeatherSummary domain entities.
  * * @class WeatherSummaryAssembler
@@ -13,25 +60,29 @@ export class WeatherSummaryAssembler {
         if (resource?.daily || resource?.hourly) {
             const firstHour = resource.hourly?.[0] ?? {};
             const firstDay = resource.daily?.[0] ?? {};
+            const rawCondition = firstHour.weatherStatus ?? firstDay.dominantStatus ?? "";
+            const visual = resolveWeatherVisual(rawCondition);
 
             return new WeatherSummary({
                 id: resource.plotId ?? null,
                 city: resource.plotName ?? "Tacna",
                 currentTemp: firstHour.temperatureCelsius ?? firstDay.averageTemperatureCelsius ?? 0,
-                condition: firstHour.weatherStatus ?? firstDay.dominantStatus ?? "",
+                condition: humanizeCondition(rawCondition),
                 lastUpdate: resource.generatedAt ?? "",
-                icon: resource.icon ?? "",
-                backgroundImage: resource.backgroundImage ?? "",
+                icon: resource.icon ?? visual.icon,
+                backgroundImage: resource.backgroundImage ?? visual.backgroundImage,
                 forecast3Days: (resource.daily ?? []).slice(0, 3).map((day, index) => ({
                     dayLabel: index === 0 ? "Today" : day.date ?? "",
                     minTemp: day.minTemperatureCelsius ?? 0,
                     maxTemp: day.maxTemperatureCelsius ?? 0,
-                    condition: day.dominantStatus ?? ""
+                    condition: humanizeCondition(day.dominantStatus ?? "")
                 })),
                 temperatureAnomaly: resource.thermalAnomalyCelsius ?? 0,
-                climateRisk: resource.overallRisk ?? "Low"
+                climateRisk: humanizeCondition(resource.overallRisk ?? "Low")
             });
         }
+
+        const visual = resolveWeatherVisual(resource?.condition ?? "");
 
         return new WeatherSummary({
             id: resource?.id ?? null,
@@ -39,8 +90,8 @@ export class WeatherSummaryAssembler {
             currentTemp: resource?.currentTemp ?? 0,
             condition: resource?.condition ?? '',
             lastUpdate: resource?.lastUpdate ?? '',
-            icon: resource?.icon ?? '',
-            backgroundImage: resource?.backgroundImage ?? '',
+            icon: resource?.icon || visual.icon,
+            backgroundImage: resource?.backgroundImage || visual.backgroundImage,
             forecast3Days: (resource?.forecast3Days ?? []).map(day => ({
                 dayLabel: day.dayLabel ?? '',
                 minTemp: day.minTemp ?? 0,
