@@ -7,10 +7,12 @@
  */
 import { ref, onMounted, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { usePlotMap } from '../../application/use-plot-map.js';
 import { useAgronomicStore } from '../../application/agronomic.store.js';
 
 const { t } = useI18n();
+const router = useRouter();
 
 const props = defineProps({
   /**
@@ -85,6 +87,11 @@ const recommendedAction = computed(() => {
  * @type {string}
  */
 const tooltipContent = t('dashboard.ndvi-risk-tooltip');
+
+const openPlotOverview = () => {
+  if (!props.selectedPlot?.id) return;
+  router.push(`/dashboard/plot-overview/${props.selectedPlot.id}`);
+};
 </script>
 
 <template>
@@ -99,6 +106,8 @@ const tooltipContent = t('dashboard.ndvi-risk-tooltip');
             <pv-button
                 icon="pi pi-arrow-right"
                 class="header-btn-action"
+                aria-label="Open plot overview"
+                @click="openPlotOverview"
             />
             <pv-dropdown
                 :modelValue="selectedPlot"

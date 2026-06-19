@@ -9,6 +9,7 @@
     "overview": "Resumen",
     "subtitle": "Surveillance en tiempo real y visión agronómica",
     "header-description": "Monitoree sus parcelas, indicadores de salud y riesgos agrícolas activos",
+    "plot-overview-description": "Vista satelital detallada e indicadores de la parcela seleccionada",
     "loading-telemetry": "Sincronizando telemetría satelital...",
     "recent-alerts-title": "Alertas Recientes",
     "plot-overview-title": "Vista de parcelas",

@@ -38,10 +38,17 @@ const scopeLabel = computed(() => {
   return agronomicStore.selectedDashboardPlot?.name || t('dashboard.scope.allPlots');
 });
 
+const activePlotOverviewId = computed(() => {
+  return agronomicStore.selectedDashboardPlot?.id
+      || agronomicStore.selectedPlot?.id
+      || agronomicStore.plots[0]?.id
+      || 1;
+});
+
 const viewOptions = computed(() => [
   { id: 'iot-devices', label: 'IoT Devices', labelKey: 'toolbar.iotDevices', route: '/agronomic/iot-devices', icon: 'wifi' },
-  { id: 'plot-overview', label: 'Plot Overview', labelKey: 'toolbar.plotOverview', icon: 'map' },
-  { id: 'weather', label: 'Weather', labelKey: 'toolbar.weather', icon: 'cloud' }
+  { id: 'plot-overview', label: 'Plot Overview', labelKey: 'toolbar.plotOverview', route: `/dashboard/plot-overview/${activePlotOverviewId.value}`, icon: 'map' },
+  { id: 'weather', label: 'Weather', labelKey: 'toolbar.weather', route: `/dashboard/weather/${activePlotOverviewId.value}`, icon: 'cloud' }
 ]);
 
 const scopeOptions = computed(() => {
