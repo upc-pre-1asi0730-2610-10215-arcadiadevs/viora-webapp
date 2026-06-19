@@ -597,41 +597,149 @@
       "id": 1,
       "plotId": 1,
       "userId": 1,
-      "plotName": "Santa Rosa",
-      "locationLabel": "La Yarada - Los Palos, Tacna",
+      "name": "Santa Rosa",
+      "location": "La Yarada - Los Palos, Tacna",
+      "campaign": "2026 campaign",
+      "cropType": "Olive",
+      "variety": "Sevillana",
+      "notes": "Reference plot for the dashboard overview.",
+      "polygonCoordinates": [
+        [-70.2912, -18.0834],
+        [-70.2868, -18.0831],
+        [-70.2865, -18.0872],
+        [-70.2914, -18.0875],
+        [-70.2912, -18.0834]
+      ],
       "areaSizeHectares": 12.5,
-      "dataFreshness": {
-        "updatedLabel": "3 min ago",
-        "satelliteImage": "2 days ago",
-        "weatherSync": "3 minutes ago",
-        "predictionModel": "22 hours ago"
+      "boundaryPointCount": 4,
+      "boundaryStatus": "VALIDATED",
+      "registeredAt": "2026-05-01T00:00:00Z",
+      "lastConfigurationUpdateAt": "2026-05-04T21:00:00Z",
+      "monitoringLinks": {
+        "climateMonitoring": "ACTIVE",
+        "satelliteNdvi": "ACTIVE",
+        "climateLastSyncAt": "2026-05-04T21:00:00Z",
+        "satelliteLastSyncAt": "2026-05-01T00:00:00Z"
       },
-      "recommendedActions": [
-        { "id": "view-plot-details", "label": "View plot details", "icon": "pi-eye" },
-        { "id": "report-symptoms", "label": "Report symptoms", "icon": "pi-shield" },
-        { "id": "open-nutrition-plan", "label": "Open nutrition plan", "icon": "pi-send" },
-        { "id": "request-expert", "label": "Request expert", "icon": "pi-headphones" }
+      "iot": {
+        "status": "ACTIVE",
+        "linkedDeviceCount": 2,
+        "onlineDeviceCount": 1,
+        "lastActivityAt": "2026-05-12T13:54:59Z"
+      },
+      "devices": [
+        {
+          "id": 1,
+          "name": "Soil Sensor Alpha-1",
+          "status": "ONLINE",
+          "linkedAt": "2026-05-01T12:00:00Z",
+          "lastActivityAt": "2026-05-12T13:54:59Z"
+        },
+        {
+          "id": 2,
+          "name": "Soil Sensor Beta-2",
+          "status": "OFFLINE",
+          "linkedAt": "2026-05-01T12:00:00Z",
+          "lastActivityAt": "2026-05-11T12:30:00Z"
+        }
+      ],
+      "recentConfigurationActivity": [
+        { "type": "SATELLITE_SYNC", "description": "Satellite monitoring synchronized.", "occurredAt": "2026-05-04T21:05:00Z" },
+        { "type": "CLIMATE_LINK", "description": "Climate monitoring linked.", "occurredAt": "2026-05-01T06:51:00Z" },
+        { "type": "BOUNDARY_REGISTERED", "description": "Plot boundary registered.", "occurredAt": "2026-05-01T06:51:00Z" }
       ]
     },
     {
       "id": 2,
       "plotId": 2,
       "userId": 1,
-      "plotName": "El Olivar",
-      "locationLabel": "Sama Inclan, Tacna",
+      "name": "El Olivar",
+      "location": "Sama Inclán, Tacna",
+      "campaign": "2026 campaign",
+      "cropType": "Olive",
+      "variety": "Criolla",
+      "notes": "Plot under review due to moderate water stress.",
+      "polygonCoordinates": [
+        [-70.3038, -18.0711],
+        [-70.2995, -18.0708],
+        [-70.2992, -18.0746],
+        [-70.3041, -18.0749],
+        [-70.3038, -18.0711]
+      ],
       "areaSizeHectares": 8.2,
-      "dataFreshness": {
-        "updatedLabel": "7 min ago",
-        "satelliteImage": "3 days ago",
-        "weatherSync": "7 minutes ago",
-        "predictionModel": "1 day ago"
+      "boundaryPointCount": 4,
+      "boundaryStatus": "VALIDATED",
+      "registeredAt": "2026-05-02T00:00:00Z",
+      "lastConfigurationUpdateAt": "2026-05-08T20:30:00Z",
+      "monitoringLinks": {
+        "climateMonitoring": "ACTIVE",
+        "satelliteNdvi": "ACTIVE",
+        "climateLastSyncAt": "2026-05-08T20:30:00Z",
+        "satelliteLastSyncAt": "2026-05-02T00:00:00Z"
       },
-      "recommendedActions": [
-        { "id": "view-plot-details", "label": "View plot details", "icon": "pi-eye" },
-        { "id": "report-symptoms", "label": "Report symptoms", "icon": "pi-shield" },
-        { "id": "open-nutrition-plan", "label": "Open nutrition plan", "icon": "pi-send" },
-        { "id": "request-expert", "label": "Request expert", "icon": "pi-headphones" }
+      "iot": {
+        "status": "ACTIVE",
+        "linkedDeviceCount": 1,
+        "onlineDeviceCount": 1,
+        "lastActivityAt": "2026-05-11T11:45:00Z"
+      },
+      "devices": [
+        {
+          "id": 3,
+          "name": "Leaf Sensor Gamma-3",
+          "status": "ONLINE",
+          "linkedAt": "2026-05-02T12:00:00Z",
+          "lastActivityAt": "2026-05-11T11:45:00Z"
+        }
+      ],
+      "recentConfigurationActivity": [
+        { "type": "CLIMATE_LINK", "description": "Climate monitoring linked.", "occurredAt": "2026-05-02T07:10:00Z" },
+        { "type": "BOUNDARY_REGISTERED", "description": "Plot boundary registered.", "occurredAt": "2026-05-02T07:10:00Z" }
       ]
+    }
+  ],
+  "dynamic-nutrition-plans-active": [
+    {
+      "dynamicNutritionPlanId": 1,
+      "userId": 1,
+      "plotId": 1,
+      "status": "RECOMMENDED",
+      "inputRecommendations": [
+        { "value": "Foliar nutrition support", "purpose": "Improve stress response and recovery", "dosage": 2.5, "dosageUnit": "L/ha", "status": "RECOMMENDED" },
+        { "value": "Potassium-calcium support", "purpose": "Support flowering consistency and reduce abortion risk", "dosage": 3, "dosageUnit": "kg/ha", "status": "RECOMMENDED" },
+        { "value": "Biostimulant support", "purpose": "Reinforce vegetative recovery after stress periods", "dosage": 1.2, "dosageUnit": "L/ha", "status": "OPTIONAL" }
+      ],
+      "applicationWindow": { "startDate": "2026-06-18", "endDate": "2026-06-21" },
+      "rationale": {
+        "summary": "Plan generated from HIGH risk using AgroMonitoring NDVI 0.62 captured on 2026-06-18 and weather observed on 2026-06-19; temperature anomaly is +1.5 C against the configured agronomic reference.",
+        "triggeringRiskLevel": "HIGH",
+        "ndviValue": 0.62,
+        "temperatureAnomaly": 1.5
+      },
+      "generatedDate": "2026-06-18",
+      "certificationStatus": "PENDING",
+      "application": null
+    },
+    {
+      "dynamicNutritionPlanId": 2,
+      "userId": 1,
+      "plotId": 2,
+      "status": "RECOMMENDED",
+      "inputRecommendations": [
+        { "value": "Foliar nutrition support", "purpose": "Improve stress response and recovery", "dosage": 2, "dosageUnit": "L/ha", "status": "RECOMMENDED" },
+        { "value": "Potassium-calcium support", "purpose": "Support flowering consistency and reduce abortion risk", "dosage": 2.5, "dosageUnit": "kg/ha", "status": "RECOMMENDED" },
+        { "value": "Biostimulant support", "purpose": "Reinforce vegetative recovery after stress periods", "dosage": 1, "dosageUnit": "L/ha", "status": "OPTIONAL" }
+      ],
+      "applicationWindow": { "startDate": "2026-06-19", "endDate": "2026-06-22" },
+      "rationale": {
+        "summary": "Plan generated from MEDIUM risk using AgroMonitoring NDVI 0.45 captured on 2026-06-18 and weather observed on 2026-06-19; temperature anomaly is +2.1 C against the configured agronomic reference.",
+        "triggeringRiskLevel": "MODERATE",
+        "ndviValue": 0.45,
+        "temperatureAnomaly": 2.1
+      },
+      "generatedDate": "2026-06-19",
+      "certificationStatus": "PENDING",
+      "application": null
     }
   ],
   "iot-device-summaries": [

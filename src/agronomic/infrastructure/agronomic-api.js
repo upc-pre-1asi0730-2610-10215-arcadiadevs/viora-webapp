@@ -1,5 +1,8 @@
 import { BaseApi } from "../../shared/infrastructure/base-api.js";
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
+import { polygonAreaHectares } from "./geo-area.js";
+
+const defaultUserId = import.meta.env.VITE_DEFAULT_USER_ID;
 
 // Endpoint paths are relative to the API base URL (which already includes the
 // `/api/v1` prefix), matching the OS frontend convention.
@@ -68,10 +71,20 @@ export class AgronomicApi extends BaseApi {
     }
 
     #withBackendTimeRange(params = {}) {
-        return {
+        const normalized = {
             ...params,
             timeRange: this.#toBackendTimeRange(params.timeRange)
         };
+
+        // The platform's `plotId` is an optional numeric param: omitting it means
+        // "aggregate across all plots". The dashboard uses the sentinel 'all',
+        // which the backend cannot parse as a Long (400), so drop it here.
+        const plotId = String(normalized.plotId ?? "").trim().toLowerCase();
+        if (plotId === "" || plotId === "all") {
+            delete normalized.plotId;
+        }
+
+        return normalized;
     }
 
     getPlots() {
@@ -86,12 +99,52 @@ export class AgronomicApi extends BaseApi {
         return this.#plotsEndpoint.getById(id);
     }
 
-    createPlot(plot) {
-        return this.#plotsEndpoint.create(plot);
+    /**
+     * Registers a plot. Injects the owner `userId` into the body (as the platform
+     * `CreatePlotResource` requires) and, while json-server backs the contract,
+     * enriches the echoed payload with the area and automatic-link statuses the
+     * real backend computes on registration. Once the C# backend is live those
+     * fields arrive populated and the enrichment becomes a no-op.
+     *
+     * @param {Object} plot - Create plot request (without userId).
+     * @returns {Promise<import('axios').AxiosResponse<Object>>}
+     */
+    async createPlot(plot) {
+        const body = {
+            userId: Number(defaultUserId) || 1,
+            cropType: "",
+            variety: "",
+            location: "",
+            campaign: "",
+            notes: "",
+            ...plot
+        };
+        const response = await this.#plotsEndpoint.create(body);
+        response.data = this.#withRegistrationDefaults(response.data);
+        return response;
     }
 
     updatePlot(plotId, plot) {
         return this.#plotsEndpoint.update(plotId, plot);
+    }
+
+    /**
+     * Fills the registration fields json-server does not compute, so the wizard's
+     * confirmation step matches the platform `PlotRegistrationResource` shape.
+     *
+     * @param {Object} data - Echoed plot payload from the mock.
+     * @returns {Object} Contract-shaped registration resource.
+     */
+    #withRegistrationDefaults(data = {}) {
+        const coordinates = Array.isArray(data.polygonCoordinates) ? data.polygonCoordinates : [];
+        return {
+            ...data,
+            areaSizeHectares: data.areaSizeHectares ?? Number(polygonAreaHectares(coordinates).toFixed(2)),
+            state: data.state ?? "enable",
+            climateMonitoring: data.climateMonitoring ?? "ACTIVE",
+            satelliteNdvi: data.satelliteNdvi ?? "ACTIVE",
+            iotDevices: data.iotDevices ?? "NOT_LINKED"
+        };
     }
 
     deletePlot(plotId) {

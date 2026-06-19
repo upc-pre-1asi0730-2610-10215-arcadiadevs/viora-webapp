@@ -3,6 +3,10 @@ import agronomicRoutes from "./agronomic/presentation/agronomic-routes.js";
 import workspaceRoutes from "./shared/presentation/workspace-routes.js";
 
 const producerDashboard = () => import('./shared/presentation/views/dashboard-producer.vue');
+const myPlotsOverviewPage = () => import('./agronomic/presentation/views/my-plots-overview.vue');
+const plotFormPage = () => import('./agronomic/presentation/views/plot-form-page.vue');
+const plotDetailPage = () => import('./agronomic/presentation/views/plot-detail-page.vue');
+const dynamicNutritionPage = () => import('./agronomic/presentation/views/dynamic-nutrition-page.vue');
 const plotOverviewPage = () => import('./agronomic/presentation/views/plot-overview-page.vue');
 const weatherPage = () => import('./agronomic/presentation/views/weather-page.vue');
 
@@ -35,6 +39,51 @@ const routes = [
         meta: {
             title: 'dashboard.weather-title',
             description: 'dashboard.weather-description'
+        }
+    },
+    {
+        path: '/agronomic/plots',
+        name: 'my-plots',
+        component: myPlotsOverviewPage,
+        meta: {
+            title: 'sidebar.myPlots',
+            description: 'myPlots.subtitle'
+        }
+    },
+    {
+        path: '/agronomic/plots/new',
+        name: 'my-plots-create',
+        component: plotFormPage,
+        meta: {
+            title: 'plotCreate.title',
+            description: 'plotCreate.subtitle'
+        }
+    },
+    {
+        path: '/agronomic/plots/:id/edit',
+        name: 'my-plots-edit',
+        component: plotFormPage,
+        meta: {
+            title: 'plotCreate.edit.title',
+            description: 'plotCreate.edit.subtitle'
+        }
+    },
+    {
+        path: '/agronomic/plots/:id',
+        name: 'my-plots-detail',
+        component: plotDetailPage,
+        meta: {
+            title: 'plotDetail.title',
+            description: 'plotDetail.subtitle'
+        }
+    },
+    {
+        path: '/agronomic/dynamic-nutrition',
+        name: 'dynamic-nutrition',
+        component: dynamicNutritionPage,
+        meta: {
+            title: 'sidebar.dynamicNutrition',
+            description: 'dynamicNutrition.subtitle'
         }
     },
     {

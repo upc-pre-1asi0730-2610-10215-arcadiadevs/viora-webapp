@@ -84,10 +84,316 @@
     "addIotDevice": "Add IoT Device"
   },
   "toolbar": {
+    "dashboard": "Dashboard",
     "iotDevices": "IoT Devices",
     "plotOverview": "Plot Overview",
     "weather": "Weather",
     "selectScope": "Select scope"
+  },
+  "common": {
+    "loading": "Loading",
+    "refresh": "Refresh",
+    "cancel": "Cancel",
+    "updated": "Updated"
+  },
+  "myPlots": {
+    "overview": "Overview",
+    "subtitle": "Manage your registered plots, boundaries, monitoring status, and linked devices.",
+    "yourPlots": "Your Plots",
+    "plotsRegistered": "{count} plots registered",
+    "importCoordinates": "Import coordinates",
+    "addPlot": "Add plot",
+    "viewDetails": "View details",
+    "empty": "No plots registered yet. Add your first plot to start monitoring.",
+    "ndvi": "NDVI",
+    "chill": "Chill",
+    "activeAlerts": "{count} active alerts",
+    "devicesOnline": "{count} devices online",
+    "kpi": {
+      "registeredPlots": "Registered plots",
+      "registeredPlotsCaption": "Productive areas linked to climate and satellite monitoring.",
+      "monitoredArea": "Monitored area",
+      "monitoredAreaCaption": "Total registered olive crop area.",
+      "climateLinked": "Climate linked",
+      "climateLinkedCaption": "All plots are receiving zonal weather data.",
+      "allLinked": "All linked",
+      "iotDevices": "IoT devices",
+      "iotDevicesCaption": "Plots with linked telemetry devices.",
+      "online": "online",
+      "iot": "IoT"
+    }
+  },
+  "plotCreate": {
+    "title": "Create plot",
+    "subtitle": "Define the geographic boundary of your plot to enable satellite and climate monitoring.",
+    "reset": "Reset form",
+    "edit": {
+      "title": "Edit plot",
+      "subtitle": "Update the plot details and boundary. Changes are saved to the selected plot.",
+      "save": "Save changes",
+      "saving": "Saving changes…"
+    },
+    "steps": {
+      "basicInfo": "Basic info",
+      "boundary": "Boundary",
+      "confirm": "Confirm"
+    },
+    "info": {
+      "title": "Plot information",
+      "subtitle": "Basic data used to identify and classify your productive area.",
+      "areaNote": "Area will be computed automatically once you close the boundary on the map."
+    },
+    "fields": {
+      "name": "Plot name",
+      "cropType": "Crop type",
+      "campaign": "Campaign",
+      "location": "Location",
+      "area": "Productive area",
+      "notes": "Notes (optional)"
+    },
+    "placeholders": {
+      "name": "Santa Rosa",
+      "cropType": "Full plot",
+      "campaign": "2026 campaign",
+      "location": "Tacna, Perú",
+      "area": "Calculated after polygon closure",
+      "notes": "Olive trees under productive stage, regular irrigation schedule."
+    },
+    "errors": {
+      "name": "Enter a plot name (3-80 characters)."
+    },
+    "links": {
+      "title": "Automatic links — enabled on registration",
+      "climate": "Climate monitoring",
+      "ndvi": "Satellite NDVI",
+      "iot": "IoT devices",
+      "willActivate": "Will activate",
+      "linkFromDetail": "Link from detail"
+    },
+    "linkStatus": {
+      "active": "Active",
+      "initializing": "Initializing…",
+      "notLinked": "Not linked yet",
+      "pending": "Pending"
+    },
+    "boundary": {
+      "title": "Draw plot boundary",
+      "subtitle": "Click on the map to add boundary points. Close the polygon to register the plot.",
+      "searchPlace": "Search a place…",
+      "tokenMissing": "Set VITE_MAPBOX_ACCESS_TOKEN to enable the interactive satellite map and place search.",
+      "polygonClosed": "Polygon closed",
+      "polygonOpen": "Polygon open",
+      "addPoint": "Add point",
+      "undoPoint": "Undo point",
+      "clear": "Clear boundary",
+      "close": "Close polygon",
+      "pointsSelected": "Points selected",
+      "estimatedArea": "Estimated area",
+      "boundaryStatus": "Boundary status",
+      "closed": "Closed",
+      "open": "Open",
+      "incompleteTitle": "Incomplete boundary",
+      "incompleteBody": "The plot cannot be registered until the geographic polygon is closed correctly. Click Close polygon or add the missing point to complete the boundary.",
+      "continueDrawing": "Continue drawing",
+      "autoLinkNote": "Once registered, climate and satellite monitoring will be automatically linked to this boundary.",
+      "register": "Register plot",
+      "registerLocked": "Register plot — close boundary first",
+      "registerTooSmall": "Register plot — area must be at least 1 ha",
+      "registering": "Registering plot…",
+      "tooSmallTitle": "Area too small",
+      "tooSmallBody": "This boundary is {area} ha. Satellite monitoring requires a plot of at least 1 hectare, so draw a larger area before registering."
+    },
+    "confirm": {
+      "title": "Plot registered successfully",
+      "subtitle": "{name} has been registered and linked to climate monitoring for the selected geographic area.",
+      "plot": "Plot",
+      "area": "Area",
+      "note": "First NDVI analysis may take up to 24 hours while satellite imagery is processed for your boundary.",
+      "viewDetail": "View plot detail",
+      "back": "Back to My plots"
+    }
+  },
+  "plotImport": {
+    "title": "Import coordinates",
+    "subtitle": "Import plot boundaries from coordinate files."
+  },
+  "plotDetail": {
+    "back": "Back to My plots",
+    "title": "Plot Detail",
+    "subtitle": "Review plot configuration, registered boundary, monitoring links, and connected devices.",
+    "notFound": "Plot not found.",
+    "status": {
+      "active": "Active",
+      "initializing": "Initializing…",
+      "notLinked": "Not linked",
+      "pending": "Pending"
+    },
+    "productiveArea": {
+      "title": "Productive area",
+      "area": "Area",
+      "points": "Polygon points",
+      "pointsUnit": "points",
+      "boundary": "Boundary",
+      "validated": "Validated",
+      "registered": "Registered"
+    },
+    "monitoring": {
+      "title": "Monitoring links",
+      "climate": "Climate link",
+      "satellite": "Satellite (NDVI)",
+      "alerts": "Alerts",
+      "enabled": "Enabled",
+      "lastSync": "Last sync"
+    },
+    "iot": {
+      "title": "IoT devices",
+      "status": "Status",
+      "telemetry": "Telemetry",
+      "available": "Available",
+      "none": "—",
+      "lastReading": "Last reading",
+      "manage": "Manage devices"
+    },
+    "actions": {
+      "edit": "Edit plot",
+      "openDashboard": "Open dashboard view",
+      "addIot": "Add IoT device",
+      "delete": "Delete plot"
+    },
+    "boundary": {
+      "title": "Registered boundary",
+      "expand": "Expand",
+      "subtitle": "This boundary is used to retrieve satellite indicators and local climate data.",
+      "closed": "Boundary closed · {count} points",
+      "note": "No NDVI overlay — open dashboard view for analysis.",
+      "openDashboard": "Open in Dashboard"
+    },
+    "info": {
+      "title": "Plot information",
+      "edit": "Edit"
+    },
+    "config": {
+      "title": "Configuration summary",
+      "subtitle": "Active integrations and setup status for this plot.",
+      "boundary": "Boundary registered",
+      "done": "Done",
+      "climate": "Climate data linked",
+      "satellite": "Satellite monitoring",
+      "iot": "IoT telemetry linked",
+      "alerts": "Alerts enabled",
+      "on": "On"
+    },
+    "activity": {
+      "title": "Recent configuration activity",
+      "subtitle": "Setup changes and integration updates.",
+      "empty": "No configuration activity yet."
+    },
+    "devices": {
+      "title": "Linked IoT devices",
+      "subtitle": "Sensors connected to {name} for real-time telemetry.",
+      "add": "Add device",
+      "empty": "No IoT devices linked to this plot yet.",
+      "lastRead": "Last read"
+    },
+    "delete": {
+      "title": "Delete plot",
+      "body": "This permanently deletes \"{name}\" and unlinks its satellite and climate monitoring. This action cannot be undone.",
+      "confirmLabel": "Type the plot name to confirm",
+      "confirm": "Delete plot"
+    }
+  },
+  "dynamicNutrition": {
+    "subtitle": "Review the compensatory nutrition plan generated from phenological risk alerts and certify field application.",
+    "activePlan": "Active Plan",
+    "plot": "Plot",
+    "plan": "Plan",
+    "linkedAlert": "Linked alert",
+    "stable": "Stable",
+    "loading": "Loading nutrition plan…",
+    "certify": "Certify application",
+    "registerExpense": "Register mitigation expense",
+    "empty": {
+      "title": "No active nutrition plan",
+      "body": "There is no active compensatory plan for {plot}. Generate one from the latest alert and monitoring indicators.",
+      "hint": "A compensatory plan is only generated when the plot's climate risk is high.",
+      "generate": "Generate plan",
+      "generating": "Generating plan…"
+    },
+    "cards": {
+      "activePlan": "Active plan",
+      "activePlanNote": "Generated from the latest risk alert.",
+      "linkedPlot": "Linked plot",
+      "viewInMyPlots": "View in My Plots",
+      "applicationWindow": "Application window",
+      "windowNote": "Before the next phenological stage.",
+      "climate": "Climate",
+      "certification": "Certification status",
+      "certifiedNote": "Field application certified.",
+      "pendingNote": "No field application registered yet."
+    },
+    "table": {
+      "title": "Recommended nutrition plan",
+      "input": "Input",
+      "purpose": "Purpose",
+      "coverage": "Coverage",
+      "rate": "Planned rate",
+      "status": "Status"
+    },
+    "rationale": {
+      "title": "Plan rationale",
+      "subtitle": "Why the system generated this compensatory plan.",
+      "chill": "Chill accumulation",
+      "gap": "Gap",
+      "anomaly": "Temperature anomaly",
+      "yieldRisk": "Yield risk",
+      "note": "This plan was generated by Viora using the active alert and recent monitoring indicators."
+    },
+    "window": {
+      "title": "Application window",
+      "subtitle": "The optimal window updates when the forecast changes.",
+      "current": "Current window",
+      "climateCheck": "Climate check",
+      "stableConditions": "Stable conditions",
+      "note": "Window may update if forecast conditions change before execution."
+    },
+    "exec": {
+      "title": "Plan execution",
+      "subtitle": "Certification and financial declaration are mandatory to close the nutrition intervention.",
+      "applicationStatus": "Application status",
+      "requiredCertification": "Required certification",
+      "dateAndInputs": "Date and applied inputs",
+      "expenseDeclaration": "Expense declaration",
+      "declared": "Declared",
+      "pending": "Pending"
+    },
+    "certifyModal": {
+      "title": "Certify application",
+      "subtitle": "Register the exact date and inputs applied in field.",
+      "date": "Application date",
+      "time": "Application time",
+      "appliedInputs": "Applied inputs",
+      "doseConfirmation": "Dose confirmation",
+      "doseRecommended": "Applied as recommended",
+      "doseAdjusted": "Adjusted dose",
+      "dosePartial": "Partial application",
+      "fieldOperator": "Field operator",
+      "fieldNotes": "Field notes",
+      "note": "This certification updates the plot history and feeds the predictive engine with executed actions.",
+      "save": "Save certification"
+    },
+    "expenseModal": {
+      "title": "Register mitigation expense",
+      "subtitle": "Declare costs associated with the nutrition plan.",
+      "inputCost": "Input cost (S/)",
+      "laborCost": "Labor cost (S/)",
+      "equipmentCost": "Equipment cost (S/)",
+      "code": "Receipt or internal code",
+      "notes": "Expense notes",
+      "total": "Calculated total",
+      "margin": "Expected margin after expense",
+      "note": "The intervention cannot be closed until the financial declaration is registered.",
+      "save": "Save expense"
+    }
   },
   "sidebar": {
     "brand": "Viora Dashboard",
