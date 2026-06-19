@@ -235,43 +235,80 @@
       "userId": 1,
       "plotName": "Santa Rosa",
       "generatedAt": "2026-05-11T19:34:00Z",
+      "updatedLabel": "just now",
       "hourly": [
         {
           "timestamp": "2026-05-11T19:00:00Z",
-          "temperatureCelsius": 22,
-          "weatherStatus": "PARTLY_CLOUDY",
+          "temperatureCelsius": 23,
+          "weatherStatus": "RAIN",
           "humidityPercentage": 62,
-          "precipitationMillimeters": 0,
+          "precipitationMillimeters": 0.5,
           "windSpeedMetersPerSecond": 2.4,
-          "windGustMetersPerSecond": 4.1
+          "windGustMetersPerSecond": 7.8
         },
         {
-          "timestamp": "2026-05-11T21:00:00Z",
+          "timestamp": "2026-05-11T22:00:00Z",
           "temperatureCelsius": 21,
-          "weatherStatus": "CLEAR",
+          "weatherStatus": "CLOUDY",
           "humidityPercentage": 59,
-          "precipitationMillimeters": 0,
+          "precipitationMillimeters": 0.1,
           "windSpeedMetersPerSecond": 2.8,
           "windGustMetersPerSecond": 4.6
+        },
+        {
+          "timestamp": "2026-05-12T01:00:00Z",
+          "temperatureCelsius": 18,
+          "weatherStatus": "CLOUDY",
+          "humidityPercentage": 60,
+          "precipitationMillimeters": 0,
+          "windSpeedMetersPerSecond": 2.6,
+          "windGustMetersPerSecond": 4.2
+        },
+        {
+          "timestamp": "2026-05-12T04:00:00Z",
+          "temperatureCelsius": 13,
+          "weatherStatus": "CLEAR",
+          "humidityPercentage": 58,
+          "precipitationMillimeters": 0,
+          "windSpeedMetersPerSecond": 2.1,
+          "windGustMetersPerSecond": 3.7
+        },
+        {
+          "timestamp": "2026-05-12T07:00:00Z",
+          "temperatureCelsius": 14,
+          "weatherStatus": "CLEAR",
+          "humidityPercentage": 57,
+          "precipitationMillimeters": 0,
+          "windSpeedMetersPerSecond": 1.9,
+          "windGustMetersPerSecond": 3.5
+        },
+        {
+          "timestamp": "2026-05-12T10:00:00Z",
+          "temperatureCelsius": 20,
+          "weatherStatus": "CLOUDY",
+          "humidityPercentage": 56,
+          "precipitationMillimeters": 0,
+          "windSpeedMetersPerSecond": 2.2,
+          "windGustMetersPerSecond": 4.0
         }
       ],
       "daily": [
         {
           "date": "2026-05-11",
-          "minTemperatureCelsius": 19,
-          "maxTemperatureCelsius": 22,
-          "averageTemperatureCelsius": 20.5,
-          "dominantStatus": "PARTLY_CLOUDY",
+          "minTemperatureCelsius": 13,
+          "maxTemperatureCelsius": 23,
+          "averageTemperatureCelsius": 20,
+          "dominantStatus": "CLOUDY",
           "averageHumidityPercentage": 60,
-          "totalPrecipitationMillimeters": 0.2,
-          "maxWindGustMetersPerSecond": 4.6
+          "totalPrecipitationMillimeters": 0.5,
+          "maxWindGustMetersPerSecond": 7.8
         },
         {
           "date": "2026-05-12",
-          "minTemperatureCelsius": 18,
-          "maxTemperatureCelsius": 23,
-          "averageTemperatureCelsius": 20.5,
-          "dominantStatus": "SUNNY_INTERVALS",
+          "minTemperatureCelsius": 15,
+          "maxTemperatureCelsius": 25,
+          "averageTemperatureCelsius": 20,
+          "dominantStatus": "CLOUDY",
           "averageHumidityPercentage": 58,
           "totalPrecipitationMillimeters": 0,
           "maxWindGustMetersPerSecond": 5.2
@@ -279,12 +316,32 @@
         {
           "date": "2026-05-13",
           "minTemperatureCelsius": 17,
-          "maxTemperatureCelsius": 21,
-          "averageTemperatureCelsius": 19,
-          "dominantStatus": "BREEZY",
+          "maxTemperatureCelsius": 22,
+          "averageTemperatureCelsius": 19.5,
+          "dominantStatus": "RAIN",
           "averageHumidityPercentage": 57,
           "totalPrecipitationMillimeters": 1.6,
           "maxWindGustMetersPerSecond": 6.1
+        },
+        {
+          "date": "2026-05-14",
+          "minTemperatureCelsius": 16,
+          "maxTemperatureCelsius": 18,
+          "averageTemperatureCelsius": 17,
+          "dominantStatus": "RAIN",
+          "averageHumidityPercentage": 63,
+          "totalPrecipitationMillimeters": 2.1,
+          "maxWindGustMetersPerSecond": 6.4
+        },
+        {
+          "date": "2026-05-15",
+          "minTemperatureCelsius": 12,
+          "maxTemperatureCelsius": 17,
+          "averageTemperatureCelsius": 15,
+          "dominantStatus": "RAIN",
+          "averageHumidityPercentage": 64,
+          "totalPrecipitationMillimeters": 1.8,
+          "maxWindGustMetersPerSecond": 5.9
         }
       ],
       "thermalAnomalyCelsius": 1.5,
@@ -310,6 +367,7 @@
       "userId": 1,
       "plotName": "El Olivar",
       "generatedAt": "2026-05-11T19:34:00Z",
+      "updatedLabel": "7 min ago",
       "hourly": [
         {
           "timestamp": "2026-05-11T19:00:00Z",
@@ -319,6 +377,51 @@
           "precipitationMillimeters": 0,
           "windSpeedMetersPerSecond": 3.1,
           "windGustMetersPerSecond": 5.0
+        },
+        {
+          "timestamp": "2026-05-11T22:00:00Z",
+          "temperatureCelsius": 20,
+          "weatherStatus": "CLEAR",
+          "humidityPercentage": 52,
+          "precipitationMillimeters": 0,
+          "windSpeedMetersPerSecond": 2.8,
+          "windGustMetersPerSecond": 4.8
+        },
+        {
+          "timestamp": "2026-05-12T01:00:00Z",
+          "temperatureCelsius": 18,
+          "weatherStatus": "PARTLY_CLOUDY",
+          "humidityPercentage": 53,
+          "precipitationMillimeters": 0,
+          "windSpeedMetersPerSecond": 2.6,
+          "windGustMetersPerSecond": 4.2
+        },
+        {
+          "timestamp": "2026-05-12T04:00:00Z",
+          "temperatureCelsius": 17,
+          "weatherStatus": "BREEZY",
+          "humidityPercentage": 51,
+          "precipitationMillimeters": 0,
+          "windSpeedMetersPerSecond": 3.4,
+          "windGustMetersPerSecond": 5.4
+        },
+        {
+          "timestamp": "2026-05-12T07:00:00Z",
+          "temperatureCelsius": 19,
+          "weatherStatus": "CLEAR",
+          "humidityPercentage": 50,
+          "precipitationMillimeters": 0,
+          "windSpeedMetersPerSecond": 3.0,
+          "windGustMetersPerSecond": 5.0
+        },
+        {
+          "timestamp": "2026-05-12T10:00:00Z",
+          "temperatureCelsius": 24,
+          "weatherStatus": "CLEAR",
+          "humidityPercentage": 48,
+          "precipitationMillimeters": 0,
+          "windSpeedMetersPerSecond": 3.2,
+          "windGustMetersPerSecond": 5.3
         }
       ],
       "daily": [
@@ -351,6 +454,26 @@
           "averageHumidityPercentage": 50,
           "totalPrecipitationMillimeters": 0.4,
           "maxWindGustMetersPerSecond": 6.5
+        },
+        {
+          "date": "2026-05-14",
+          "minTemperatureCelsius": 16,
+          "maxTemperatureCelsius": 23,
+          "averageTemperatureCelsius": 19.5,
+          "dominantStatus": "CLEAR",
+          "averageHumidityPercentage": 50,
+          "totalPrecipitationMillimeters": 0,
+          "maxWindGustMetersPerSecond": 5.7
+        },
+        {
+          "date": "2026-05-15",
+          "minTemperatureCelsius": 15,
+          "maxTemperatureCelsius": 21,
+          "averageTemperatureCelsius": 18,
+          "dominantStatus": "PARTLY_CLOUDY",
+          "averageHumidityPercentage": 52,
+          "totalPrecipitationMillimeters": 0,
+          "maxWindGustMetersPerSecond": 5.3
         }
       ],
       "thermalAnomalyCelsius": 2.1,
@@ -467,6 +590,48 @@
         "lastReadingAt": "2026-05-02T00:00:00Z",
         "updateFrequencyMinutes": 1440
       }
+    }
+  ],
+  "plot-details": [
+    {
+      "id": 1,
+      "plotId": 1,
+      "userId": 1,
+      "plotName": "Santa Rosa",
+      "locationLabel": "La Yarada - Los Palos, Tacna",
+      "areaSizeHectares": 12.5,
+      "dataFreshness": {
+        "updatedLabel": "3 min ago",
+        "satelliteImage": "2 days ago",
+        "weatherSync": "3 minutes ago",
+        "predictionModel": "22 hours ago"
+      },
+      "recommendedActions": [
+        { "id": "view-plot-details", "label": "View plot details", "icon": "pi-eye" },
+        { "id": "report-symptoms", "label": "Report symptoms", "icon": "pi-shield" },
+        { "id": "open-nutrition-plan", "label": "Open nutrition plan", "icon": "pi-send" },
+        { "id": "request-expert", "label": "Request expert", "icon": "pi-headphones" }
+      ]
+    },
+    {
+      "id": 2,
+      "plotId": 2,
+      "userId": 1,
+      "plotName": "El Olivar",
+      "locationLabel": "Sama Inclan, Tacna",
+      "areaSizeHectares": 8.2,
+      "dataFreshness": {
+        "updatedLabel": "7 min ago",
+        "satelliteImage": "3 days ago",
+        "weatherSync": "7 minutes ago",
+        "predictionModel": "1 day ago"
+      },
+      "recommendedActions": [
+        { "id": "view-plot-details", "label": "View plot details", "icon": "pi-eye" },
+        { "id": "report-symptoms", "label": "Report symptoms", "icon": "pi-shield" },
+        { "id": "open-nutrition-plan", "label": "Open nutrition plan", "icon": "pi-send" },
+        { "id": "request-expert", "label": "Request expert", "icon": "pi-headphones" }
+      ]
     }
   ],
   "iot-device-summaries": [
