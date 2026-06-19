@@ -8,11 +8,12 @@ import { AgronomicMapAdapter } from '../infrastructure/agronomic-map.adapter.js'
  * This service orchestrates the interaction between the UI and Map Infrastructure.
  * It encapsulates the map's lifecycle and ensures clean architectural separation.
  */
-export function usePlotMap(containerRef) {
+export function usePlotMap(containerRef, options = {}) {
     /** @type {import('vue').Ref<Object|null>} */
     const map = shallowRef(null);
     /** @type {AgronomicMapAdapter|null} */
     let adapter = null;
+    const renderImageryTiles = options.renderImageryTiles === true;
 
     /**
      * Initializes the Mapbox infrastructure using the shared service.
@@ -20,37 +21,28 @@ export function usePlotMap(containerRef) {
      */
     const init = (initialPlot = null) => {
         if (!containerRef.value) return;
-        // We use the promise-based flow to ensure consistency across the infrastructure layer
         mapboxService.createMapInstance({
             container: containerRef.value,
             zoom: 14,
             center: initialPlot ? initialPlot.polygonCoordinates[0] : [0, 0]
         })
             .then((mapInstance) => {
-                // Setup the specialized adapter once the map instance is ready
-                // We attach 'load' as soon as possible
                 mapInstance.on('load', () => {
-                    console.log("[Application Service] Mapbox loaded successfully");
                     adapter = new AgronomicMapAdapter(mapInstance);
 
                     if (initialPlot) {
                         render(initialPlot);
                     }
 
-                    // Force a resize calculation to ensure the canvas fills the container
-                    // We use a timeout to ensure the layout pass has completed
                     setTimeout(() => {
                         if (mapInstance) {
                             mapInstance.resize();
-                            console.log("[Application Service] Mapbox resize triggered (500ms)");
                         }
                     }, 500);
 
-                    // Secondary resize for safety in complex layouts
                     setTimeout(() => {
                         if (mapInstance) {
                             mapInstance.resize();
-                            console.log("[Application Service] Mapbox secondary resize triggered (2000ms)");
                         }
                     }, 2000);
                 });
@@ -59,6 +51,7 @@ export function usePlotMap(containerRef) {
             })
             .catch((error) => {
                 console.error("[Application Service] Failed to initialize plot map logic:", error);
+                options.onError?.(error);
             });
     };
 
@@ -68,7 +61,7 @@ export function usePlotMap(containerRef) {
      */
     const render = (plot) => {
         if (adapter && plot) {
-            adapter.renderPlotSurveillance(plot);
+            adapter.renderPlotSurveillance(plot, { renderImageryTiles });
         }
     };
 

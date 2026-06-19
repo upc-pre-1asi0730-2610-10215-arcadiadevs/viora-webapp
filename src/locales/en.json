@@ -9,6 +9,7 @@
     "overview": "Overview",
     "subtitle": "Real-time surveillance and agronomic vision",
     "header-description": "Monitor your plots, health indicators and active agricultural risks",
+    "plot-overview-description": "Detailed satellite view and indicators for the selected plot",
     "loading-telemetry": "Synchronizing satellite telemetry...",
     "recent-alerts-title": "Recent Alerts",
     "plot-overview-title": "Plot Overview",
