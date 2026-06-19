@@ -18,8 +18,9 @@ const placeholder = (path, name, sectionLabel, subtitle) => ({
 });
 
 const workspaceRoutes = [
-  placeholder('/agronomic/plots', 'my-plots', 'sidebar.myPlots', 'comingSoon.subtitle-my-plots'),
-  placeholder('/agronomic/dynamic-nutrition', 'dynamic-nutrition', 'sidebar.dynamicNutrition', 'comingSoon.subtitle-dynamic-nutrition'),
+  // `/agronomic/plots`, `/agronomic/plots/new` and `/agronomic/plots/:id/edit`
+  // are served by the real My Plots views (see router.js).
+  placeholder('/agronomic/plots/import', 'my-plots-import', 'plotImport.title', 'plotImport.subtitle'),
   placeholder('/surveillance/alerts', 'alerts', 'sidebar.alerts', 'comingSoon.subtitle-alerts'),
   placeholder('/surveillance/pest-surveillance', 'pest-surveillance', 'sidebar.pestSurveillance', 'comingSoon.subtitle-pest-surveillance'),
   placeholder('/assistance/expert-assistance', 'expert-assistance', 'sidebar.expertAssistance', 'comingSoon.subtitle-expert-assistance'),

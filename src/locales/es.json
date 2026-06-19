@@ -83,10 +83,316 @@
     "addIotDevice": "Añadir Dispositivo IoT"
   },
   "toolbar": {
+    "dashboard": "Dashboard",
     "iotDevices": "Dispositivos IoT",
     "plotOverview": "Vista de Parcelas",
     "weather": "Clima",
     "selectScope": "Seleccionar alcance"
+  },
+  "common": {
+    "loading": "Cargando",
+    "refresh": "Actualizar",
+    "cancel": "Cancelar",
+    "updated": "Actualizado"
+  },
+  "myPlots": {
+    "overview": "Resumen",
+    "subtitle": "Gestiona tus parcelas registradas, límites, estado de monitoreo y dispositivos vinculados.",
+    "yourPlots": "Tus parcelas",
+    "plotsRegistered": "{count} parcelas registradas",
+    "importCoordinates": "Importar coordenadas",
+    "addPlot": "Agregar parcela",
+    "viewDetails": "Ver detalles",
+    "empty": "Aún no hay parcelas registradas. Agrega tu primera parcela para empezar a monitorear.",
+    "ndvi": "NDVI",
+    "chill": "Frío",
+    "activeAlerts": "{count} alertas activas",
+    "devicesOnline": "{count} dispositivos en línea",
+    "kpi": {
+      "registeredPlots": "Parcelas registradas",
+      "registeredPlotsCaption": "Áreas productivas vinculadas a monitoreo climático y satelital.",
+      "monitoredArea": "Área monitoreada",
+      "monitoredAreaCaption": "Área total registrada de cultivo de olivo.",
+      "climateLinked": "Vinculadas al clima",
+      "climateLinkedCaption": "Todas las parcelas reciben datos climáticos zonales.",
+      "allLinked": "Todas vinculadas",
+      "iotDevices": "Dispositivos IoT",
+      "iotDevicesCaption": "Parcelas con dispositivos de telemetría vinculados.",
+      "online": "en línea",
+      "iot": "IoT"
+    }
+  },
+  "plotCreate": {
+    "title": "Crear parcela",
+    "subtitle": "Define el límite geográfico de tu parcela para habilitar el monitoreo satelital y climático.",
+    "reset": "Reiniciar formulario",
+    "edit": {
+      "title": "Editar parcela",
+      "subtitle": "Actualiza los datos y el límite de la parcela. Los cambios se guardan en la parcela seleccionada.",
+      "save": "Guardar cambios",
+      "saving": "Guardando cambios…"
+    },
+    "steps": {
+      "basicInfo": "Datos básicos",
+      "boundary": "Límite",
+      "confirm": "Confirmar"
+    },
+    "info": {
+      "title": "Información de la parcela",
+      "subtitle": "Datos básicos para identificar y clasificar tu área productiva.",
+      "areaNote": "El área se calculará automáticamente al cerrar el límite en el mapa."
+    },
+    "fields": {
+      "name": "Nombre de la parcela",
+      "cropType": "Tipo de cultivo",
+      "campaign": "Campaña",
+      "location": "Ubicación",
+      "area": "Área productiva",
+      "notes": "Notas (opcional)"
+    },
+    "placeholders": {
+      "name": "Santa Rosa",
+      "cropType": "Parcela completa",
+      "campaign": "Campaña 2026",
+      "location": "Tacna, Perú",
+      "area": "Se calcula al cerrar el polígono",
+      "notes": "Olivos en etapa productiva, riego regular."
+    },
+    "errors": {
+      "name": "Ingresa un nombre de parcela (3-80 caracteres)."
+    },
+    "links": {
+      "title": "Vínculos automáticos — se activan al registrar",
+      "climate": "Monitoreo climático",
+      "ndvi": "NDVI satelital",
+      "iot": "Dispositivos IoT",
+      "willActivate": "Se activará",
+      "linkFromDetail": "Vincular desde detalle"
+    },
+    "linkStatus": {
+      "active": "Activo",
+      "initializing": "Inicializando…",
+      "notLinked": "Sin vincular aún",
+      "pending": "Pendiente"
+    },
+    "boundary": {
+      "title": "Dibujar límite de la parcela",
+      "subtitle": "Haz clic en el mapa para añadir puntos del límite. Cierra el polígono para registrar la parcela.",
+      "searchPlace": "Buscar un lugar…",
+      "tokenMissing": "Configura VITE_MAPBOX_ACCESS_TOKEN para habilitar el mapa satelital interactivo y la búsqueda de lugares.",
+      "polygonClosed": "Polígono cerrado",
+      "polygonOpen": "Polígono abierto",
+      "addPoint": "Añadir punto",
+      "undoPoint": "Deshacer punto",
+      "clear": "Limpiar límite",
+      "close": "Cerrar polígono",
+      "pointsSelected": "Puntos seleccionados",
+      "estimatedArea": "Área estimada",
+      "boundaryStatus": "Estado del límite",
+      "closed": "Cerrado",
+      "open": "Abierto",
+      "incompleteTitle": "Límite incompleto",
+      "incompleteBody": "La parcela no puede registrarse hasta que el polígono geográfico esté correctamente cerrado. Haz clic en Cerrar polígono o añade el punto faltante para completar el límite.",
+      "continueDrawing": "Continuar dibujando",
+      "autoLinkNote": "Una vez registrada, el monitoreo climático y satelital se vinculará automáticamente a este límite.",
+      "register": "Registrar parcela",
+      "registerLocked": "Registrar parcela — cierra el límite primero",
+      "registerTooSmall": "Registrar parcela — el área debe ser de al menos 1 ha",
+      "registering": "Registrando parcela…",
+      "tooSmallTitle": "Área demasiado pequeña",
+      "tooSmallBody": "Este límite tiene {area} ha. El monitoreo satelital requiere una parcela de al menos 1 hectárea; dibuja un área más grande antes de registrar."
+    },
+    "confirm": {
+      "title": "Parcela registrada con éxito",
+      "subtitle": "{name} se registró y vinculó al monitoreo climático para el área geográfica seleccionada.",
+      "plot": "Parcela",
+      "area": "Área",
+      "note": "El primer análisis NDVI puede tardar hasta 24 horas mientras se procesa la imagen satelital de tu límite.",
+      "viewDetail": "Ver detalle de la parcela",
+      "back": "Volver a Mis parcelas"
+    }
+  },
+  "plotImport": {
+    "title": "Importar coordenadas",
+    "subtitle": "Importa límites de parcelas desde archivos de coordenadas."
+  },
+  "plotDetail": {
+    "back": "Volver a Mis parcelas",
+    "title": "Detalle de parcela",
+    "subtitle": "Revisa la configuración de la parcela, el límite registrado, los vínculos de monitoreo y los dispositivos conectados.",
+    "notFound": "Parcela no encontrada.",
+    "status": {
+      "active": "Activo",
+      "initializing": "Inicializando…",
+      "notLinked": "Sin vincular",
+      "pending": "Pendiente"
+    },
+    "productiveArea": {
+      "title": "Área productiva",
+      "area": "Área",
+      "points": "Puntos del polígono",
+      "pointsUnit": "puntos",
+      "boundary": "Límite",
+      "validated": "Validado",
+      "registered": "Registrada"
+    },
+    "monitoring": {
+      "title": "Vínculos de monitoreo",
+      "climate": "Vínculo climático",
+      "satellite": "Satélite (NDVI)",
+      "alerts": "Alertas",
+      "enabled": "Habilitado",
+      "lastSync": "Última sincronización"
+    },
+    "iot": {
+      "title": "Dispositivos IoT",
+      "status": "Estado",
+      "telemetry": "Telemetría",
+      "available": "Disponible",
+      "none": "—",
+      "lastReading": "Última lectura",
+      "manage": "Gestionar dispositivos"
+    },
+    "actions": {
+      "edit": "Editar parcela",
+      "openDashboard": "Abrir vista del dashboard",
+      "addIot": "Agregar dispositivo IoT",
+      "delete": "Eliminar parcela"
+    },
+    "boundary": {
+      "title": "Límite registrado",
+      "expand": "Expandir",
+      "subtitle": "Este límite se usa para obtener indicadores satelitales y datos climáticos locales.",
+      "closed": "Límite cerrado · {count} puntos",
+      "note": "Sin capa NDVI — abre la vista del dashboard para el análisis.",
+      "openDashboard": "Abrir en Dashboard"
+    },
+    "info": {
+      "title": "Información de la parcela",
+      "edit": "Editar"
+    },
+    "config": {
+      "title": "Resumen de configuración",
+      "subtitle": "Integraciones activas y estado de configuración de esta parcela.",
+      "boundary": "Límite registrado",
+      "done": "Listo",
+      "climate": "Datos climáticos vinculados",
+      "satellite": "Monitoreo satelital",
+      "iot": "Telemetría IoT vinculada",
+      "alerts": "Alertas habilitadas",
+      "on": "Activo"
+    },
+    "activity": {
+      "title": "Actividad de configuración reciente",
+      "subtitle": "Cambios de configuración y actualizaciones de integración.",
+      "empty": "Aún no hay actividad de configuración."
+    },
+    "devices": {
+      "title": "Dispositivos IoT vinculados",
+      "subtitle": "Sensores conectados a {name} para telemetría en tiempo real.",
+      "add": "Agregar dispositivo",
+      "empty": "Aún no hay dispositivos IoT vinculados a esta parcela.",
+      "lastRead": "Última lectura"
+    },
+    "delete": {
+      "title": "Eliminar parcela",
+      "body": "Esto elimina permanentemente \"{name}\" y desvincula su monitoreo satelital y climático. Esta acción no se puede deshacer.",
+      "confirmLabel": "Escribe el nombre de la parcela para confirmar",
+      "confirm": "Eliminar parcela"
+    }
+  },
+  "dynamicNutrition": {
+    "subtitle": "Revisa el plan nutricional compensatorio generado por las alertas de riesgo fenológico y certifica la aplicación en campo.",
+    "activePlan": "Plan activo",
+    "plot": "Parcela",
+    "plan": "Plan",
+    "linkedAlert": "Alerta vinculada",
+    "stable": "Estable",
+    "loading": "Cargando plan nutricional…",
+    "certify": "Certificar aplicación",
+    "registerExpense": "Registrar gasto de mitigación",
+    "empty": {
+      "title": "Sin plan nutricional activo",
+      "body": "No hay un plan compensatorio activo para {plot}. Genera uno a partir de la última alerta e indicadores de monitoreo.",
+      "hint": "Un plan compensatorio solo se genera cuando el riesgo climático de la parcela es alto.",
+      "generate": "Generar plan",
+      "generating": "Generando plan…"
+    },
+    "cards": {
+      "activePlan": "Plan activo",
+      "activePlanNote": "Generado a partir de la última alerta de riesgo.",
+      "linkedPlot": "Parcela vinculada",
+      "viewInMyPlots": "Ver en My Plots",
+      "applicationWindow": "Ventana de aplicación",
+      "windowNote": "Antes de la siguiente etapa fenológica.",
+      "climate": "Clima",
+      "certification": "Estado de certificación",
+      "certifiedNote": "Aplicación en campo certificada.",
+      "pendingNote": "Aún no se registró la aplicación en campo."
+    },
+    "table": {
+      "title": "Plan nutricional recomendado",
+      "input": "Insumo",
+      "purpose": "Propósito",
+      "coverage": "Cobertura",
+      "rate": "Dosis planificada",
+      "status": "Estado"
+    },
+    "rationale": {
+      "title": "Justificación del plan",
+      "subtitle": "Por qué el sistema generó este plan compensatorio.",
+      "chill": "Acumulación de frío",
+      "gap": "Brecha",
+      "anomaly": "Anomalía de temperatura",
+      "yieldRisk": "Riesgo de rendimiento",
+      "note": "Este plan fue generado por Viora usando la alerta activa y los indicadores de monitoreo recientes."
+    },
+    "window": {
+      "title": "Ventana de aplicación",
+      "subtitle": "La ventana óptima se actualiza cuando cambia el pronóstico.",
+      "current": "Ventana actual",
+      "climateCheck": "Verificación climática",
+      "stableConditions": "Condiciones estables",
+      "note": "La ventana puede actualizarse si las condiciones del pronóstico cambian antes de la ejecución."
+    },
+    "exec": {
+      "title": "Ejecución del plan",
+      "subtitle": "La certificación y la declaración financiera son obligatorias para cerrar la intervención nutricional.",
+      "applicationStatus": "Estado de aplicación",
+      "requiredCertification": "Certificación requerida",
+      "dateAndInputs": "Fecha e insumos aplicados",
+      "expenseDeclaration": "Declaración de gasto",
+      "declared": "Declarado",
+      "pending": "Pendiente"
+    },
+    "certifyModal": {
+      "title": "Certificar aplicación",
+      "subtitle": "Registra la fecha exacta y los insumos aplicados en campo.",
+      "date": "Fecha de aplicación",
+      "time": "Hora de aplicación",
+      "appliedInputs": "Insumos aplicados",
+      "doseConfirmation": "Confirmación de dosis",
+      "doseRecommended": "Aplicado según recomendación",
+      "doseAdjusted": "Dosis ajustada",
+      "dosePartial": "Aplicación parcial",
+      "fieldOperator": "Operario de campo",
+      "fieldNotes": "Notas de campo",
+      "note": "Esta certificación actualiza el historial de la parcela y alimenta el motor predictivo con las acciones ejecutadas.",
+      "save": "Guardar certificación"
+    },
+    "expenseModal": {
+      "title": "Registrar gasto de mitigación",
+      "subtitle": "Declara los costos asociados al plan nutricional.",
+      "inputCost": "Costo de insumos (S/)",
+      "laborCost": "Costo de mano de obra (S/)",
+      "equipmentCost": "Costo de equipos (S/)",
+      "code": "Recibo o código interno",
+      "notes": "Notas del gasto",
+      "total": "Total calculado",
+      "margin": "Margen esperado tras el gasto",
+      "note": "La intervención no puede cerrarse hasta registrar la declaración financiera.",
+      "save": "Guardar gasto"
+    }
   },
   "sidebar": {
     "brand": "Viora Dashboard",

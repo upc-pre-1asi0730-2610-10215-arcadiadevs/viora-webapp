@@ -275,7 +275,11 @@ const scrollToMap = () => {
 };
 
 const goToEditPlot = () => {
-  router.push('/agronomic/plots');
+  if (!selectedPlotId.value) {
+    router.push('/agronomic/plots');
+    return;
+  }
+  router.push(`/agronomic/plots/${selectedPlotId.value}/edit`);
 };
 
 const handleRecommendedAction = (action) => {
