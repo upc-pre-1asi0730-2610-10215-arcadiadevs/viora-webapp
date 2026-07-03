@@ -1,9 +1,11 @@
 import { BaseApi } from "../../shared/infrastructure/base-api.js";
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
 
-// Surveillance alerts are not yet served by the Viora platform backend, so they
-// are routed to the mock API target (json-server), mirroring the OS frontend.
+const defaultUserId = import.meta.env.VITE_DEFAULT_USER_ID;
 const alertsEndpointPath = import.meta.env.VITE_ALERTS_ENDPOINT_PATH || "/alerts";
+const communityRiskEndpointPath = import.meta.env.VITE_COMMUNITY_RISK_ENDPOINT_PATH || "/community-risk";
+const pestReportsEndpointPath = import.meta.env.VITE_PEST_REPORTS_ENDPOINT_PATH || "/pest-sighting-reports";
+const symptomsEndpointPath = import.meta.env.VITE_SYMPTOMS_ENDPOINT_PATH || "/symptom-dictionary-items";
 
 /**
  * Infrastructure service gateway for the Surveillance bounded-context endpoints.
@@ -12,30 +14,75 @@ const alertsEndpointPath = import.meta.env.VITE_ALERTS_ENDPOINT_PATH || "/alerts
  */
 export class SurveillanceApi extends BaseApi {
     #alertsEndpoint;
+    #communityRiskEndpoint;
+    #pestReportsEndpoint;
+    #symptomsEndpoint;
 
-    /**
-     * Initializes all internal endpoints using environment variable paths.
-     */
     constructor() {
         super();
-        this.#alertsEndpoint = new BaseEndpoint(this, alertsEndpointPath, { mock: true });
+        this.#alertsEndpoint = new BaseEndpoint(this, alertsEndpointPath);
+        this.#communityRiskEndpoint = new BaseEndpoint(this, communityRiskEndpointPath);
+        this.#pestReportsEndpoint = new BaseEndpoint(this, pestReportsEndpointPath);
+        this.#symptomsEndpoint = new BaseEndpoint(this, symptomsEndpointPath);
     }
 
-    /**
-     * Fetches alerts, typically the most recent ones for the dashboard.
-     * @param {Object} [params={}] - Query parameters (e.g., { _limit: 3, _sort: 'date', _order: 'desc' }).
-     * @returns {Promise<import('axios').AxiosResponse>}
-     */
     getAlerts(params = {}) {
-        return this.#alertsEndpoint.getAll(params);
+        const queryParams = { userId: Number(defaultUserId) || 1, ...params };
+        return this.#alertsEndpoint.getAll(queryParams);
     }
 
-    /**
-     * Fetches a specific alert by its ID.
-     * @param {number|string} id - Alert identifier.
-     * @returns {Promise<import('axios').AxiosResponse>}
-     */
-    getAlertById(id) {
-        return this.#alertsEndpoint.getById(id);
+    getAlertById(alertId) {
+        return this.#alertsEndpoint.getById(alertId);
+    }
+
+    getAlertTimeline(alertId) {
+        return this.http.get(`${this.#alertsEndpoint.endpointPath}/${alertId}`, { params: { view: "timeline" } });
+    }
+
+    updateAlertStatus(alertId, status, reason = null) {
+        const body = { status };
+        if (reason) body.reason = reason;
+        return this.http.patch(`${this.#alertsEndpoint.endpointPath}/${alertId}`, body);
+    }
+
+    confirmAlert(alertId) {
+        return this.http.patch(`${this.#alertsEndpoint.endpointPath}/${alertId}`, { status: "UNDER_REVIEW", raiseSeverity: true });
+    }
+
+    escalateAlert(alertId) {
+        return this.http.patch(`${this.#alertsEndpoint.endpointPath}/${alertId}`, { raiseSeverity: true });
+    }
+
+    linkReport(alertId, reportId) {
+        return this.http.put(`${this.#alertsEndpoint.endpointPath}/${alertId}/report/${reportId}`);
+    }
+
+    markAlertUnderReview(alertId) {
+        return this.http.patch(`${this.#alertsEndpoint.endpointPath}/${alertId}`, { status: "UNDER_REVIEW" });
+    }
+
+    resolveAlert(alertId) {
+        return this.http.patch(`${this.#alertsEndpoint.endpointPath}/${alertId}`, { status: "Resolved" });
+    }
+
+    dismissAlert(alertId) {
+        return this.http.patch(`${this.#alertsEndpoint.endpointPath}/${alertId}`, { status: "Dismissed" });
+    }
+
+    getCommunityRisk(plotId, radiusKm = 5) {
+        return this.#communityRiskEndpoint.getAll({ plotId, radiusKm });
+    }
+
+    getPestReports(params = {}) {
+        const queryParams = { userId: Number(defaultUserId) || 1, ...params };
+        return this.#pestReportsEndpoint.getAll(queryParams);
+    }
+
+    createPestReport(request) {
+        return this.#pestReportsEndpoint.create(request);
+    }
+
+    getSymptomDictionary() {
+        return this.#symptomsEndpoint.getAll();
     }
 }

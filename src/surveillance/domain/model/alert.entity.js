@@ -4,27 +4,59 @@
  * It uses a simplified Plot information (Value Object) to maintain context isolation.
  * @class Alert
  */
+
+const THREAT_TYPE_LABELS = {
+    PHENOLOGICAL_RISK: 'Phenological risk',
+    PEST_SYMPTOM_REPORT: 'Pest symptom report',
+    LOW_NDVI_ZONE: 'Low NDVI zone',
+    DISEASE_OUTBREAK: 'Disease outbreak',
+    WEATHER_ANOMALY: 'Weather anomaly',
+    IRRIGATION_ALERT: 'Irrigation alert'
+};
+
+const SOURCE_LABELS = {
+    SATELLITE: 'Satellite',
+    IOT_SENSOR: 'IoT Sensor',
+    COMMUNITY: 'Community',
+    AGRONOMIC_MODEL: 'Agronomic Model',
+    MANUAL_REPORT: 'Manual Report'
+};
+
 export class Alert {
     /**
      * @param {Object} params
-     * @param {number|null} [params.id=null] - Unique identifier.
-     * @param {string} [params.type=''] - Type of the alert (e.g., 'Phenological risk', 'Pest symptom report', 'Low NDVI zone').
-     * @param {string} [params.description=''] - Brief description of the alert context.
-     * @param {string} [params.severity='Low'] - Categorized severity ('Low', 'Medium', 'High').
-     * @param {string} [params.date=''] - Timestamp or formatted date of the alert.
-     * @param {string} [params.status='Pending'] - Current state ('Pending', 'In Progress', 'Resolved').
-     * @param {Object} [params.plot={}] - Simplified plot info.
-     * @param {string} [params.plot.name=''] - Name of the affected plot.
-     * @param {string} [params.plot.location=''] - Geographical reference/location.
-     * @param {number} [params.plot.hectares=0] - Area size in hectares.
+     * @param {number|null} [params.id=null]
+     * @param {number|null} [params.reportId=null]
+     * @param {number|null} [params.plotId=null]
+     * @param {string} [params.type='']
+     * @param {string} [params.severity='Low']
+     * @param {string} [params.status='Pending']
+     * @param {string} [params.title='']
+     * @param {string} [params.description='']
+     * @param {string} [params.date='']
+     * @param {string} [params.riskExplanation='']
+     * @param {string[]} [params.sources=[]]
+     * @param {string[]} [params.dataProviders=[]]
+     * @param {Object} [params.supportingData={}]
+     * @param {Object} [params.plot={}]
+     * @param {string} [params.plot.name='']
+     * @param {string} [params.plot.location='']
+     * @param {number} [params.plot.hectares=0]
      */
     constructor({
                     id = null,
+                    reportId = null,
+                    plotId = null,
                     type = '',
-                    description = '',
                     severity = 'Low',
-                    date = '',
                     status = 'Pending',
+                    title = '',
+                    description = '',
+                    date = '',
+                    riskExplanation = '',
+                    sources = [],
+                    dataProviders = [],
+                    supportingData = {},
                     plot = {
                         name: '',
                         location: '',
@@ -32,19 +64,59 @@ export class Alert {
                     }
                 }) {
         this.id = id;
+        this.reportId = reportId;
+        this.plotId = plotId;
         this.type = type;
-        this.description = description;
         this.severity = severity;
-        this.date = date;
         this.status = status;
+        this.title = title;
+        this.description = description;
+        this.date = date;
+        this.riskExplanation = riskExplanation;
+        this.sources = sources;
+        this.dataProviders = dataProviders;
+        this.supportingData = supportingData;
         this.plot = plot;
     }
 
-    /**
-     * Business logic to check if the alert requires immediate action.
-     * @returns {boolean}
-     */
     get requiresUrgentAction() {
         return this.severity === 'High' && this.status === 'Pending';
+    }
+
+    /** @returns {string} Human-readable type label */
+    get typeLabel() {
+        return THREAT_TYPE_LABELS[this.type] || this.type || 'Unknown';
+    }
+
+    /** @returns {string} Primary data source label */
+    get primarySource() {
+        if (!this.sources || this.sources.length === 0) return 'Not specified';
+        return SOURCE_LABELS[this.sources[0]] || this.sources[0];
+    }
+
+    /** @returns {string} Intl.DateTimeFormat formatted date */
+    get formattedDate() {
+        if (!this.date) return '';
+        const d = new Date(this.date);
+        return new Intl.DateTimeFormat('en-US', {
+            month: 'short',
+            day: '2-digit',
+            year: 'numeric'
+        }).format(d);
+    }
+
+    /** @returns {string} Plot summary like "PlotName - Location" */
+    get plotSummaryLabel() {
+        const name = this.plot?.name || 'Unnamed plot';
+        const loc = this.plot?.location;
+        return loc ? `${name} - ${loc}` : name;
+    }
+
+    /** @returns {string} Truncated description preview */
+    get descriptionPreview() {
+        if (!this.description) return 'No description';
+        return this.description.length > 120
+            ? this.description.substring(0, 120) + '...'
+            : this.description;
     }
 }
