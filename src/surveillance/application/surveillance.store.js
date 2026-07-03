@@ -44,8 +44,8 @@ export const useSurveillanceStore = defineStore('surveillance', () => {
         try {
             const params = {
                 _limit: limit,
-                _sort: "date",
-                _order: "desc"
+                _sort: 'date',
+                _order: 'desc'
             };
             const response = await surveillanceApi.getAlerts(params);
             alerts.value = AlertAssembler.toEntitiesFromResponse(response);
