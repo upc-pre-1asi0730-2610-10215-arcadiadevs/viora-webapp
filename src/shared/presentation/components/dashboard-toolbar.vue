@@ -17,11 +17,11 @@ const props = defineProps({
   },
   timeRangeOptions: {
     type: Array,
-    required: true
+    default: () => []
   },
   selectedTimeRange: {
     type: String,
-    required: true
+    default: ''
   }
 });
 
