@@ -17,17 +17,18 @@ export class SurveillanceAssembler {
 
         return new Alert({
             id: normalizedResource.id ?? null,
-            type: normalizedResource.type || normalizedResource.alertType || "",
-            description:
-                normalizedResource.description || normalizedResource.summary || "",
-            severity:
-                normalizedResource.severity || normalizedResource.level || "Low",
-            date:
-                normalizedResource.date ||
-                normalizedResource.createdAt ||
-                normalizedResource.timestamp ||
-                "",
+            reportId: normalizedResource.reportId ?? null,
+            plotId: normalizedResource.plotId ?? null,
+            type: normalizedResource.type || "",
+            severity: normalizedResource.severity || "Low",
             status: normalizedResource.status || "Pending",
+            title: normalizedResource.title || "",
+            description: normalizedResource.description || "",
+            date: normalizedResource.date || normalizedResource.createdAt || "",
+            riskExplanation: normalizedResource.riskExplanation || "",
+            sources: normalizedResource.sources || [],
+            dataProviders: normalizedResource.dataProviders || [],
+            supportingData: normalizedResource.supportingData || {},
             plot: {
                 name: plot.name || normalizedResource.plotName || "",
                 location: plot.location || normalizedResource.plotLocation || "",
