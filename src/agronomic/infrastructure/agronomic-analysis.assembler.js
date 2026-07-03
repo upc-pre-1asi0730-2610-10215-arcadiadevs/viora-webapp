@@ -12,17 +12,22 @@ export class AgronomicAnalysisAssembler {
      */
     static toEntityFromResource(resource) {
         return new AgronomicAnalysis({
-            id: resource.id,
             plotId: resource.plotId,
             timeRange: resource.timeRange,
             labels: resource.labels || [],
             ndviSeries: resource.ndviSeries || [],
-            cpSeries: resource.cpSeries || resource.chillHoursSeries || [],
+            cpSeries: resource.cpSeries || [],
+            chillHoursSeries: resource.chillHoursSeries || [],
             threshold: resource.threshold || 600,
-            observation: resource.observation,
-            trend: resource.trend,
-            statusLabel: resource.statusLabel,
-            description: resource.description
+            chillRequirementSource: resource.chillRequirementSource || '',
+            chillMetricModel: resource.chillMetricModel || '',
+            chillUnit: resource.chillUnit || '',
+            observation: resource.observation || '',
+            trend: resource.trend || '',
+            statusLabel: resource.statusLabel || '',
+            ndviTrend: resource.ndviTrend || null,
+            chillPortionsTrend: resource.chillPortionsTrend || null,
+            chillHoursTrend: resource.chillHoursTrend || null
         });
     }
 

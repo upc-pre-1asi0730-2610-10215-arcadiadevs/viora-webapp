@@ -1,5 +1,10 @@
-﻿import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import agronomicRoutes from "./agronomic/presentation/agronomic-routes.js";
+import surveillanceRoutes from "./surveillance/presentation/surveillance-routes.js";
+import interventionRoutes from "./intervention/presentation/intervention-routes.js";
+import profileRoutes from "./profile/presentation/profile-routes.js";
+import billingRoutes from "./billing/presentation/billing-routes.js";
+import supportRoutes from "./support/presentation/support-routes.js";
 import workspaceRoutes from "./shared/presentation/workspace-routes.js";
 
 const producerDashboard = () => import('./shared/presentation/views/dashboard-producer.vue');
@@ -90,6 +95,31 @@ const routes = [
         path: '/agronomic',
         name: 'agronomic',
         children: agronomicRoutes
+    },
+    {
+        path: '/surveillance',
+        name: 'surveillance',
+        children: surveillanceRoutes
+    },
+    {
+        path: '/assistance',
+        name: 'assistance',
+        children: interventionRoutes
+    },
+    {
+        path: '/settings',
+        name: 'settings',
+        children: profileRoutes
+    },
+    {
+        path: '/subscription',
+        name: 'subscription',
+        children: billingRoutes
+    },
+    {
+        path: '/support',
+        name: 'support',
+        children: supportRoutes
     },
     ...workspaceRoutes,
     {

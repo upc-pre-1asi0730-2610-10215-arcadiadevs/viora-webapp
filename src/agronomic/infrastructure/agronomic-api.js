@@ -14,18 +14,16 @@ const statisticsEndpointPath = import.meta.env.VITE_AGRONOMIC_STATISTICS_ENDPOIN
 const statisticsSeriesEndpointPath = import.meta.env.VITE_AGRONOMIC_STATISTICS_SERIES_ENDPOINT_PATH || "/agronomic-statistics/series";
 const nutritionPlansEndpointPath = import.meta.env.VITE_DYNAMIC_NUTRITION_PLANS_ENDPOINT_PATH || "/dynamic-nutrition-plans";
 // IoT sensor telemetry and the dashboard insight cards are not yet served by the
-// Viora platform backend, so they are routed to the mock API target (json-server),
-// mirroring the OS frontend.
+// Viora platform backend, so they are routed to the mock API target (json-server).
 const iotDevicesEndpointPath = import.meta.env.VITE_IOT_DEVICES_ENDPOINT_PATH || "/iot-devices";
 const iotDeviceSummariesEndpointPath = import.meta.env.VITE_IOT_DEVICE_SUMMARIES_ENDPOINT_PATH || "/iot-device-summaries";
 
 /**
  * Infrastructure service gateway for the Agronomic bounded-context endpoints.
  *
- * Every method targets the Viora platform contracts directly. While the C# .NET
- * backend is under construction the contracts are served by json-server from
- * `server/db.json` (see `VITE_VIORA_PLATFORM_API_URL` / `VITE_MOCK_API_URL`);
- * switching to the real backend only requires changing those URLs.
+ * Every method targets the Viora platform contracts directly. IoT endpoints
+ * still target the mock API (json-server) while the backend implementation
+ * is completed.
  *
  * @class AgronomicApi
  * @extends BaseApi
@@ -202,8 +200,8 @@ export class AgronomicApi extends BaseApi {
         return this.#statisticsSeriesEndpoint.getAll(this.#withBackendTimeRange(params));
     }
 
-    ingestAgronomicStatistics(snapshot) {
-        return this.http.post(`${this.#statisticsEndpoint.endpointPath}/ingest`, snapshot);
+    ingestAgronomicStatistics(userId) {
+        return this.http.post(this.#statisticsEndpoint.endpointPath, null, { params: { userId } });
     }
 
     generateNutritionPlan(params = {}) {
