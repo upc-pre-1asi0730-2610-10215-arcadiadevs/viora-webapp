@@ -10,12 +10,9 @@
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import DashboardHeader from '../../../shared/presentation/components/dashboard-header.vue';
 import { useProfileStore } from '../../application/profile.store.js';
-import { AgronomicApi } from '../../../agronomic/infrastructure/agronomic-api.js';
-import { PlotAssembler } from '../../../agronomic/infrastructure/plot.assembler.js';
 
 // ── Stores ─────────────────────────────────────────────────────────────
 const store = useProfileStore();
-const agronomicApi = new AgronomicApi();
 
 // BillingStore (Referrals tab) — may not exist yet; gracefully degrade.
 let billing = null;
@@ -65,8 +62,6 @@ const jobTitle = ref('');
 const language = ref('');
 const location = ref('');
 const specialtyArea = ref('');
-const totalHectares = ref(0);
-const plotCount = ref(0);
 
 const applyDraftFrom = (profile) => {
     fullName.value = profile.fullName;
@@ -89,8 +84,8 @@ const preview = computed(() =>
         fullName: fullName.value,
         specialtyArea: specialtyArea.value,
         location: location.value,
-        totalHectares: totalHectares.value,
-        plotCount: plotCount.value,
+        totalHectares: store.farmTotalHectares,
+        plotCount: store.farmPlotCount,
     }),
 );
 
@@ -145,24 +140,10 @@ function ensureTabData(tabId) {
     }
 }
 
-// ── Load farm totals from Agronomic plots ──────────────────────────────
-function loadFarmTotals() {
-    agronomicApi
-        .getPlots()
-        .then((response) => {
-            const resources = response?.data ?? [];
-            const plots = PlotAssembler.toEntitiesFromResponse(resources);
-            const hectares = plots.reduce((sum, p) => sum + (p.areaSize || 0), 0);
-            totalHectares.value = Number(hectares.toFixed(1));
-            plotCount.value = plots.length;
-        })
-        .catch(() => {});
-}
-
 // ── Actions ────────────────────────────────────────────────────────────
 function resetDraft() {
     store.load();
-    loadFarmTotals();
+    store.loadFarmTotals();
     if (activeTab.value === 'referrals' && billing) {
         billing.load();
     } else if (activeTab.value === 'security' && security) {
@@ -308,7 +289,7 @@ function confirmDeactivate() {
 // ── Init ───────────────────────────────────────────────────────────────
 onMounted(() => {
     store.load();
-    loadFarmTotals();
+    store.loadFarmTotals();
 });
 </script>
 

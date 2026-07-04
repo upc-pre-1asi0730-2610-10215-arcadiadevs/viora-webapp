@@ -7,10 +7,13 @@
  */
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import useIamStore from '../../../iam/application/iam.store.js';
 
 const { t } = useI18n();
 const route = useRoute();
+const router = useRouter();
+const iamStore = useIamStore();
 
 const props = defineProps({
   /**
@@ -74,8 +77,13 @@ const mainItems = computed(() => [
   },
   {
     label: t('sidebar.expenseHistory'),
-    route: '/billing/expense-history',
+    route: '/agronomic/expense-history',
     iconPath: '/assets/icons/dashboard/sync-outline.svg'
+  },
+  {
+    label: t('sidebar.interventions'),
+    route: '/assistance/interventions',
+    iconPath: '/assets/icons/dashboard/construct-outline.svg'
   }
 ]);
 
@@ -120,6 +128,11 @@ const getIconStyle = (path) => {
 const isRouteActive = (targetPath, exact = false) => {
   return exact ? route.path === targetPath : route.path === targetPath || route.path.startsWith(`${targetPath}/`);
 };
+
+function logout() {
+  iamStore.signOut();
+  router.push({ name: 'iam-sign-in' });
+}
 </script>
 
 <template>
@@ -172,11 +185,11 @@ const isRouteActive = (targetPath, exact = false) => {
       <img class="user-avatar" src="/assets/images/dashboard/user-avatar.png" alt="User avatar" />
       <div v-if="!collapsed" class="user-info">
         <span>{{ t('sidebar.welcomeBack') }}</span>
-        <strong>DaronCameloft</strong>
+        <strong>{{ iamStore.currentFullName || iamStore.currentEmail || 'Viora user' }}</strong>
       </div>
-      <router-link v-if="!collapsed" to="/profile" class="user-action" :aria-label="t('sidebar.openProfile')">
-        <i class="pi pi-chevron-right"></i>
-      </router-link>
+      <button v-if="!collapsed" class="logout-button" @click="logout" :aria-label="'Sign out'">
+        <span class="pi pi-sign-out"></span>
+      </button>
     </div>
   </aside>
 </template>
@@ -366,6 +379,26 @@ const isRouteActive = (targetPath, exact = false) => {
   margin-left: auto;
   color: var(--viora-primary-dark);
   text-decoration: none;
+}
+
+.logout-button {
+  margin-left: auto;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--viora-border);
+  border-radius: 8px;
+  background: transparent;
+  color: #8c877f;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.logout-button:hover {
+  background: rgba(229, 53, 53, 0.08);
+  color: #e53535;
+  border-color: #e53535;
 }
 
 @media (max-width: 900px) {

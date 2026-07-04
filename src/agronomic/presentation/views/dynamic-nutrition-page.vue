@@ -11,9 +11,7 @@
  */
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { AgronomicApi } from '../../infrastructure/agronomic-api.js';
-import { MyPlotsOverviewAssembler } from '../../infrastructure/my-plots-overview.assembler.js';
-import { DynamicNutritionPlanAssembler } from '../../infrastructure/dynamic-nutrition-plan.assembler.js';
+import { useAgronomicStore } from '../../application/agronomic.store.js';
 import { DynamicNutritionPlan } from '../../domain/model/dynamic-nutrition-plan.entity.js';
 import { normalizeClimateRisk } from '../../infrastructure/status-normalizers.js';
 import LanguageSwitcher from '../../../shared/presentation/components/language-switcher.vue';
@@ -25,7 +23,7 @@ import LanguageSwitcher from '../../../shared/presentation/components/language-s
 const REFERENCE_PRICE_PER_TONNE = 4200;
 
 const { t } = useI18n();
-const agronomicApi = new AgronomicApi();
+const agronomicStore = useAgronomicStore();
 
 const plots = ref([]);
 const selectedPlotId = ref(null);
@@ -85,8 +83,8 @@ const formatWindow = (start, end) => `${formatDate(start)} – ${formatDate(end)
 
 const loadPlots = async () => {
   try {
-    const response = await agronomicApi.getPlotsOverview();
-    plots.value = MyPlotsOverviewAssembler.toEntityFromResponse(response).plots;
+    const overview = await agronomicStore.fetchMyPlotsOverview();
+    plots.value = overview?.plots ?? [];
     if (!selectedPlotId.value && plots.value.length) {
       selectedPlotId.value = String(plots.value[0].id);
     }
@@ -101,13 +99,12 @@ const loadPlan = async (plotId) => {
   generateMessage.value = null;
   savedExpenseTotal.value = null;
   try {
-    const [planResponse, summaryResponse] = await Promise.all([
-      agronomicApi.getActiveNutritionPlan({ plotId }),
-      agronomicApi.getPlotMonitoringSummary(plotId)
+    const [planResult, summaryResult] = await Promise.all([
+      agronomicStore.fetchActiveNutritionPlan(plotId),
+      agronomicStore.fetchPlotSummary(plotId)
     ]);
-    plan.value = DynamicNutritionPlanAssembler.toEntityFromResponse(planResponse);
-    const summaryData = summaryResponse?.data;
-    summary.value = Array.isArray(summaryData) ? summaryData[0] ?? null : summaryData ?? null;
+    plan.value = planResult;
+    summary.value = summaryResult;
   } catch (error) {
     plan.value = null;
     console.error('[DynamicNutrition] Failed to load plan.', error);
@@ -131,8 +128,8 @@ const generatePlan = async () => {
   saving.value = true;
   generateMessage.value = null;
   try {
-    await agronomicApi.generateNutritionPlan({ plotId: selectedPlotId.value });
-    await loadPlan(selectedPlotId.value);
+    const success = await agronomicStore.generateNutritionPlan(selectedPlotId.value);
+    if (success) await loadPlan(selectedPlotId.value);
   } catch (error) {
     generateMessage.value =
         error?.response?.data?.details ||
@@ -194,8 +191,8 @@ const submitCertify = async () => {
 
   saving.value = true;
   try {
-    const response = await agronomicApi.certifyNutritionPlan(plan.value.id, application);
-    plan.value = DynamicNutritionPlanAssembler.toEntityFromResponse(response) ?? certifiedPlan(application);
+    const result = await agronomicStore.certifyNutritionPlan(plan.value.id, application);
+    plan.value = result ?? certifiedPlan(application);
   } catch {
     // json-server does not expose the certification command endpoint; apply the
     // certified state optimistically so the mock mirrors the backend outcome.

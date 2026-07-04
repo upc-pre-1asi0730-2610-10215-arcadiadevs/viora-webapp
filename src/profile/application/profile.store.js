@@ -2,6 +2,11 @@
  * Application service store for the `Profile` bounded context.
  * Owns the account holder's editable profile that backs the Settings screens.
  *
+ * CONTEXT MAP: This store depends on the Agronomic bounded context to compute
+ * farm totals (totalHectares, plotCount). The dependency is documented here
+ * and flows through the application layer — the presentation layer never
+ * imports from agronomic infrastructure directly.
+ *
  * @module useProfileStore
  */
 import { defineStore } from 'pinia';
@@ -9,8 +14,11 @@ import { computed, ref } from 'vue';
 
 import { UserProfile } from '../domain/model/user-profile.entity.js';
 import { ProfileApi } from '../infrastructure/profile-api.js';
+import { AgronomicApi } from '../../agronomic/infrastructure/agronomic-api.js';
+import { PlotAssembler } from '../../agronomic/infrastructure/plot.assembler.js';
 
 const profileApi = new ProfileApi();
+const agronomicApi = new AgronomicApi();
 
 /**
  * Reactive store that exposes Profile commands and queries.
@@ -28,6 +36,12 @@ export const useProfileStore = defineStore('profile', () => {
 
     /** @type {import('vue').Ref<Date|null>} */
     const lastSavedAt = ref(null);
+
+    /** @type {import('vue').Ref<number>} */
+    const farmTotalHectares = ref(0);
+
+    /** @type {import('vue').Ref<number>} */
+    const farmPlotCount = ref(0);
 
     /** Relative caption for the dashboard header. */
     const lastSyncLabel = computed(() => {
@@ -68,6 +82,23 @@ export const useProfileStore = defineStore('profile', () => {
     }
 
     /**
+     * Loads farm totals (total hectares, plot count) from the Agronomic context.
+     * Context Map: profile depends on agronomic for marketplace visibility data.
+     */
+    async function loadFarmTotals() {
+        try {
+            const response = await agronomicApi.getPlots();
+            const resources = response?.data ?? [];
+            const plots = PlotAssembler.toEntitiesFromResponse(resources);
+            const hectares = plots.reduce((sum, p) => sum + (p.areaSize || 0), 0);
+            farmTotalHectares.value = Number(hectares.toFixed(1));
+            farmPlotCount.value = plots.length;
+        } catch {
+            // Non-critical: farm totals are display-only.
+        }
+    }
+
+    /**
      * @param {Date} date
      * @returns {string}
      */
@@ -88,8 +119,11 @@ export const useProfileStore = defineStore('profile', () => {
         loading,
         lastSavedAt,
         lastSyncLabel,
+        farmTotalHectares,
+        farmPlotCount,
         load,
         save,
+        loadFarmTotals,
     };
 });
 

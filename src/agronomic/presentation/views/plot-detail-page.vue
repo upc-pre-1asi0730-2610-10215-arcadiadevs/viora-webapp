@@ -12,8 +12,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { AgronomicApi } from '../../infrastructure/agronomic-api.js';
-import { PlotDetailAssembler } from '../../infrastructure/plot-detail.assembler.js';
+import { useAgronomicStore } from '../../application/agronomic.store.js';
 import PlotThumbnail from '../components/plot-thumbnail.vue';
 import PlotDeleteDialog from '../components/plot-delete-dialog.vue';
 import LanguageSwitcher from '../../../shared/presentation/components/language-switcher.vue';
@@ -21,7 +20,7 @@ import LanguageSwitcher from '../../../shared/presentation/components/language-s
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const agronomicApi = new AgronomicApi();
+const agronomicStore = useAgronomicStore();
 
 const plotId = route.params.id ?? '';
 
@@ -95,8 +94,7 @@ const loadDetail = async () => {
   loading.value = true;
   errors.value = [];
   try {
-    const response = await agronomicApi.getPlotDetail(plotId);
-    detail.value = PlotDetailAssembler.toEntityFromResponse(response);
+    detail.value = await agronomicStore.fetchPlotDetail(plotId);
   } catch (error) {
     errors.value.push(error);
   } finally {
@@ -110,9 +108,11 @@ const confirmDelete = async () => {
   if (!detail.value?.id) return;
   deleting.value = true;
   try {
-    await agronomicApi.deletePlot(detail.value.id);
-    showDeleteDialog.value = false;
-    await router.push('/agronomic/plots');
+    const success = await agronomicStore.deletePlot(detail.value.id);
+    if (success) {
+      showDeleteDialog.value = false;
+      await router.push('/agronomic/plots');
+    }
   } catch (error) {
     errors.value.push(error);
   } finally {
