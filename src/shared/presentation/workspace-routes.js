@@ -20,14 +20,14 @@ const placeholder = (path, name, sectionLabel, subtitle) => ({
 const workspaceRoutes = [
   // `/agronomic/plots`, `/agronomic/plots/new` and `/agronomic/plots/:id/edit`
   // are served by the real My Plots views (see router.js).
+  // Routes with real views are registered in their feature route files:
+  //   agronomic  → agronomic-routes.js (expense-history)
+  //   surveillance → surveillance-routes.js
+  //   intervention → intervention-routes.js
+  //   billing     → billing-routes.js
+  //   profile     → profile-routes.js
+  //   support     → support-routes.js
   placeholder('/agronomic/plots/import', 'my-plots-import', 'plotImport.title', 'plotImport.subtitle'),
-  placeholder('/surveillance/alerts', 'alerts', 'sidebar.alerts', 'comingSoon.subtitle-alerts'),
-  placeholder('/surveillance/pest-surveillance', 'pest-surveillance', 'sidebar.pestSurveillance', 'comingSoon.subtitle-pest-surveillance'),
-  placeholder('/assistance/expert-assistance', 'expert-assistance', 'sidebar.expertAssistance', 'comingSoon.subtitle-expert-assistance'),
-  placeholder('/billing/expense-history', 'expense-history', 'sidebar.expenseHistory', 'comingSoon.subtitle-expense-history'),
-  placeholder('/billing/subscription', 'subscription', 'sidebar.subscription', 'comingSoon.subtitle-subscription'),
-  placeholder('/settings', 'settings', 'sidebar.settings', 'comingSoon.subtitle-settings'),
-  placeholder('/support', 'support', 'sidebar.support', 'comingSoon.subtitle-support'),
   placeholder('/profile', 'profile', 'sidebar.openProfile', 'comingSoon.subtitle-profile')
 ];
 

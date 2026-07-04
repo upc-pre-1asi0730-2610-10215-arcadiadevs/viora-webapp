@@ -6,6 +6,8 @@ import profileRoutes from "./profile/presentation/profile-routes.js";
 import billingRoutes from "./billing/presentation/billing-routes.js";
 import supportRoutes from "./support/presentation/support-routes.js";
 import workspaceRoutes from "./shared/presentation/workspace-routes.js";
+import iamRoutes from "./iam/presentation/iam-routes.js";
+import { authenticationGuard } from "./iam/infrastructure/authentication.guard.js";
 
 const producerDashboard = () => import('./shared/presentation/views/dashboard-producer.vue');
 const myPlotsOverviewPage = () => import('./agronomic/presentation/views/my-plots-overview.vue');
@@ -121,6 +123,11 @@ const routes = [
         name: 'support',
         children: supportRoutes
     },
+    {
+        path: '/iam',
+        name: 'iam',
+        children: iamRoutes
+    },
     ...workspaceRoutes,
     {
         path: '/',
@@ -134,11 +141,16 @@ const router = createRouter({
 });
 
 /**
- * Global navigation guard for updating document title.
+ * Global navigation guard: auth guard + document title.
  */
 router.beforeEach((to, from, next) => {
     document.title = `Dashboard - ${to.name}`;
-    return next();
+    const result = authenticationGuard(to, from);
+    if (result === true) {
+        next();
+    } else {
+        next(result);
+    }
 });
 
 export default router;
