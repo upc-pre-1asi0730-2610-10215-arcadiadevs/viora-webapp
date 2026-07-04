@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Application service store for the `Agronomic` bounded context.
  * It coordinates plots, telemetry, weather, and yield forecast use cases and keeps a UI-facing state.
  *
@@ -16,6 +16,10 @@ import { MonitoringSummaryAssembler } from "../infrastructure/monitoring-summary
 import { AgronomicAnalysisAssembler } from "../infrastructure/agronomic-analysis.assembler.js";
 import { IotDeviceAssembler } from "../infrastructure/iot-device.assembler.js";
 import { IotDeviceSummaryAssembler } from "../infrastructure/iot-device-summary.assembler.js";
+import { PlotDetailAssembler } from "../infrastructure/plot-detail.assembler.js";
+import { MyPlotsOverviewAssembler } from "../infrastructure/my-plots-overview.assembler.js";
+import { PlotRegistrationAssembler } from "../infrastructure/plot-registration.assembler.js";
+import { DynamicNutritionPlanAssembler } from "../infrastructure/dynamic-nutrition-plan.assembler.js";
 import { DateTimeFormatter } from "../../shared/infrastructure/date-time.formatter.js";
 
 const agronomicApi = new AgronomicApi();
@@ -402,6 +406,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
         fetchWeather();
         fetchIotDevices();
         fetchIotDeviceSummary(dashboardScope.value);
+        fetchAnalysisStatistics();
 
         if (dashboardScope.value !== 'all') {
             const period = dashboardTimeRange.value === 'current' ? undefined : dashboardTimeRange.value;
@@ -475,7 +480,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
     }
 
     function fetchIotDevices() {
-        agronomicApi.getIotDevices().then(response => {
+        return agronomicApi.getIotDevices().then(response => {
             iotDevices.value = IotDeviceAssembler.toEntitiesFromResponse(response);
             iotDevicesLoaded.value = true;
         }).catch(error => {
@@ -487,7 +492,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
      * @param {string|number} scope
      */
     function fetchIotDeviceSummary(scope) {
-        agronomicApi.getIotDeviceSummaries().then(response => {
+        return agronomicApi.getIotDeviceSummaries().then(response => {
             const entities = IotDeviceSummaryAssembler.toEntitiesFromResponse(response);
             iotDeviceSummary.value = entities.length > 0 ? entities[0] : null;
         }).catch(error => {
@@ -538,6 +543,188 @@ export const useAgronomicStore = defineStore('agronomic', () => {
         yieldForecast.value = null;
         monitoringSummary.value = null;
         summaryLoaded.value = false;
+    }
+
+    // ── Infrastructure-free data loading (Phase 1: DDD compliance) ─────
+
+    /** Extracts the first resource from an Axios response (array or object). */
+    const firstResource = (response) => {
+        const data = response?.data;
+        if (Array.isArray(data)) return data[0] ?? null;
+        return data ?? null;
+    };
+
+    /**
+     * Fetches plot detail by ID.
+     * @param {string|number} plotId
+     * @returns {Promise<Object|null>} PlotDetail entity or null.
+     */
+    async function fetchPlotDetail(plotId) {
+        if (!plotId) return null;
+        try {
+            const response = await agronomicApi.getPlotDetail(plotId);
+            return PlotDetailAssembler.toEntityFromResponse(response);
+        } catch (error) {
+            errors.value.push(error);
+            return null;
+        }
+    }
+
+    /**
+     * Fetches monitoring summary for a specific plot.
+     * @param {string|number} plotId
+     * @returns {Promise<Object|null>} Summary data or null.
+     */
+    async function fetchPlotSummary(plotId) {
+        if (!plotId) return null;
+        try {
+            const response = await agronomicApi.getPlotMonitoringSummary(plotId);
+            return firstResource(response);
+        } catch (error) {
+            errors.value.push(error);
+            return null;
+        }
+    }
+
+    /**
+     * Fetches weather forecast for a specific plot.
+     * @param {string|number} plotId
+     * @returns {Promise<Object|null>} Weather data or null.
+     */
+    async function fetchPlotWeather(plotId) {
+        if (!plotId) return null;
+        try {
+            const response = await agronomicApi.getPlotWeatherForecast(plotId);
+            return firstResource(response);
+        } catch (error) {
+            errors.value.push(error);
+            return null;
+        }
+    }
+
+    /**
+     * Fetches aggregated My Plots overview.
+     * @returns {Promise<Object>} MyPlotsOverview entity.
+     */
+    async function fetchMyPlotsOverview() {
+        try {
+            const response = await agronomicApi.getPlotsOverview();
+            return MyPlotsOverviewAssembler.toEntityFromResponse(response);
+        } catch (error) {
+            errors.value.push(error);
+            return null;
+        }
+    }
+
+    /**
+     * Fetches plot registration data for edit mode.
+     * @param {string|number} plotId
+     * @returns {Promise<Object|null>} Raw plot data or null.
+     */
+    async function fetchPlotForEdit(plotId) {
+        if (!plotId) return null;
+        try {
+            const response = await agronomicApi.getPlotById(plotId);
+            return response?.data ?? null;
+        } catch (error) {
+            errors.value.push(error);
+            return null;
+        }
+    }
+
+    /**
+     * Registers a new plot.
+     * @param {Object} plotData - Plot registration payload.
+     * @returns {Promise<Object|null>} Registration response or null.
+     */
+    async function registerPlot(plotData) {
+        try {
+            const response = await agronomicApi.createPlot(plotData);
+            return PlotRegistrationAssembler.toEntityFromResource(response.data);
+        } catch (error) {
+            errors.value.push(error);
+            return null;
+        }
+    }
+
+    /**
+     * Updates an existing plot.
+     * @param {string|number} plotId
+     * @param {Object} plotData - Plot update payload.
+     * @returns {Promise<boolean>} Success flag.
+     */
+    async function updatePlot(plotId, plotData) {
+        try {
+            await agronomicApi.updatePlot(plotId, plotData);
+            return true;
+        } catch (error) {
+            errors.value.push(error);
+            return false;
+        }
+    }
+
+    /**
+     * Deletes a plot.
+     * @param {string|number} plotId
+     * @returns {Promise<boolean>} Success flag.
+     */
+    async function deletePlot(plotId) {
+        try {
+            await agronomicApi.deletePlot(plotId);
+            return true;
+        } catch (error) {
+            errors.value.push(error);
+            return false;
+        }
+    }
+
+    /**
+     * Fetches the active nutrition plan for a plot.
+     * @param {string|number} plotId
+     * @returns {Promise<Object|null>} DynamicNutritionPlan entity or null.
+     */
+    async function fetchActiveNutritionPlan(plotId) {
+        if (!plotId) return null;
+        try {
+            const response = await agronomicApi.getActiveNutritionPlan({ plotId });
+            return DynamicNutritionPlanAssembler.toEntityFromResponse(response);
+        } catch (error) {
+            errors.value.push(error);
+            return null;
+        }
+    }
+
+    /**
+     * Generates a new nutrition plan for a plot.
+     * @param {string|number} plotId
+     * @returns {Promise<boolean>} Success flag.
+     */
+    async function generateNutritionPlan(plotId) {
+        if (!plotId) return false;
+        try {
+            await agronomicApi.generateNutritionPlan({ plotId });
+            return true;
+        } catch (error) {
+            errors.value.push(error);
+            return false;
+        }
+    }
+
+    /**
+     * Certifies a nutrition plan with application data.
+     * @param {string|number} planId
+     * @param {Object} application - Certification payload.
+     * @returns {Promise<Object|null>} Updated DynamicNutritionPlan or null.
+     */
+    async function certifyNutritionPlan(planId, application) {
+        if (!planId) return null;
+        try {
+            const response = await agronomicApi.certifyNutritionPlan(planId, application);
+            return DynamicNutritionPlanAssembler.toEntityFromResponse(response);
+        } catch (error) {
+            errors.value.push(error);
+            return null;
+        }
     }
 
     return {
@@ -593,7 +780,19 @@ export const useAgronomicStore = defineStore('agronomic', () => {
         getIotDeviceById,
         addIotDevice,
         updateIotDevice,
-        deleteIotDevice
+        deleteIotDevice,
+        firstResource,
+        fetchPlotDetail,
+        fetchPlotSummary,
+        fetchPlotWeather,
+        fetchMyPlotsOverview,
+        fetchPlotForEdit,
+        registerPlot,
+        updatePlot,
+        deletePlot,
+        fetchActiveNutritionPlan,
+        generateNutritionPlan,
+        certifyNutritionPlan
     };
 });
 

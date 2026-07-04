@@ -1,8 +1,7 @@
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { AgronomicApi } from '../../infrastructure/agronomic-api.js';
-import { PlotAssembler } from '../../infrastructure/plot.assembler.js';
+import { useAgronomicStore } from '../../application/agronomic.store.js';
 import { DateTimeFormatter } from '../../../shared/infrastructure/date-time.formatter.js';
 import { mapboxService } from '../../../shared/infrastructure/mapbox.service.js';
 import LanguageSwitcher from '../../../shared/presentation/components/language-switcher.vue';
@@ -12,7 +11,7 @@ const WEATHER_BACKGROUND_ROOT = '/assets/icons/backgrounds';
 
 const router = useRouter();
 const route = useRoute();
-const agronomicApi = new AgronomicApi();
+const agronomicStore = useAgronomicStore();
 
 const plots = ref([]);
 const selectedPlotId = ref(null);
@@ -24,12 +23,6 @@ const loadingPlots = ref(false);
 const errors = ref([]);
 const precipitationMapContainer = ref(null);
 const precipitationMap = shallowRef(null);
-
-const firstResource = (response) => {
-  const data = response?.data;
-  if (Array.isArray(data)) return data[0] ?? null;
-  return data ?? null;
-};
 
 const normalizeStatus = (status = '') => String(status || '').replace(/_/g, ' ').trim();
 
@@ -232,8 +225,7 @@ const loadWeatherForPlot = async (plotId, { force = false } = {}) => {
   const key = String(plotId);
   if (!force && weatherByPlotId.value[key]) return weatherByPlotId.value[key];
 
-  const response = await agronomicApi.getPlotWeatherForecast(plotId);
-  const weather = firstResource(response);
+  const weather = await agronomicStore.fetchPlotWeather(plotId);
   weatherByPlotId.value = { ...weatherByPlotId.value, [key]: weather };
   return weather;
 };
@@ -243,8 +235,7 @@ const loadSummaryForPlot = async (plotId, { force = false } = {}) => {
   const key = String(plotId);
   if (!force && summaryByPlotId.value[key]) return summaryByPlotId.value[key];
 
-  const response = await agronomicApi.getPlotMonitoringSummary(plotId);
-  const summary = firstResource(response);
+  const summary = await agronomicStore.fetchPlotSummary(plotId);
   summaryByPlotId.value = { ...summaryByPlotId.value, [key]: summary };
   return summary;
 };
@@ -252,8 +243,8 @@ const loadSummaryForPlot = async (plotId, { force = false } = {}) => {
 const loadPlots = async () => {
   loadingPlots.value = true;
   try {
-    const response = await agronomicApi.getPlots();
-    plots.value = PlotAssembler.toEntitiesFromResponse(response);
+    await agronomicStore.fetchPlots();
+    plots.value = agronomicStore.plots;
     await Promise.all(plots.value.map((plot) => loadWeatherForPlot(plot.id).catch((error) => errors.value.push(error))));
   } catch (error) {
     errors.value.push(error);
