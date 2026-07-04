@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.1] - 2026-07-03
+
+### Added
+
+- expense entity and assembler for agronomic context
+- expense history overview view with modal and CSV export
+- trend analysis card component for agronomic dashboard
+- iam user entity, authentication guard, sign-in/up assemblers and resources
+- iam routes configuration
+- surveillance recommended actions card
+- referral and coupon images for billing presentation
+
+### Changed
+
+- updated router.js and workspace-routes.js with agronomic route definitions
+- updated vite.config.js proxy settings
+- updated .env.development with api endpoints
+
 ## [2.7.0] - 2026-07-03
 
 ### Changed

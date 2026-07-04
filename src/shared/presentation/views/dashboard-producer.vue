@@ -21,6 +21,8 @@ import PlotOverviewWidget from "../../../agronomic/presentation/components/plot-
 import AgronomicAnalysisWidget from "../../../agronomic/presentation/components/agronomic-analysis-widget.vue";
 import WeatherSummary from "../../../agronomic/presentation/components/weather-summary.vue";
 import RecentAlertsWidget from "../../../surveillance/presentation/components/recent-alerts-widget.vue";
+import RecommendedActionsCard from "../../../surveillance/presentation/components/recommended-actions-card.vue";
+import TrendAnalysisCard from "../../../agronomic/presentation/components/trend-analysis-card.vue";
 import DashboardToolbar from "../components/dashboard-toolbar.vue";
 import LanguageSwitcher from "../components/language-switcher.vue";
 import IotDevicesCard from '../../../agronomic/presentation/components/iot-devices-card.vue';
@@ -170,15 +172,17 @@ onMounted(() => {
       </div>
     </section>
 
-    <section class="w-full max-w-full mx-auto px-4 lg:px-0 mb-[26px] flex">
-      <div class="w-full lg:w-[75%]">
-        <RecentAlertsWidget />
-      </div>
-      <div class="hidden lg:block lg:w-[25%]"></div>
+    <section class="surveillance-row">
+      <RecentAlertsWidget />
+      <RecommendedActionsCard />
     </section>
 
     <section class="w-full max-w-full mx-auto px-4 lg:px-0 pb-10">
       <AgronomicAnalysisWidget />
+    </section>
+
+    <section class="w-full max-w-full mx-auto px-4 lg:px-0 pb-10">
+      <TrendAnalysisCard />
     </section>
   </div>
 </template>
@@ -345,5 +349,15 @@ a.breadcrumb-item:hover {
   .lower-grid { grid-template-columns: 1fr; }
   .iot-grid { grid-template-columns: repeat(2, 1fr); }
   .kpi-grid-container { grid-template-columns: repeat(2, 1fr); }
+  .surveillance-row { grid-template-columns: 1fr; }
+}
+
+.surveillance-row {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(220px, 0.8fr);
+  gap: 24px;
+  margin-top: 24px;
+  margin-bottom: 26px;
+  padding: 0 16px;
 }
 </style>

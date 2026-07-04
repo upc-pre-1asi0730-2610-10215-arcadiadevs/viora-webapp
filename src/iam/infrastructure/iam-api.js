@@ -1,41 +1,48 @@
 import { BaseApi } from '../../shared/infrastructure/base-api.js';
 import { BaseEndpoint } from '../../shared/infrastructure/base-endpoint.js';
 
-import { UserSessionAssembler } from './iam-response.js';
-
+const authPath = import.meta.env.VITE_AUTH_ENDPOINT_PATH || '/auth';
 const usersPath = import.meta.env.VITE_USERS_ENDPOINT_PATH || '/users';
 
-/**
- * Infrastructure gateway for IAM account-security operations (Settings > Security).
- * Password change, active sessions, and account deactivation for the active user.
- * @class IamApi
- * @extends BaseApi
- */
 export class IamApi extends BaseApi {
-    #usersEndpoint;
+  #authEndpoint;
+  #usersEndpoint;
 
-    constructor() {
-        super();
-        this.#usersEndpoint = new BaseEndpoint(this, usersPath);
-    }
+  constructor() {
+    super();
+    this.#authEndpoint = new BaseEndpoint(this, authPath);
+    this.#usersEndpoint = new BaseEndpoint(this, usersPath);
+  }
 
-    /** Lists the active user's signed-in sessions. */
-    getSessions(userId) {
-        return this.http.get(`${this.#usersEndpoint.endpointPath}/${userId}/sessions`);
-    }
+  signIn(request) {
+    return this.http.post(`${this.#authEndpoint.endpointPath}/sign-in`, request);
+  }
 
-    /** Revokes (signs out) a session. Errors are surfaced to callers. */
-    revokeSession(userId, sessionId) {
-        return this.http.delete(`${this.#usersEndpoint.endpointPath}/${userId}/sessions/${sessionId}`);
-    }
+  signUp(request) {
+    return this.http.post(`${this.#authEndpoint.endpointPath}/sign-up`, request);
+  }
 
-    /** Changes the active user's password. Errors are surfaced to callers. */
-    changePassword(userId, request) {
-        return this.http.put(`${this.#usersEndpoint.endpointPath}/${userId}/password`, request);
-    }
+  verify(token) {
+    return this.http.post(`${this.#authEndpoint.endpointPath}/verify`, { token });
+  }
 
-    /** Deactivates the active user's account (Danger zone). */
-    deactivateAccount(userId) {
-        return this.http.patch(`${this.#usersEndpoint.endpointPath}/${userId}/deactivate`, {});
-    }
+  resendVerification(email) {
+    return this.http.post(`${this.#authEndpoint.endpointPath}/resend-verification`, { email });
+  }
+
+  getSessions(userId) {
+    return this.http.get(`${this.#usersEndpoint.endpointPath}/${userId}/sessions`);
+  }
+
+  revokeSession(userId, sessionId) {
+    return this.http.delete(`${this.#usersEndpoint.endpointPath}/${userId}/sessions/${sessionId}`);
+  }
+
+  changePassword(userId, request) {
+    return this.http.put(`${this.#usersEndpoint.endpointPath}/${userId}/password`, request);
+  }
+
+  deactivateAccount(userId) {
+    return this.http.patch(`${this.#usersEndpoint.endpointPath}/${userId}/deactivate`, {});
+  }
 }
