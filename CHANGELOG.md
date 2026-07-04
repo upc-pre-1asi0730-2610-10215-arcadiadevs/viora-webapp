@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0] - 2026-07-03
+
+### Changed
+
+- DDD architecture audit and refactoring across all bounded contexts
+- agronomic presentation views no longer import infrastructure directly (assemblers, API gateways)
+- agronomic store extended with 11 new methods for data loading
+- expense-api refactored to extend BaseApi with BaseEndpoint
+- profile store gains loadFarmTotals with documented Context Map dependency on agronomic
+- shared kernel decoupled from iam via interceptor registry pattern
+- iam store uses shared IamApi singleton instance
+- iam domain gains SignInCommand and SignUpCommand command objects
+- iam store methods return {success, error} results instead of handling navigation
+- navigation (router.push) moved from stores to presentation layer
+
+### Added
+
+- shared/infrastructure/interceptor-registry.js for cross-context interceptor registration
+- iam/infrastructure/iam-api-instance.js for IamApi singleton
+- iam/domain/model/sign-in.command.js and sign-up.command.js command objects
+
+### Fixed
+
+- expense-api missing auth interceptor (was using native fetch without Bearer token)
+- iam store duplicated IamApi instances across iam.store.js and security.store.js
+
 ## [2.6.0] - 2026-07-03
 
 ### Added
