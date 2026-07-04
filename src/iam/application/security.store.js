@@ -8,10 +8,10 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-import { IamApi } from "../infrastructure/iam-api.js";
+import { getIamApi } from "../infrastructure/iam-api-instance.js";
 import { UserSessionAssembler } from "../infrastructure/iam-response.js";
 
-const iamApi = new IamApi();
+const iamApi = getIamApi();
 const defaultUserId = import.meta.env.VITE_DEFAULT_USER_ID;
 
 /**
