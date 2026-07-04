@@ -11,15 +11,14 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { AgronomicApi } from '../../infrastructure/agronomic-api.js';
-import { PlotRegistrationAssembler } from '../../infrastructure/plot-registration.assembler.js';
+import { useAgronomicStore } from '../../application/agronomic.store.js';
 import PlotBoundaryMap from '../components/plot-boundary-map.vue';
 import LanguageSwitcher from '../../../shared/presentation/components/language-switcher.vue';
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const agronomicApi = new AgronomicApi();
+const agronomicStore = useAgronomicStore();
 
 /** AgroMonitoring rejects polygons below 1 ha (no satellite/NDVI coverage). */
 const MIN_AREA_HECTARES = 1;
@@ -183,7 +182,7 @@ const registerPlot = async () => {
 
   try {
     if (isEditMode.value) {
-      await agronomicApi.updatePlot(editPlotId, {
+      const success = await agronomicStore.updatePlot(editPlotId, {
         name: raw.name.trim(),
         polygonCoordinates,
         cropType: raw.cropType.trim(),
@@ -191,11 +190,11 @@ const registerPlot = async () => {
         location: raw.location.trim(),
         notes: raw.notes.trim()
       });
-      await router.push(`/dashboard/plot-overview/${editPlotId}`);
+      if (success) await router.push(`/dashboard/plot-overview/${editPlotId}`);
       return;
     }
 
-    const response = await agronomicApi.createPlot({
+    registration.value = await agronomicStore.registerPlot({
       name: raw.name.trim(),
       polygonCoordinates,
       cropType: optional(raw.cropType),
@@ -203,7 +202,6 @@ const registerPlot = async () => {
       location: optional(raw.location),
       notes: optional(raw.notes)
     });
-    registration.value = PlotRegistrationAssembler.toEntityFromResource(response.data);
   } catch (error) {
     errors.value.push(error);
   } finally {
@@ -227,8 +225,8 @@ const viewPlotDetail = () => {
 const preloadForEdit = async () => {
   if (!isEditMode.value) return;
   try {
-    const response = await agronomicApi.getPlotById(editPlotId);
-    const data = response?.data ?? {};
+    const data = await agronomicStore.fetchPlotForEdit(editPlotId);
+    if (!data) return;
     form.value = {
       name: data.name ?? '',
       cropType: data.cropType ?? '',

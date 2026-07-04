@@ -10,14 +10,13 @@
  */
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { AgronomicApi } from '../../infrastructure/agronomic-api.js';
-import { MyPlotsOverviewAssembler } from '../../infrastructure/my-plots-overview.assembler.js';
+import { useAgronomicStore } from '../../application/agronomic.store.js';
 import { MyPlotsOverview } from '../../domain/model/my-plots-overview.entity.js';
 import PlotThumbnail from '../components/plot-thumbnail.vue';
 import LanguageSwitcher from '../../../shared/presentation/components/language-switcher.vue';
 
 const { t } = useI18n();
-const agronomicApi = new AgronomicApi();
+const agronomicStore = useAgronomicStore();
 
 const overview = ref(new MyPlotsOverview());
 const loading = ref(false);
@@ -78,8 +77,8 @@ const loadOverview = async () => {
   loading.value = true;
   errors.value = [];
   try {
-    const response = await agronomicApi.getPlotsOverview();
-    overview.value = MyPlotsOverviewAssembler.toEntityFromResponse(response);
+    const result = await agronomicStore.fetchMyPlotsOverview();
+    if (result) overview.value = result;
   } catch (error) {
     errors.value.push(error);
   } finally {

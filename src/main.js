@@ -16,6 +16,9 @@ import pinia from "./pinia.js";
 import Chart from "primevue/chart";
 import router from "./router.js";
 
+// Register IAM auth interceptor before any BaseApi is constructed.
+import './iam/infrastructure/iam.interceptor.js';
+
 createApp(App)
     .use(pinia)
     .use(i18n)

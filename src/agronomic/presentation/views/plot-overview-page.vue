@@ -3,18 +3,14 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { usePlotMap } from '../../application/use-plot-map.js';
-import { AgronomicApi } from '../../infrastructure/agronomic-api.js';
-import { PlotAssembler } from '../../infrastructure/plot.assembler.js';
-import { WeatherSummaryAssembler } from '../../infrastructure/weather-summary.assembler.js';
-import { IotDeviceAssembler } from '../../infrastructure/iot-device.assembler.js';
-import { IotDeviceSummaryAssembler } from '../../infrastructure/iot-device-summary.assembler.js';
+import { useAgronomicStore } from '../../application/agronomic.store.js';
 import { DateTimeFormatter } from '../../../shared/infrastructure/date-time.formatter.js';
 import LanguageSwitcher from '../../../shared/presentation/components/language-switcher.vue';
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
-const agronomicApi = new AgronomicApi();
+const agronomicStore = useAgronomicStore();
 
 const plots = ref([]);
 const selectedPlotId = ref(null);
@@ -35,12 +31,6 @@ const { init: initPlotMap, render: renderPlotMap } = usePlotMap(mapContainer, {
     mapInitialized.value = false;
   }
 });
-
-const firstResource = (response) => {
-  const data = response?.data;
-  if (Array.isArray(data)) return data[0] ?? null;
-  return data ?? null;
-};
 
 const selectedPlot = computed(() => {
   return plots.value.find((plot) => String(plot.id) === String(selectedPlotId.value)) ?? null;
@@ -206,8 +196,8 @@ const renderSelectedPlotMap = async () => {
 const loadPlots = async () => {
   loadingPlots.value = true;
   try {
-    const response = await agronomicApi.getPlots();
-    plots.value = PlotAssembler.toEntitiesFromResponse(response);
+    await agronomicStore.fetchPlots();
+    plots.value = agronomicStore.plots;
   } catch (error) {
     errors.value.push(error);
   } finally {
@@ -221,19 +211,23 @@ const loadPlotData = async (plotId) => {
   errors.value = [];
 
   try {
-    const [detailResponse, summaryResponse, weatherResponse, devicesResponse, summaryDevicesResponse] = await Promise.all([
-      agronomicApi.getPlotDetail(plotId),
-      agronomicApi.getPlotMonitoringSummary(plotId),
-      agronomicApi.getPlotWeatherForecast(plotId),
-      agronomicApi.getIotDevices(plotId),
-      agronomicApi.getIotDeviceSummaries()
+    const [detail, summary, weather] = await Promise.all([
+      agronomicStore.fetchPlotDetail(plotId),
+      agronomicStore.fetchPlotSummary(plotId),
+      agronomicStore.fetchPlotWeather(plotId)
     ]);
 
-    plotDetail.value = firstResource(detailResponse);
-    plotSummary.value = firstResource(summaryResponse);
-    weatherSummary.value = WeatherSummaryAssembler.toEntitiesFromResponse(weatherResponse)[0] ?? null;
-    iotDevices.value = IotDeviceAssembler.toEntitiesFromResponse(devicesResponse);
-    iotDeviceSummary.value = IotDeviceSummaryAssembler.toEntitiesFromResponse(summaryDevicesResponse)[0] ?? null;
+    plotDetail.value = detail;
+    plotSummary.value = summary;
+    weatherSummary.value = weather;
+
+    await Promise.all([
+      agronomicStore.fetchIotDevices(),
+      agronomicStore.fetchIotDeviceSummary(plotId)
+    ]);
+
+    iotDevices.value = agronomicStore.iotDevices;
+    iotDeviceSummary.value = agronomicStore.iotDeviceSummary;
     await renderSelectedPlotMap();
   } catch (error) {
     errors.value.push(error);
