@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getRequestInterceptors } from "./interceptor-registry.js";
 
 const platformApi = import.meta.env.VITE_VIORA_PLATFORM_API_URL;
 const mockApi = import.meta.env.VITE_MOCK_API_URL;
@@ -38,6 +39,10 @@ export class BaseApi {
     constructor() {
         this.#http = createClient(platformApi);
         this.#mockHttp = createClient(mockApi);
+
+        for (const interceptor of getRequestInterceptors()) {
+            this.#http.interceptors.request.use(interceptor);
+        }
 
         this.#http.interceptors.request.use((config) => {
             if (!defaultUserId) return config;
