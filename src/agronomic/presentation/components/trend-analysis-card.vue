@@ -145,7 +145,7 @@ const onTimeRangeSelected = (event) => store.setAnalysisTimeRange(event.target.v
 <template>
   <div class="trend-analysis-card">
     <div class="trend-header">
-      <h2>{{ t('agronomic.trendAnalysis') || 'Trend Analysis' }}</h2>
+      <h2>{{ t('dashboard.analysis-title') }}</h2>
       <div class="trend-controls">
         <select :value="store.analysisPlotId" @change="onPlotSelected" class="trend-select">
           <option value="all">All Plots</option>
@@ -158,7 +158,7 @@ const onTimeRangeSelected = (event) => store.setAnalysisTimeRange(event.target.v
     </div>
     <div class="trend-chart-container">
       <Bar v-if="chartData.labels.length" :data="chartData" :options="chartOptions" />
-      <p v-else class="trend-empty">{{ t('agronomic.noData') || 'No data available' }}</p>
+      <p v-else class="trend-empty">{{ t('dashboard.insufficient-records-msg') }}</p>
     </div>
   </div>
 </template>

@@ -15,6 +15,7 @@ import { useAgronomicStore } from '../../application/agronomic.store.js';
 import { DynamicNutritionPlan } from '../../domain/model/dynamic-nutrition-plan.entity.js';
 import { normalizeClimateRisk } from '../../infrastructure/status-normalizers.js';
 import LanguageSwitcher from '../../../shared/presentation/components/language-switcher.vue';
+import DashboardHeader from '../../../shared/presentation/components/dashboard-header.vue';
 
 /**
  * Reference olive farm-gate price (S/ per tonne) used to estimate the margin in
@@ -24,6 +25,12 @@ const REFERENCE_PRICE_PER_TONNE = 4200;
 
 const { t } = useI18n();
 const agronomicStore = useAgronomicStore();
+
+const breadcrumbs = computed(() => [
+  { label: t('sidebar.dashboard'), route: '/dashboard' },
+  { label: t('sidebar.dynamicNutrition'), disabled: true },
+  { label: t('dynamicNutrition.activePlan'), disabled: true }
+]);
 
 const plots = ref([]);
 const selectedPlotId = ref(null);
@@ -242,29 +249,16 @@ onMounted(loadPlots);
 <template>
   <section class="nutrition-page">
     <!-- Header -->
-    <header class="page-header">
-      <div class="header-copy">
-        <nav class="page-breadcrumb" aria-label="Page breadcrumb">
-          <router-link to="/dashboard">{{ t('sidebar.dashboard') }}</router-link>
-          <span>/</span>
-          <span>{{ t('sidebar.dynamicNutrition') }}</span>
-          <span>/</span>
-          <strong>{{ t('dynamicNutrition.activePlan') }}</strong>
-        </nav>
-        <p>{{ t('dynamicNutrition.subtitle') }}</p>
-      </div>
-
-      <div class="page-actions">
-        <div class="status-sync-box">
-          <span>{{ t('common.updated') }}</span>
-          <strong>· {{ updatedLabel }}</strong>
-        </div>
+    <DashboardHeader
+      :breadcrumbs="breadcrumbs"
+      :subtitle="t('dynamicNutrition.subtitle')"
+      :updated-label="`${t('common.updated')} · ${updatedLabel}`"
+      @refresh="refresh"
+    >
+      <template #actions>
         <LanguageSwitcher />
-        <button type="button" class="refresh-btn-viora" :aria-label="t('common.refresh')" @click="refresh">
-          <i class="pi pi-refresh"></i>
-        </button>
-      </div>
-    </header>
+      </template>
+    </DashboardHeader>
 
     <!-- Quick actions -->
     <nav class="quick-actions">
@@ -622,77 +616,6 @@ onMounted(loadPlots);
   font-family: 'Poppins', sans-serif;
 }
 
-/* ---------- Header ---------- */
-.page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 24px;
-}
-
-.page-breadcrumb {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.2;
-  color: #1f2523;
-}
-
-.page-breadcrumb a {
-  color: #1f2523;
-  text-decoration: none;
-}
-
-.page-breadcrumb span {
-  color: #8c877f;
-  font-weight: 500;
-}
-
-.header-copy p {
-  margin: 8px 0 0;
-  color: #8c877f;
-  font-size: 13px;
-}
-
-.page-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.status-sync-box {
-  height: 42px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 18px;
-  border: 1.5px solid #9aa39d;
-  border-radius: 999px;
-  color: #2e4a3a;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-sync-box span {
-  color: #2f7fd5;
-}
-
-.refresh-btn-viora {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border: 1.5px solid #2e4a3a;
-  border-radius: 8px;
-  background: transparent;
-  color: #2e4a3a;
-  cursor: pointer;
-}
 
 /* ---------- Quick actions ---------- */
 .quick-actions {
