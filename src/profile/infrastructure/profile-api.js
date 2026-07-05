@@ -1,6 +1,7 @@
 import { BaseApi } from '../../shared/infrastructure/base-api.js';
 import { BaseEndpoint } from '../../shared/infrastructure/base-endpoint.js';
 import { ProfileAssembler } from './profile-response.js';
+import { requireActiveUserId } from '../../shared/infrastructure/active-session.js';
 
 const profilesEndpointPath = import.meta.env.VITE_PROFILES_ENDPOINT_PATH || '/profiles';
 
@@ -21,14 +22,14 @@ export class ProfileApi extends BaseApi {
 
     /** Fetches the active account holder's profile. */
     async getProfile() {
-        const response = await this.#profilesEndpoint.getAll();
+        const response = await this.#profilesEndpoint.getById(requireActiveUserId());
         return ProfileAssembler.toEntityFromResource(response.data);
     }
 
     /** Persists the editable profile fields (upsert on the backend). */
     async updateProfile(changes) {
         const response = await this.#profilesEndpoint.http.put(
-            this.#profilesEndpoint.endpointPath,
+            `${this.#profilesEndpoint.endpointPath}/${requireActiveUserId()}`,
             changes,
         );
         return ProfileAssembler.toEntityFromResource(response.data);
