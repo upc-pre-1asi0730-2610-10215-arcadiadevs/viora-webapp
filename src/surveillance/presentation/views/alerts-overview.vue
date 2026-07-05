@@ -4,17 +4,36 @@
  * Full surveillance alerts dashboard with KPIs, table, and community risk section.
  * @component
  */
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { useSurveillanceStore } from '../../application/surveillance.store.js';
+import { useAgronomicStore } from '../../../agronomic/application/agronomic.store.js';
+import DashboardHeader from '../../../shared/presentation/components/dashboard-header.vue';
+import DashboardToolbar from '../../../shared/presentation/components/dashboard-toolbar.vue';
 import CommunityRiskMap from '../components/community-risk-map.vue';
 
 const surveillanceStore = useSurveillanceStore();
+const agronomicStore = useAgronomicStore();
 const { t } = useI18n();
+const router = useRouter();
 
 const searchQuery = ref('');
 const currentPage = ref(1);
 const pageSize = ref(10);
+const selectedRiskPlotId = ref(null);
+
+watch(searchQuery, () => { currentPage.value = 1; });
+
+const breadcrumbs = [
+    { label: 'Alerts', disabled: true },
+    { label: 'Overview', disabled: true },
+];
+
+const surveillanceViewOptions = [
+    { id: 'alerts', label: 'Alerts', route: '/surveillance/alerts', icon: 'bell', active: true },
+    { id: 'pest-surveillance', label: 'Pest Surveillance', route: '/surveillance/pest-surveillance', icon: 'shield' },
+];
 
 const filteredAlerts = computed(() => {
     if (!searchQuery.value) return surveillanceStore.alerts;
@@ -33,6 +52,55 @@ const paginatedAlerts = computed(() => {
 });
 
 const totalPages = computed(() => Math.ceil(filteredAlerts.value.length / pageSize.value));
+
+const pageNumbers = computed(() => Array.from({ length: totalPages.value }, (_, index) => index + 1));
+
+const rangeLabel = computed(() => {
+    const total = filteredAlerts.value.length;
+    if (total === 0) return 'No alerts to show';
+    const start = (currentPage.value - 1) * pageSize.value + 1;
+    const end = Math.min(start + pageSize.value - 1, total);
+    return `Showing ${start} to ${end} of ${total} alerts`;
+});
+
+const goToPage = (page) => {
+    if (page < 1 || page > totalPages.value) return;
+    currentPage.value = page;
+};
+
+const selectedRiskPlot = computed(() => {
+    return agronomicStore.plots.find(plot => String(plot.id) === String(selectedRiskPlotId.value)) ?? null;
+});
+
+const calculateBoundaryCenter = (boundary) => {
+    if (!boundary?.length) return null;
+    const validPoints = boundary.filter(point => Array.isArray(point) && point.length >= 2);
+    if (validPoints.length === 0) return null;
+
+    return validPoints
+        .reduce((acc, point) => [acc[0] + Number(point[0]), acc[1] + Number(point[1])], [0, 0])
+        .map(total => total / validPoints.length);
+};
+
+const communityRiskCenter = computed(() => {
+    return calculateBoundaryCenter(selectedRiskPlot.value?.polygonCoordinates ?? []);
+});
+
+const selectRiskPlot = (plotId) => {
+    selectedRiskPlotId.value = plotId;
+    if (plotId) surveillanceStore.loadCommunityRisk(plotId, 5);
+};
+
+const initializeCommunityRiskScope = async () => {
+    if (!agronomicStore.plotsLoaded) await agronomicStore.fetchPlots();
+    const initialPlotId = agronomicStore.plots[0]?.id ?? null;
+    if (initialPlotId !== null) selectRiskPlot(initialPlotId);
+};
+
+const refreshAlerts = () => {
+    surveillanceStore.fetchAlerts(50);
+    void initializeCommunityRiskScope();
+};
 
 const getAlertIcon = (type) => {
     if (type === 'Phenological risk') return 'pi pi-cloud';
@@ -56,20 +124,72 @@ const getStatusStyle = (status) => {
     return { backgroundColor: '#F3F4F6', color: '#6B7280' };
 };
 
-onMounted(() => {
+const isOpenAlert = (alert) => alert?.status !== 'Resolved' && alert?.status !== 'Dismissed';
+
+const alertActionFor = (alert) => {
+    const type = String(alert?.type ?? '').trim().toUpperCase();
+
+    switch (type) {
+        case 'PHENOLOGICAL_RISK':
+            return { label: 'Open nutrition plan', route: '/agronomic/dynamic-nutrition' };
+        case 'CHILL_DEFICIT':
+        case 'CLIMATE_EXTREME':
+            return { label: 'View climate detail', route: '/agronomic/plots' };
+        case 'PEST_SYMPTOM':
+        case 'PEST_SYMPTOM_REPORT':
+        case 'XYLELLA_RELATED':
+            return { label: 'Request expert', route: '/assistance/expert-assistance/request' };
+        case 'COMMUNITY_PEST':
+            return { label: 'Inspect plot', review: true };
+        case 'LOW_NDVI':
+        case 'LOW_NDVI_ZONE':
+            return { label: 'View plot overview', route: '/agronomic/plots' };
+        case 'HYDRIC_STRESS':
+        case 'WATER_STRESS':
+            return { label: 'Review telemetry', route: '/agronomic/iot-devices' };
+        default:
+            return { label: 'View details', route: '/agronomic/plots' };
+    }
+};
+
+const runAlertAction = (alert) => {
+    const action = alertActionFor(alert);
+
+    if (action.review) {
+        if (alert?.id != null) surveillanceStore.markUnderReview(alert.id);
+        return;
+    }
+
+    if (action.route) router.push(action.route);
+};
+
+const resolveAlert = (alert) => {
+    if (alert?.id != null) surveillanceStore.resolveAlert(alert.id);
+};
+
+const dismissAlert = (alert) => {
+    if (alert?.id != null) surveillanceStore.dismissAlert(alert.id);
+};
+
+onMounted(async () => {
     surveillanceStore.fetchAlerts(50);
-    surveillanceStore.loadCommunityRisk(1, 5);
+    await initializeCommunityRiskScope();
 });
 </script>
 
 <template>
     <div class="alerts-overview">
-        <!-- Breadcrumb -->
-        <div class="breadcrumb-header">
-            <span class="breadcrumb-item">Surveillance</span>
-            <span class="breadcrumb-sep">/</span>
-            <span class="breadcrumb-item active">Alerts Overview</span>
-        </div>
+        <DashboardHeader
+            :breadcrumbs="breadcrumbs"
+            subtitle="Monitor active surveillance alerts and nearby community risk."
+            updated-label="Latest data"
+            @refresh="refreshAlerts"
+        />
+
+        <DashboardToolbar
+            class="surveillance-toolbar"
+            :view-options="surveillanceViewOptions"
+        />
 
         <!-- KPI Cards -->
         <div class="kpi-grid">
@@ -118,6 +238,7 @@ onMounted(() => {
                     <div class="table-thead">
                         <div class="col-type">Type</div>
                         <div class="col-plot">Plot</div>
+                        <div class="col-source">Source</div>
                         <div class="col-severity">Severity</div>
                         <div class="col-date">Date</div>
                         <div class="col-status">Status</div>
@@ -141,6 +262,9 @@ onMounted(() => {
                                 <span class="plot-name">{{ alert.plot?.name || 'N/A' }}</span>
                                 <span class="plot-meta">{{ alert.plot?.location }}</span>
                             </div>
+                            <div class="col-source cell-source">
+                                {{ alert.primarySource }}
+                            </div>
                             <div class="col-severity">
                                 <div class="severity-tag" :style="getSeverityStyle(alert.severity)">
                                     {{ alert.severity }}
@@ -154,23 +278,22 @@ onMounted(() => {
                             </div>
                             <div class="col-actions">
                                 <pv-button
-                                    v-if="alert.status === 'Pending'"
-                                    icon="pi pi-eye"
-                                    class="p-button-text p-button-sm"
-                                    @click="surveillanceStore.markUnderReview(alert.id)"
-                                    v-tooltip.top="'Mark Under Review'"
+                                    :label="alertActionFor(alert).label"
+                                    class="p-button-text p-button-sm primary-row-action"
+                                    @click="runAlertAction(alert)"
                                 />
                                 <pv-button
-                                    v-if="alert.status === 'Under review'"
+                                    v-if="isOpenAlert(alert)"
                                     icon="pi pi-check"
                                     class="p-button-text p-button-sm p-button-success"
-                                    @click="surveillanceStore.resolveAlert(alert.id)"
+                                    @click="resolveAlert(alert)"
                                     v-tooltip.top="'Resolve'"
                                 />
                                 <pv-button
+                                    v-if="isOpenAlert(alert)"
                                     icon="pi pi-times"
                                     class="p-button-text p-button-sm p-button-secondary"
-                                    @click="surveillanceStore.dismissAlert(alert.id)"
+                                    @click="dismissAlert(alert)"
                                     v-tooltip.top="'Dismiss'"
                                 />
                             </div>
@@ -186,15 +309,25 @@ onMounted(() => {
                         icon="pi pi-chevron-left"
                         class="p-button-text p-button-sm"
                         :disabled="currentPage <= 1"
-                        @click="currentPage--"
+                        @click="goToPage(currentPage - 1)"
                     />
-                    <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+                    <button
+                        v-for="page in pageNumbers"
+                        :key="page"
+                        type="button"
+                        class="page-dot"
+                        :class="{ active: page === currentPage }"
+                        @click="goToPage(page)"
+                    >
+                        {{ page }}
+                    </button>
                     <pv-button
                         icon="pi pi-chevron-right"
                         class="p-button-text p-button-sm"
                         :disabled="currentPage >= totalPages"
-                        @click="currentPage++"
+                        @click="goToPage(currentPage + 1)"
                     />
+                    <span class="range-label">{{ rangeLabel }}</span>
                 </div>
             </template>
         </pv-card>
@@ -204,15 +337,32 @@ onMounted(() => {
             <template #content>
                 <div class="table-header">
                     <h2 class="table-title">Community Risk</h2>
-                    <span class="radius-badge">{{ surveillanceStore.communityRisk.radiusKm }} km radius</span>
+                    <div class="risk-header-actions">
+                        <pv-select
+                            id="community-risk-plot-scope"
+                            v-model="selectedRiskPlotId"
+                            :options="agronomicStore.plots"
+                            option-label="name"
+                            option-value="id"
+                            placeholder="Select plot"
+                            class="scope-select"
+                            @change="selectRiskPlot(selectedRiskPlotId)"
+                        />
+                        <span class="radius-badge">{{ surveillanceStore.communityRisk.radiusKm }} km radius</span>
+                    </div>
                 </div>
                 <div class="community-risk-layout">
                     <div class="risk-map-col">
                         <CommunityRiskMap
-                            :center="[-70.04, -18.01]"
+                            v-if="communityRiskCenter"
+                            :key="String(selectedRiskPlotId) + '-' + surveillanceStore.communityRisk.signals.length"
+                            :center="communityRiskCenter"
                             :radius-km="surveillanceStore.communityRisk.radiusKm"
                             :signals="surveillanceStore.communityRisk.signals"
                         />
+                        <div v-else class="empty-map-state">
+                            Select a plot with boundary data to inspect community risk.
+                        </div>
                     </div>
                     <div class="risk-details-col">
                         <div class="signals-list">
@@ -249,12 +399,15 @@ onMounted(() => {
                 </div>
             </template>
         </pv-card>
+
+        <div v-if="surveillanceStore.errors.length > 0" class="error-box">
+            <strong>Something went wrong loading surveillance data.</strong>
+        </div>
     </div>
 </template>
 
 <style scoped>
 .alerts-overview {
-    padding: 24px;
     font-family: 'Poppins', sans-serif;
 }
 
@@ -273,6 +426,10 @@ onMounted(() => {
 }
 
 .breadcrumb-sep { color: #D1D5DB; }
+
+.surveillance-toolbar {
+    margin-bottom: 24px;
+}
 
 .kpi-grid {
     display: grid;
@@ -352,8 +509,31 @@ onMounted(() => {
     font-weight: 500;
 }
 
+.risk-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.scope-select {
+    min-width: 220px;
+}
+
+.empty-map-state {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #D1D5DB;
+    border-radius: 8px;
+    color: #6B7280;
+    font-size: 14px;
+    text-align: center;
+    padding: 24px;
+}
+
 .alerts-table { overflow-x: auto; }
-.table-thead, .table-tbody { min-width: 900px; }
+.table-thead, .table-tbody { min-width: 1000px; }
 
 .table-thead {
     display: flex;
@@ -380,10 +560,11 @@ onMounted(() => {
 
 .col-type { flex: 2.5; min-width: 250px; }
 .col-plot { flex: 2; min-width: 180px; display: flex; flex-direction: column; }
+.col-source { flex: 1; min-width: 110px; }
 .col-severity { flex: 1; min-width: 100px; }
 .col-date { flex: 1.2; min-width: 110px; font-size: 14px; color: #4B5563; }
 .col-status { flex: 1.5; min-width: 150px; }
-.col-actions { flex: 1; min-width: 120px; display: flex; gap: 4px; }
+.col-actions { flex: 1.6; min-width: 190px; display: flex; gap: 4px; align-items: center; }
 
 .cell-type { display: flex; align-items: center; gap: 15px; }
 
@@ -406,6 +587,8 @@ onMounted(() => {
 .cell-plot { gap: 2px; text-align: left; }
 .plot-name { font-weight: 600; font-size: 14px; color: #1C1D21; }
 .plot-meta { font-size: 12px; color: #6B7280; }
+.cell-source { font-size: 13px; color: #4B5563; align-items: center; }
+.primary-row-action { white-space: nowrap; }
 
 .severity-tag {
     display: inline-flex;
@@ -436,12 +619,32 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 8px;
     padding: 16px 20px;
     border-top: 1px solid #F0F0F3;
+    position: relative;
 }
 
-.page-info { font-size: 14px; color: #6B7280; }
+.page-dot {
+    min-width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: #4B5563;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.page-dot.active { background: #2E4A3A; color: #ffffff; }
+
+.range-label {
+    position: absolute;
+    right: 8px;
+    font-size: 13px;
+    color: #6B7280;
+}
 
 .community-risk-layout {
     display: grid;
@@ -484,4 +687,12 @@ onMounted(() => {
 .recommendations { margin-top: 16px; }
 .recommendations ul { padding-left: 20px; }
 .recommendations li { font-size: 14px; color: #4B5563; margin-bottom: 6px; }
+
+.error-box {
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: rgba(255, 92, 92, 0.12);
+    color: #d63b3b;
+    margin-bottom: 24px;
+}
 </style>
