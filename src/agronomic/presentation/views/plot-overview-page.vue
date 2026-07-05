@@ -6,6 +6,7 @@ import { usePlotMap } from '../../application/use-plot-map.js';
 import { useAgronomicStore } from '../../application/agronomic.store.js';
 import { DateTimeFormatter } from '../../../shared/infrastructure/date-time.formatter.js';
 import LanguageSwitcher from '../../../shared/presentation/components/language-switcher.vue';
+import DashboardHeader from '../../../shared/presentation/components/dashboard-header.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -49,6 +50,12 @@ const plotOptions = computed(() => plots.value.map((plot) => ({
 })));
 
 const plotName = computed(() => plotDetail.value?.plotName || selectedPlot.value?.name || 'Plot');
+
+const breadcrumbs = computed(() => [
+  { label: 'Dashboard', route: '/dashboard' },
+  { label: 'Plot Overview', disabled: true },
+  { label: plotName.value, disabled: true }
+]);
 const plotArea = computed(() => plotDetail.value?.areaSizeHectares ?? selectedPlot.value?.areaSize ?? 0);
 const plotLocation = computed(() => plotDetail.value?.locationLabel || selectedPlot.value?.locationReference || 'Tacna, Peru');
 
@@ -299,27 +306,16 @@ onMounted(ensureRoutePlot);
 
 <template>
   <section class="plot-overview-page">
-    <header class="page-header">
-      <div class="header-copy">
-        <nav class="page-breadcrumb" aria-label="Page breadcrumb">
-          <router-link to="/dashboard">Dashboard</router-link>
-          <span>/</span>
-          <span>Plot Overview</span>
-          <span>/</span>
-          <strong>{{ plotName }}</strong>
-        </nav>
-        <p>Detailed satellite view and indicators for this plot.</p>
-      </div>
-
-      <div class="page-actions">
-        <div class="status-sync-box">
-          <span>Updated</span>
-          <strong>{{ updatedLabel }}</strong>
-        </div>
+    <DashboardHeader
+      :breadcrumbs="breadcrumbs"
+      subtitle="Detailed satellite view and indicators for this plot."
+      :updated-label="updatedLabel"
+      @refresh="refresh"
+    >
+      <template #actions>
         <LanguageSwitcher />
-        <pv-button icon="pi pi-refresh" class="refresh-btn-viora" :loading="loading" @click="refresh" />
-      </div>
-    </header>
+      </template>
+    </DashboardHeader>
 
     <section class="quick-actions">
       <pv-button label="Plot detail" icon="pi pi-th-large" class="quick-action-btn" text @click="scrollToMap" />
@@ -553,51 +549,6 @@ onMounted(ensureRoutePlot);
   color: #1f2523;
 }
 
-.page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 28px;
-}
-
-.header-copy {
-  min-width: 0;
-}
-
-.page-breadcrumb {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  color: #1f2523;
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.page-breadcrumb a {
-  color: #1f2523;
-  text-decoration: none;
-}
-
-.page-breadcrumb span {
-  color: #4f4f4f;
-}
-
-.page-breadcrumb strong {
-  color: #1f2523;
-  font-weight: 600;
-}
-
-.header-copy p {
-  margin: 8px 0 0;
-  color: #8c877f;
-  font-size: 13px;
-  font-weight: 400;
-}
-
-.page-actions,
 .quick-actions,
 .section-title-row,
 .sensor-header,
@@ -606,44 +557,6 @@ onMounted(ensureRoutePlot);
 .recommended-bar {
   display: flex;
   align-items: center;
-}
-
-.page-actions {
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.status-sync-box {
-  height: 42px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 18px;
-  border: 1.5px solid #9aa39d;
-  border-radius: 999px;
-  background: transparent;
-  color: #2e4a3a;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-sync-box span {
-  color: #2f7fd5;
-}
-
-.status-sync-box strong {
-  color: #2e4a3a;
-  font-weight: 600;
-}
-
-.refresh-btn-viora {
-  width: 42px;
-  height: 42px;
-  padding: 0 !important;
-  border: 1.5px solid #2e4a3a !important;
-  border-radius: 8px !important;
-  background: transparent !important;
-  color: #2e4a3a !important;
 }
 
 .quick-actions {
@@ -1406,11 +1319,6 @@ onMounted(ensureRoutePlot);
 }
 
 @media (max-width: 820px) {
-  .page-header {
-    flex-direction: column;
-  }
-
-  .page-actions,
   .quick-actions {
     flex-wrap: wrap;
   }

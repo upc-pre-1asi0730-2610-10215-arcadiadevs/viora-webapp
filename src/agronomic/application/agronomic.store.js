@@ -353,7 +353,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
 
     function fetchPlots() {
         errors.value = [];
-        agronomicApi.getPlots().then(response => {
+        return agronomicApi.getPlots().then(response => {
             plots.value = PlotAssembler.toEntitiesFromResponse(response);
             plotsLoaded.value = true;
             if (plots.value.length > 0 && !selectedPlotId.value) {
@@ -508,8 +508,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
     }
 
     function addIotDevice(device) {
-        const resource = IotDeviceAssembler.toResourceFromEntity(device);
-        agronomicApi.createIotDevice(resource).then(response => {
+        agronomicApi.createIotDevice(device).then(response => {
             const entity = IotDeviceAssembler.toEntityFromResource(response.data);
             iotDevices.value.push(entity);
         }).catch(error => {
@@ -518,8 +517,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
     }
 
     function updateIotDevice(device) {
-        const resource = IotDeviceAssembler.toResourceFromEntity(device);
-        agronomicApi.updateIotDevice(device.id, resource).then(response => {
+        agronomicApi.updateIotDevice(device).then(response => {
             const index = iotDevices.value.findIndex(d => d.id === device.id);
             if (index !== -1) {
                 iotDevices.value[index] = IotDeviceAssembler.toEntityFromResource(response.data);
@@ -530,7 +528,7 @@ export const useAgronomicStore = defineStore('agronomic', () => {
     }
 
     function deleteIotDevice(device) {
-        agronomicApi.deleteIotDevice(device.id, device.plotId).then(() => {
+        agronomicApi.deleteIotDevice(device.plotId, device.id).then(() => {
             iotDevices.value = iotDevices.value.filter(d => d.id !== device.id);
         }).catch(error => {
             errors.value.push(error);

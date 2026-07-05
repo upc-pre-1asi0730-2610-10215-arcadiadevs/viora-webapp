@@ -5,6 +5,7 @@ import { useAgronomicStore } from '../../application/agronomic.store.js';
 import { DateTimeFormatter } from '../../../shared/infrastructure/date-time.formatter.js';
 import { mapboxService } from '../../../shared/infrastructure/mapbox.service.js';
 import LanguageSwitcher from '../../../shared/presentation/components/language-switcher.vue';
+import DashboardHeader from '../../../shared/presentation/components/dashboard-header.vue';
 
 const WEATHER_ICON_ROOT = '/assets/icons/weather';
 const WEATHER_BACKGROUND_ROOT = '/assets/icons/backgrounds';
@@ -72,6 +73,12 @@ const metersPerSecondToKmh = (value = 0) => Math.round(Number(value || 0) * 3.6)
 const selectedPlot = computed(() => {
   return plots.value.find((plot) => String(plot.id) === String(selectedPlotId.value)) ?? null;
 });
+
+const breadcrumbs = computed(() => [
+  { label: 'Dashboard', route: '/dashboard' },
+  { label: 'Weather', disabled: true },
+  { label: selectedPlot.value?.name || 'Plot', disabled: true }
+]);
 
 const selectedWeather = computed(() => weatherByPlotId.value[String(selectedPlotId.value)] ?? null);
 const selectedSummary = computed(() => summaryByPlotId.value[String(selectedPlotId.value)] ?? null);
@@ -355,27 +362,16 @@ onUnmounted(() => {
 
 <template>
   <section class="weather-page">
-    <header class="weather-page-header">
-      <div class="header-copy">
-        <nav class="page-breadcrumb" aria-label="Page breadcrumb">
-          <router-link to="/dashboard">Dashboard</router-link>
-          <span>/</span>
-          <span>Weather</span>
-          <span>/</span>
-          <strong>{{ selectedPlot?.name || 'Plot' }}</strong>
-        </nav>
-        <p>Detailed forecast and indicators for the selected plot.</p>
-      </div>
-
-      <div class="page-actions">
-        <div class="status-sync-box">
-          <span>Updated</span>
-          <strong>{{ updatedLabel }}</strong>
-        </div>
+    <DashboardHeader
+      :breadcrumbs="breadcrumbs"
+      subtitle="Detailed forecast and indicators for the selected plot."
+      :updated-label="updatedLabel"
+      @refresh="refresh"
+    >
+      <template #actions>
         <LanguageSwitcher />
-        <pv-button icon="pi pi-refresh" class="refresh-btn-viora" :loading="loading" @click="refresh" />
-      </div>
-    </header>
+      </template>
+    </DashboardHeader>
 
     <section class="weather-layout">
       <aside class="plot-list" aria-label="Weather plots">
@@ -501,90 +497,6 @@ onUnmounted(() => {
 .weather-page {
   width: 100%;
   color: #1f2523;
-}
-
-.weather-page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 26px;
-}
-
-.header-copy {
-  min-width: 0;
-}
-
-.page-breadcrumb {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  color: #1f2523;
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.page-breadcrumb a {
-  color: #1f2523;
-  text-decoration: none;
-}
-
-.page-breadcrumb span {
-  color: #4f4f4f;
-}
-
-.page-breadcrumb strong {
-  color: #1f2523;
-  font-weight: 600;
-}
-
-.header-copy p {
-  margin: 8px 0 0;
-  color: #8c877f;
-  font-size: 13px;
-  font-weight: 400;
-}
-
-.page-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.status-sync-box {
-  height: 42px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 18px;
-  border: 1.5px solid #9aa39d;
-  border-radius: 999px;
-  background: transparent;
-  color: #2e4a3a;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-sync-box span {
-  color: #2f7fd5;
-}
-
-.status-sync-box strong {
-  color: #2e4a3a;
-  font-weight: 600;
-}
-
-.refresh-btn-viora {
-  width: 42px;
-  height: 42px;
-  padding: 0 !important;
-  border: 1.5px solid #2e4a3a !important;
-  border-radius: 8px !important;
-  background: transparent !important;
-  color: #2e4a3a !important;
 }
 
 .weather-layout {
@@ -1042,14 +954,6 @@ onUnmounted(() => {
 }
 
 @media (max-width: 1080px) {
-  .weather-page-header {
-    flex-direction: column;
-  }
-
-  .page-actions {
-    flex-wrap: wrap;
-  }
-
   .weather-layout,
   .mid-row,
   .bottom-row {

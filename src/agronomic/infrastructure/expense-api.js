@@ -1,13 +1,12 @@
 import { BaseApi } from '../../shared/infrastructure/base-api.js';
 import { BaseEndpoint } from '../../shared/infrastructure/base-endpoint.js';
 
-const expensesEndpointPath = import.meta.env.VITE_EXPENSES_ENDPOINT_PATH || '/api/v1/expenses';
+const expensesEndpointPath = import.meta.env.VITE_EXPENSES_ENDPOINT_PATH || '/expenses';
 
 /**
  * Infrastructure gateway for the Expense bounded-context endpoints.
- * Targets the mock API (json-server) via Vite proxy while the real backend
- * is under construction. Extends BaseApi for consistent auth interceptor
- * and HTTP client management.
+ * Expenses are served by the real Viora Platform backend: list by active grower
+ * and optional plot, then register operational expenses for the active grower.
  *
  * @class ExpenseApi
  * @extends BaseApi
@@ -17,7 +16,7 @@ export class ExpenseApi extends BaseApi {
 
   constructor() {
     super();
-    this.#expensesEndpoint = new BaseEndpoint(this, expensesEndpointPath, { mock: true });
+    this.#expensesEndpoint = new BaseEndpoint(this, expensesEndpointPath);
   }
 
   /**
@@ -26,13 +25,13 @@ export class ExpenseApi extends BaseApi {
    * @returns {Promise<import('axios').AxiosResponse<Array>>}
    */
   getExpenses(plotId = null) {
-    const params = plotId != null ? { plotId: String(plotId) } : {};
+    const params = plotId != null ? { plotId } : {};
     return this.#expensesEndpoint.getAll(params);
   }
 
   /**
-   * Creates a new expense record.
-   * @param {Object} request - Expense payload.
+   * Creates a new expense record for the active grower.
+   * @param {Object} request - Expense payload without growerId.
    * @returns {Promise<import('axios').AxiosResponse<Object>>}
    */
   createExpense(request) {

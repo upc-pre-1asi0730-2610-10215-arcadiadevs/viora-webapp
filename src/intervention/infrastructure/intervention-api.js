@@ -7,9 +7,6 @@ import { ServiceProposalAssembler } from './service-proposal-response.js';
 import { SpecialistContactAssembler } from './specialist-contact-response.js';
 import { InterventionSummaryAssembler } from './intervention-summary-response.js';
 import { TreatmentPrescriptionAssembler } from './treatment-prescription-response.js';
-
-const defaultUserId = import.meta.env.VITE_DEFAULT_USER_ID;
-
 const interventionRequestsPath = import.meta.env.VITE_INTERVENTION_REQUESTS_ENDPOINT_PATH || '/intervention-requests';
 const specialistCandidatesPath = import.meta.env.VITE_SPECIALIST_CANDIDATES_ENDPOINT_PATH || '/specialist-candidates';
 const serviceProposalsPath = import.meta.env.VITE_SERVICE_PROPOSALS_ENDPOINT_PATH || '/service-proposals';
@@ -62,7 +59,7 @@ export class InterventionApi extends BaseApi {
      * @returns {Promise<import('axios').AxiosResponse>}
      */
     getRequestsByPlot(plotId) {
-        return this.#requests.getAll({ growerId: Number(defaultUserId) || 1, plotId });
+        return this.#requests.getAll({ plotId });
     }
 
     /**
@@ -70,7 +67,7 @@ export class InterventionApi extends BaseApi {
      * @returns {Promise<import('axios').AxiosResponse>}
      */
     getAllRequests() {
-        return this.#requests.getAll({ growerId: Number(defaultUserId) || 1 });
+        return this.#requests.getAll();
     }
 
     /**
@@ -89,11 +86,7 @@ export class InterventionApi extends BaseApi {
      * @returns {Promise<import('axios').AxiosResponse>}
      */
     createRequest(request) {
-        const body = {
-            growerId: Number(defaultUserId) || 1,
-            ...request,
-        };
-        return this.#requests.create(body);
+        return this.#requests.create(request);
     }
 
     /**
@@ -126,12 +119,12 @@ export class InterventionApi extends BaseApi {
      */
     getSpecialistContact(specialistId, requestId) {
         return this.http.get(`${this.#specialists.endpointPath}/${specialistId}/contact`, {
-            params: { userId: Number(defaultUserId) || 1, requestId },
+            params: { requestId },
         });
     }
 
     /**
-     * Simulates the specialist responding to a request.
+     * Mock-only compatibility shim for local lifecycle demos.
      * @param {number|string} requestId
      * @returns {Promise<import('axios').AxiosResponse>}
      */
@@ -144,11 +137,11 @@ export class InterventionApi extends BaseApi {
      * @returns {Promise<import('axios').AxiosResponse>}
      */
     getInterventions() {
-        return this.#interventions.getAll({ growerId: Number(defaultUserId) || 1 });
+        return this.#interventions.getAll();
     }
 
     /**
-     * Simulates the specialist issuing a technical prescription.
+     * Mock-only compatibility shim for local lifecycle demos.
      * @param {number|string} requestId
      * @returns {Promise<import('axios').AxiosResponse>}
      */
@@ -199,6 +192,6 @@ export class InterventionApi extends BaseApi {
      * @returns {Promise<import('axios').AxiosResponse>}
      */
     closeIntervention(outcomeId, request) {
-        return this.http.patch(`${this.#outcomes.endpointPath}/${outcomeId}/evaluation`, request);
+        return this.http.patch(`${this.#outcomes.endpointPath}/${outcomeId}`, request);
     }
 }

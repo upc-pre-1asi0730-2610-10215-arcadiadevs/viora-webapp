@@ -14,9 +14,15 @@ import { useAgronomicStore } from '../../application/agronomic.store.js';
 import { MyPlotsOverview } from '../../domain/model/my-plots-overview.entity.js';
 import PlotThumbnail from '../components/plot-thumbnail.vue';
 import LanguageSwitcher from '../../../shared/presentation/components/language-switcher.vue';
+import DashboardHeader from '../../../shared/presentation/components/dashboard-header.vue';
 
 const { t } = useI18n();
 const agronomicStore = useAgronomicStore();
+
+const breadcrumbs = computed(() => [
+  { label: t('sidebar.myPlots'), disabled: true },
+  { label: t('myPlots.overview'), disabled: true }
+]);
 
 const overview = ref(new MyPlotsOverview());
 const loading = ref(false);
@@ -36,7 +42,7 @@ const climateLinkedLabel = computed(
     () => `${overview.value.climateLinkedPlotCount} / ${overview.value.registeredPlotCount}`
 );
 
-const updatedLabel = computed(() => relativeTime(overview.value.lastUpdatedAt));
+const updatedLabel = computed(() => `${t('dashboard.updated-label')} ${relativeTime(overview.value.lastUpdatedAt)}`);
 
 /**
  * Maps a normalized health status to a status-pill style modifier.
@@ -93,25 +99,16 @@ onMounted(loadOverview);
 
 <template>
   <section class="my-plots-page">
-    <header class="page-header">
-      <div class="header-copy">
-        <nav class="page-breadcrumb" aria-label="Page breadcrumb">
-          <strong>{{ t('sidebar.myPlots') }}</strong>
-          <span>/</span>
-          <span>{{ t('myPlots.overview') }}</span>
-        </nav>
-        <p>{{ t('myPlots.subtitle') }}</p>
-      </div>
-
-      <div class="page-actions">
-        <div class="status-sync-box">
-          <span>{{ t('dashboard.updated-label') }}</span>
-          <strong>{{ updatedLabel }}</strong>
-        </div>
+    <DashboardHeader
+      :breadcrumbs="breadcrumbs"
+      :subtitle="t('myPlots.subtitle')"
+      :updated-label="updatedLabel"
+      @refresh="refresh"
+    >
+      <template #actions>
         <LanguageSwitcher />
-        <pv-button icon="pi pi-refresh" class="refresh-btn-viora" :loading="loading" @click="refresh" />
-      </div>
-    </header>
+      </template>
+    </DashboardHeader>
 
     <!-- View tabs -->
     <nav class="plot-tabs" aria-label="My Plots views">
@@ -264,87 +261,6 @@ onMounted(loadOverview);
   width: 100%;
   font-family: 'Poppins', sans-serif;
   color: #1f2523;
-}
-
-/* ---------- Page header ---------- */
-.page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 24px;
-}
-
-.header-copy {
-  min-width: 0;
-}
-
-.page-breadcrumb {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.2;
-  color: #1f2523;
-}
-
-.page-breadcrumb span {
-  color: #8c877f;
-  font-weight: 500;
-}
-
-.page-breadcrumb strong {
-  color: #1f2523;
-  font-weight: 600;
-}
-
-.header-copy p {
-  margin: 8px 0 0;
-  color: #8c877f;
-  font-size: 13px;
-  font-weight: 400;
-}
-
-.page-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.status-sync-box {
-  height: 42px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 18px;
-  border: 1.5px solid #9aa39d;
-  border-radius: 999px;
-  background: transparent;
-  color: #2e4a3a;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-sync-box span {
-  color: #2f7fd5;
-}
-
-.status-sync-box strong {
-  color: #2e4a3a;
-  font-weight: 600;
-}
-
-.refresh-btn-viora {
-  width: 42px;
-  height: 42px;
-  padding: 0 !important;
-  border: 1.5px solid #2e4a3a !important;
-  border-radius: 8px !important;
-  background: transparent !important;
-  color: #2e4a3a !important;
 }
 
 /* ---------- View tabs ---------- */
@@ -695,10 +611,6 @@ onMounted(loadOverview);
 }
 
 @media (max-width: 760px) {
-  .page-header {
-    flex-direction: column;
-  }
-
   .kpi-grid {
     grid-template-columns: 1fr;
   }

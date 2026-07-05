@@ -7,20 +7,48 @@
 
 const THREAT_TYPE_LABELS = {
     PHENOLOGICAL_RISK: 'Phenological risk',
+    CHILL_DEFICIT: 'Chill deficit warning',
+    CLIMATE_EXTREME: 'Climate extreme warning',
+    PEST_SYMPTOM: 'Pest symptom report',
     PEST_SYMPTOM_REPORT: 'Pest symptom report',
+    COMMUNITY_PEST: 'Community pest alert',
+    LOW_NDVI: 'Low NDVI zone',
     LOW_NDVI_ZONE: 'Low NDVI zone',
+    HYDRIC_STRESS: 'Hydric stress warning',
+    WATER_STRESS: 'Hydric stress warning',
+    XYLELLA_RELATED: 'Xylella-related alert',
+    OLIVE_FRUIT_FLY: 'Olive fruit fly',
+    OLIVE_MOTH: 'Olive moth',
+    PEACOCK_SPOT: 'Peacock spot',
     DISEASE_OUTBREAK: 'Disease outbreak',
     WEATHER_ANOMALY: 'Weather anomaly',
-    IRRIGATION_ALERT: 'Irrigation alert'
+    IRRIGATION_ALERT: 'Irrigation alert',
+    UNKNOWN: 'Agronomic alert'
 };
 
 const SOURCE_LABELS = {
-    SATELLITE: 'Satellite',
-    IOT_SENSOR: 'IoT Sensor',
+    CLIMATE: 'Climate',
+    MANUAL_REPORT: 'Manual report',
     COMMUNITY: 'Community',
-    AGRONOMIC_MODEL: 'Agronomic Model',
-    MANUAL_REPORT: 'Manual Report'
+    SATELLITE: 'Satellite',
+    IOT: 'IoT',
+    IOT_SENSOR: 'IoT',
+    SYSTEM: 'System',
+    AGRONOMIC_MODEL: 'Agronomic model'
 };
+
+const normalizeEnumKey = (value) => String(value ?? '')
+    .trim()
+    .replace(/([a-z])([A-Z])/g, '$1_$2')
+    .replace(/[\s-]+/g, '_')
+    .toUpperCase();
+
+const humanizeEnumValue = (value) => normalizeEnumKey(value)
+    .toLowerCase()
+    .split('_')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
 
 export class Alert {
     /**
@@ -85,13 +113,15 @@ export class Alert {
 
     /** @returns {string} Human-readable type label */
     get typeLabel() {
-        return THREAT_TYPE_LABELS[this.type] || this.type || 'Unknown';
+        const key = normalizeEnumKey(this.type);
+        return THREAT_TYPE_LABELS[key] || humanizeEnumValue(this.type) || 'Agronomic alert';
     }
 
     /** @returns {string} Primary data source label */
     get primarySource() {
         if (!this.sources || this.sources.length === 0) return 'Not specified';
-        return SOURCE_LABELS[this.sources[0]] || this.sources[0];
+        const key = normalizeEnumKey(this.sources[0]);
+        return SOURCE_LABELS[key] || humanizeEnumValue(this.sources[0]) || 'Not specified';
     }
 
     /** @returns {string} Intl.DateTimeFormat formatted date */

@@ -9,6 +9,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useConfirm } from "primevue";
 import { useAgronomicStore } from "../../application/agronomic.store.js";
+import DashboardHeader from "../../../shared/presentation/components/dashboard-header.vue";
 import { onMounted, toRefs, ref, computed } from "vue";
 
 const { t } = useI18n();
@@ -17,6 +18,10 @@ const confirm = useConfirm();
 const store = useAgronomicStore();
 const { iotDevices, errors, iotDevicesLoaded, plots } = toRefs(store);
 const { fetchIotDevices, deleteIotDevice, fetchPlots } = store;
+
+const breadcrumbs = [
+    { label: 'IoT Devices', disabled: true }
+];
 
 /** 
  * Index of the first record in the current page.
@@ -124,6 +129,12 @@ const onPageChange = (event) => {
 
 <template>
     <div class="iot-devices-container">
+        <DashboardHeader
+            :breadcrumbs="breadcrumbs"
+            :subtitle="t('iot-devices.subtitle')"
+            @refresh="fetchIotDevices"
+        />
+
         <div class="dashboard-toolbar mb-6">
             <div class="toolbar-side"></div>
             <div class="toolbar-center"></div>
