@@ -3,7 +3,6 @@ import { getRequestInterceptors } from "./interceptor-registry.js";
 
 const platformApi = import.meta.env.VITE_VIORA_PLATFORM_API_URL;
 const mockApi = import.meta.env.VITE_MOCK_API_URL;
-const defaultUserId = import.meta.env.VITE_DEFAULT_USER_ID;
 const hasApiUrl = (url) => typeof url === "string" && url.trim().length > 0;
 
 const createClient = (baseURL) => {
@@ -44,18 +43,6 @@ export class BaseApi {
             this.#http.interceptors.request.use(interceptor);
         }
 
-        this.#http.interceptors.request.use((config) => {
-            if (!defaultUserId) return config;
-
-            const params = new URLSearchParams(config.params || {});
-
-            if (!params.has("userId")) {
-                params.set("userId", defaultUserId);
-            }
-
-            config.params = Object.fromEntries(params.entries());
-            return config;
-        });
     }
 
     /**
