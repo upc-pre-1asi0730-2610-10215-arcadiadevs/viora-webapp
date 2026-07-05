@@ -6,7 +6,7 @@ import Material from '@primeuix/themes/material';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 import {
-    Button, Card, ConfirmDialog, Drawer, Dropdown, ProgressBar, Select, SelectButton, Tag, Toolbar, Toast, Tooltip,
+    Button, Card, ConfirmDialog, Dialog, Drawer, Dropdown, ProgressBar, Select, SelectButton, Tag, Textarea, Toolbar, Toast, Tooltip,
     InputNumber, InputText, DataTable, Column
 } from "primevue";
 import ToastService from 'primevue/toastservice';
@@ -40,6 +40,8 @@ createApp(App)
     .component('pv-input-number', InputNumber)
     .component('pv-input-text', InputText)
     .component('pv-confirm-dialog', ConfirmDialog)
+    .component('pv-dialog', Dialog)
+    .component('pv-textarea', Textarea)
     .component('pv-data-table', DataTable)
     .component('pv-column', Column)
     .directive('tooltip', Tooltip)
