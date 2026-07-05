@@ -91,10 +91,9 @@
     "selectScope": "Select scope"
   },
   "common": {
-    "loading": "Loading",
-    "refresh": "Refresh",
-    "cancel": "Cancel",
-    "updated": "Updated"
+    "risk": "Risk",
+    "updated": "Updated",
+    "refresh": "Refresh"
   },
   "myPlots": {
     "overview": "Overview",
@@ -407,6 +406,7 @@
     "dynamicNutrition": "Dynamic Nutrition",
     "pestSurveillance": "Pest Surveillance",
     "expertAssistance": "Expert Assistance",
+    "interventions": "Interventions",
     "expenseHistory": "Expense History",
     "settings": "Settings",
     "subscription": "Subscription",
@@ -452,13 +452,17 @@
       "iotScope": "IoT Scope"
     }
   },
-  "common": {
-    "risk": "Risk"
-  },
   "risk": {
     "High": "High",
     "Medium": "Medium",
     "Low": "Low"
+  },
+  "recommended": {
+    "title": "Recommended Actions",
+    "nutrition": "Review nutrition plan",
+    "expert": "Request expert assistance",
+    "inspect": "Inspect low-vigor area",
+    "symptoms": "Report new symptoms"
   },
   "iot-devices": {
     "title": "IoT Devices",
@@ -482,16 +486,19 @@
       "temperature": "Temperature",
       "leaf-humidity": "Leaf Humidity",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "activation-code": "Activation Code"
     },
     "status": {
       "active": "Active",
       "warning": "Warning",
-      "critical": "Critical"
+      "critical": "Critical",
+      "inactive": "Inactive"
     },
     "placeholders": {
       "name": "e.g. Soil Sensor Alpha",
-      "plot": "Select a plot..."
+      "plot": "Select a plot...",
+      "activation-code": "VIORA-SP01-7K3M"
     }
   },
   "authoring-phrase": {
