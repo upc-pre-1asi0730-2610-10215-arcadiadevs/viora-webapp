@@ -4,10 +4,16 @@ import { useI18n } from 'vue-i18n';
 import { useAgronomicStore } from '../../application/agronomic.store.js';
 import { useExpenseStore } from '../../application/expense.store.js';
 import { Expense } from '../../domain/model/expense.entity.js';
+import DashboardHeader from '../../../shared/presentation/components/dashboard-header.vue';
 
 const { t } = useI18n();
 const agronomicStore = useAgronomicStore();
 const expenseStore = useExpenseStore();
+
+const breadcrumbs = [
+  { label: 'Expense History', disabled: true },
+  { label: 'Overview', disabled: true }
+];
 
 const selectedScope = ref('all');
 const modalOpen = ref(false);
@@ -176,6 +182,13 @@ onMounted(() => {
 
 <template>
   <section class="expense-page">
+    <DashboardHeader
+      :breadcrumbs="breadcrumbs"
+      subtitle="Track mitigation and intervention costs across your plots."
+      :updated-label="expenseStore.lastSyncLabel"
+      @refresh="refresh"
+    />
+
     <!-- Toolbar -->
     <div class="toolbar">
       <label class="scope-field">
@@ -392,7 +405,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 22px;
-  padding: 8px 4px 40px;
   font-family: 'Poppins', sans-serif;
 }
 

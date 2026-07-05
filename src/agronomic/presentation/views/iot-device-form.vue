@@ -28,7 +28,8 @@ const form = ref({
     soilMoisture: 0,
     temperature: 0,
     leafHumidity: 0,
-    status: 'active'
+    status: 'active',
+    activationCode: ''
 });
 
 /** 
@@ -53,7 +54,8 @@ const saveDevice = () => {
     const deviceData = new IotDevice({
         ...form.value,
         id: isEdit.value ? Number(route.params.id) : null,
-        lastUpdate: new Date()
+        lastUpdate: new Date(),
+        activationCode: form.value.activationCode
     });
     
     if (isEdit.value) updateIotDevice(deviceData); else addIotDevice(deviceData);
@@ -71,8 +73,7 @@ const navigateBack = () => router.push({ name: 'agronomic-iot-devices' });
  */
 const statusOptions = [
     { label: t('iot-devices.status.active'), value: 'active' },
-    { label: t('iot-devices.status.warning'), value: 'warning' },
-    { label: t('iot-devices.status.critical'), value: 'critical' }
+    { label: t('iot-devices.status.inactive'), value: 'inactive' }
 ];
 </script>
 
@@ -110,6 +111,13 @@ const statusOptions = [
                                 <label for="status" class="row-label">{{ t('iot-devices.fields.status') }}</label>
                                 <div class="row-input">
                                     <pv-dropdown id="status" v-model="form.status" :options="statusOptions" optionLabel="label" optionValue="value" class="viora-field fixed-width-field" />
+                                </div>
+                            </div>
+
+                            <div v-if="!isEdit" class="form-row">
+                                <label for="activationCode" class="row-label">{{ t('iot-devices.fields.activation-code') }}</label>
+                                <div class="row-input">
+                                    <pv-input-text id="activationCode" v-model="form.activationCode" class="viora-field fixed-width-field uppercase" :placeholder="t('iot-devices.placeholders.activation-code')" required />
                                 </div>
                             </div>
                         </div>

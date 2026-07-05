@@ -23,7 +23,8 @@ export class IotDeviceAssembler {
             temperature: resource.temperature,
             leafHumidity: resource.leafHumidity,
             status,
-            lastUpdate: resource.lastUpdate
+            lastUpdate: resource.lastUpdate,
+            activationCode: resource.activationCode || ''
         });
     }
 
@@ -58,7 +59,33 @@ export class IotDeviceAssembler {
             leafHumidity: entity.leafHumidity,
             status,
             iotDeviceStatus: status,
+            activationCode: entity.activationCode,
             lastUpdate: entity.lastUpdate
+        };
+    }
+
+    /**
+     * Builds the POST body for claiming a device under /plots/{plotId}/iot-devices.
+     * @param {IotDevice} entity
+     * @returns {{deviceName: string, status: string, activationCode: string}}
+     */
+    static toCreateRequest(entity) {
+        return {
+            deviceName: entity.name,
+            status: String(entity.status || "active").toUpperCase(),
+            activationCode: entity.activationCode
+        };
+    }
+
+    /**
+     * Builds the PATCH body for updating device metadata.
+     * @param {IotDevice} entity
+     * @returns {{deviceName: string, iotDeviceStatus: string}}
+     */
+    static toUpdateRequest(entity) {
+        return {
+            deviceName: entity.name,
+            iotDeviceStatus: String(entity.status || "active").toUpperCase()
         };
     }
 }

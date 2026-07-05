@@ -1,20 +1,17 @@
 import { BaseApi } from "../../shared/infrastructure/base-api.js";
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
 import { polygonAreaHectares } from "./geo-area.js";
-
-const defaultUserId = import.meta.env.VITE_DEFAULT_USER_ID;
+import { IotDeviceAssembler } from "./iot-device.assembler.js";
 
 // Endpoint paths are relative to the API base URL (which already includes the
 // `/api/v1` prefix), matching the OS frontend convention.
 const plotsEndpointPath = import.meta.env.VITE_PLOTS_ENDPOINT_PATH || "/plots";
-const plotsOverviewEndpointPath = import.meta.env.VITE_PLOTS_OVERVIEW_ENDPOINT_PATH || "/plots/overview";
 const recordsEndpointPath = import.meta.env.VITE_AGRONOMIC_RECORDS_ENDPOINT_PATH || "/agronomic-statistics/series";
 const currentSummaryEndpointPath = import.meta.env.VITE_MONITORING_SUMMARY_CURRENT_ENDPOINT_PATH || "/monitoring-summaries/current";
 const statisticsEndpointPath = import.meta.env.VITE_AGRONOMIC_STATISTICS_ENDPOINT_PATH || "/agronomic-statistics";
 const statisticsSeriesEndpointPath = import.meta.env.VITE_AGRONOMIC_STATISTICS_SERIES_ENDPOINT_PATH || "/agronomic-statistics/series";
 const nutritionPlansEndpointPath = import.meta.env.VITE_DYNAMIC_NUTRITION_PLANS_ENDPOINT_PATH || "/dynamic-nutrition-plans";
-// IoT sensor telemetry and the dashboard insight cards are not yet served by the
-// Viora platform backend, so they are routed to the mock API target (json-server).
+// Flat IoT reads come from /iot-devices; create/update/delete are nested under /plots/{plotId}/iot-devices.
 const iotDevicesEndpointPath = import.meta.env.VITE_IOT_DEVICES_ENDPOINT_PATH || "/iot-devices";
 const iotDeviceSummariesEndpointPath = import.meta.env.VITE_IOT_DEVICE_SUMMARIES_ENDPOINT_PATH || "/iot-device-summaries";
 
@@ -30,7 +27,6 @@ const iotDeviceSummariesEndpointPath = import.meta.env.VITE_IOT_DEVICE_SUMMARIES
  */
 export class AgronomicApi extends BaseApi {
     #plotsEndpoint;
-    #plotsOverviewEndpoint;
     #recordsEndpoint;
     #currentSummaryEndpoint;
     #statisticsEndpoint;
@@ -42,13 +38,12 @@ export class AgronomicApi extends BaseApi {
     constructor() {
         super();
         this.#plotsEndpoint = new BaseEndpoint(this, plotsEndpointPath);
-        this.#plotsOverviewEndpoint = new BaseEndpoint(this, plotsOverviewEndpointPath);
         this.#recordsEndpoint = new BaseEndpoint(this, recordsEndpointPath);
         this.#currentSummaryEndpoint = new BaseEndpoint(this, currentSummaryEndpointPath);
         this.#statisticsEndpoint = new BaseEndpoint(this, statisticsEndpointPath);
         this.#statisticsSeriesEndpoint = new BaseEndpoint(this, statisticsSeriesEndpointPath);
         this.#nutritionPlansEndpoint = new BaseEndpoint(this, nutritionPlansEndpointPath);
-        this.#iotDevicesEndpoint = new BaseEndpoint(this, iotDevicesEndpointPath, { mock: true });
+        this.#iotDevicesEndpoint = new BaseEndpoint(this, iotDevicesEndpointPath);
         this.#iotDeviceSummariesEndpoint = new BaseEndpoint(this, iotDeviceSummariesEndpointPath, { mock: true });
     }
 
@@ -90,7 +85,7 @@ export class AgronomicApi extends BaseApi {
     }
 
     getPlotsOverview() {
-        return this.#plotsOverviewEndpoint.getAll();
+        return this.#plotsEndpoint.getAll({ view: "overview" });
     }
 
     getPlotById(id) {
@@ -98,18 +93,17 @@ export class AgronomicApi extends BaseApi {
     }
 
     /**
-     * Registers a plot. Injects the owner `userId` into the body (as the platform
-     * `CreatePlotResource` requires) and, while json-server backs the contract,
+     * Registers a plot. Caller ownership is derived from the bearer token by the
+     * platform. While json-server backs the contract,
      * enriches the echoed payload with the area and automatic-link statuses the
      * real backend computes on registration. Once the C# backend is live those
      * fields arrive populated and the enrichment becomes a no-op.
      *
-     * @param {Object} plot - Create plot request (without userId).
+     * @param {Object} plot - Create plot request.
      * @returns {Promise<import('axios').AxiosResponse<Object>>}
      */
     async createPlot(plot) {
         const body = {
-            userId: Number(defaultUserId) || 1,
             cropType: "",
             variety: "",
             location: "",
@@ -158,7 +152,7 @@ export class AgronomicApi extends BaseApi {
     }
 
     getPlotDetail(plotId) {
-        return this.http.get(this.#plotPath(plotId, "/detail"));
+        return this.http.get(this.#plotPath(plotId), { params: { view: "detail" } });
     }
 
     getRecords(params = {}) {
@@ -170,11 +164,12 @@ export class AgronomicApi extends BaseApi {
     }
 
     getPlotMonitoringSummary(plotId) {
-        return this.http.get(this.#plotPath(plotId, "/monitoring-summary"));
+        return this.http.get(this.#plotPath(plotId), { params: { view: "monitoring" } });
     }
 
     getCurrentNdviTile(plotId, zoom, x, y) {
-        return this.http.get(this.#plotPath(plotId, `/imagery/tile/${zoom}/${x}/${y}`), {
+        return this.http.get(this.#plotPath(plotId, "/images"), {
+            params: { zoom, x, y },
             responseType: "blob"
         });
     }
@@ -185,7 +180,7 @@ export class AgronomicApi extends BaseApi {
     }
 
     getPlotWeatherForecast(plotId) {
-        return this.http.get(this.#plotPath(plotId, "/weather-forecast"));
+        return this.http.get(this.#plotPath(plotId), { params: { view: "weather" } });
     }
 
     getYieldForecastByPlot(plotId) {
@@ -213,18 +208,18 @@ export class AgronomicApi extends BaseApi {
     }
 
     certifyNutritionPlan(planId, certification) {
-        return this.#nutritionPlansEndpoint.http.post(
-            `${this.#nutritionPlansEndpoint.endpointPath}/${planId}/certification`,
+        return this.#nutritionPlansEndpoint.http.patch(
+            `${this.#nutritionPlansEndpoint.endpointPath}/${planId}`,
             certification
         );
     }
 
     getIotDevices(plotId) {
-        return this.#iotDevicesEndpoint.getAll(plotId ? { plotId } : {});
+        return plotId ? this.getIotDevicesByPlot(plotId) : this.#iotDevicesEndpoint.getAll();
     }
 
     getIotDevicesByPlot(plotId) {
-        return this.#iotDevicesEndpoint.getAll({ plotId });
+        return this.http.get(this.#plotDevicesPath(plotId));
     }
 
     getIotDeviceSummaries() {
@@ -239,15 +234,23 @@ export class AgronomicApi extends BaseApi {
         return this.#iotDevicesEndpoint.getById(id);
     }
 
+    #plotDevicesPath(plotId, deviceId = null) {
+        const collection = this.#plotPath(plotId, "/iot-devices");
+        return deviceId == null ? collection : `${collection}/${deviceId}`;
+    }
+
     createIotDevice(device) {
-        return this.#iotDevicesEndpoint.create(device);
+        if (device.plotId == null) return Promise.reject(new Error("Cannot claim an IoT device without a plot."));
+        return this.http.post(this.#plotDevicesPath(device.plotId), IotDeviceAssembler.toCreateRequest(device));
     }
 
-    updateIotDevice(id, device) {
-        return this.#iotDevicesEndpoint.update(id, device);
+    updateIotDevice(device) {
+        if (device.id == null || device.plotId == null) return Promise.reject(new Error("Cannot update an IoT device without a plot and id."));
+        return this.http.patch(this.#plotDevicesPath(device.plotId, device.id), IotDeviceAssembler.toUpdateRequest(device));
     }
 
-    deleteIotDevice(id, plotId) {
-        return this.#iotDevicesEndpoint.delete(id);
+    deleteIotDevice(plotId, deviceId) {
+        if (plotId == null || deviceId == null) return Promise.reject(new Error("Cannot delete an IoT device without a plot and id."));
+        return this.http.delete(this.#plotDevicesPath(plotId, deviceId));
     }
 }

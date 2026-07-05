@@ -192,7 +192,7 @@ const openPlotOverview = () => {
   width: 100%;
   height: 100%;
   min-height: 380px;
-  border-radius: 12px;
+  border-radius: 18px;
   border: 1px solid #F0F0F3;
   background-color: #ffffff;
   box-shadow: none;
