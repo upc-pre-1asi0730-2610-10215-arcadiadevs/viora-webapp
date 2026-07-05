@@ -33,6 +33,7 @@
     "analysis-subtitle": "Índice de Vigor vs. Porciones de Frío Acumuladas",
     "time-range-7days": "7 Días",
     "time-range-30days": "30 Días",
+    "time-range-campaign": "Campaña (Año)",
     "time-range-current": "Actual",
     "updated-label": "Actualizado",
     "all-plots-label": "Todas los parcelas",
@@ -90,10 +91,9 @@
     "selectScope": "Seleccionar alcance"
   },
   "common": {
-    "loading": "Cargando",
-    "refresh": "Actualizar",
-    "cancel": "Cancelar",
-    "updated": "Actualizado"
+    "risk": "Riesgo",
+    "updated": "Actualizado",
+    "refresh": "Actualizar"
   },
   "myPlots": {
     "overview": "Resumen",
@@ -406,6 +406,7 @@
     "dynamicNutrition": "Nutrición Dinámica",
     "pestSurveillance": "Vigilancia de Plagas",
     "expertAssistance": "Asistencia de Expertos",
+    "interventions": "Intervenciones",
     "expenseHistory": "Historial de Gastos",
     "settings": "Configuración",
     "subscription": "Suscripción",
@@ -451,13 +452,17 @@
       "iotScope": "Alcance IoT"
     }
   },
-  "common": {
-    "risk": "Riesgo"
-  },
   "risk": {
     "High": "Alto",
     "Medium": "Medio",
     "Low": "Bajo"
+  },
+  "recommended": {
+    "title": "Acciones Recomendadas",
+    "nutrition": "Revisar plan de nutrición",
+    "expert": "Solicitar asistencia de expertos",
+    "inspect": "Inspeccionar zona de bajo vigor",
+    "symptoms": "Reportar nuevos síntomas"
   },
   "iot-devices": {
     "title": "Dispositivos IoT",
@@ -481,16 +486,19 @@
       "temperature": "Temperatura",
       "leaf-humidity": "Humedad Foliar",
       "status": "Estado",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "activation-code": "Código de activación"
     },
     "status": {
       "active": "Activo",
       "warning": "Advertencia",
-      "critical": "Crítico"
+      "critical": "Crítico",
+      "inactive": "Inactivo"
     },
     "placeholders": {
       "name": "ej. Sensor de Suelo Alpha",
-      "plot": "Selecciona una parcela..."
+      "plot": "Selecciona una parcela...",
+      "activation-code": "VIORA-SP01-7K3M"
     }
   },
   "authoring-phrase": {
