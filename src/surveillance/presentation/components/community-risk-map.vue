@@ -4,7 +4,7 @@
  * Mapbox satellite map showing community risk with concentric radius rings.
  *
  * @component
- * @prop {number[]} center - [lng, lat] centroid
+ * @prop {number[]|null} center - [lng, lat] centroid
  * @prop {number} radiusKm - Radius in kilometers
  * @prop {Object[]} signals - Array of NearbyRiskSignal entities
  */
@@ -12,7 +12,7 @@ import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { mapboxService } from '../../../shared/infrastructure/mapbox.service.js';
 
 const props = defineProps({
-    center: { type: Array, default: () => [-70.04, -18.01] },
+    center: { type: Array, default: null },
     radiusKm: { type: Number, default: 5 },
     signals: { type: Array, default: () => [] }
 });
@@ -50,26 +50,39 @@ function generateCirclePoints(center, radiusKm, numPoints = 64) {
     return points;
 }
 
+function hasValidCenter(center) {
+    return Array.isArray(center)
+        && center.length >= 2
+        && Number.isFinite(Number(center[0]))
+        && Number.isFinite(Number(center[1]));
+}
+
+function signalBearing(signal, index) {
+    const numericSeed = Number(signal.id);
+    const seed = Number.isFinite(numericSeed) ? numericSeed : index + 1;
+    return (seed * 137.508) % 360;
+}
+
 function renderMap(map) {
+    if (!hasValidCenter(props.center)) return;
+
     const mapboxgl = window.mapboxgl;
     const [lng, lat] = props.center;
 
-    // Center marker
     new mapboxgl.Marker({ color: '#2E4A3A' })
         .setLngLat(props.center)
         .setPopup(new mapboxgl.Popup().setText('Center Plot'))
         .addTo(map);
 
-    // Concentric rings
     const rings = [
-        { radius: props.radiusKm, opacity: 0.12, label: '100%' },
-        { radius: props.radiusKm * 0.66, opacity: 0.18, label: '66%' },
-        { radius: props.radiusKm * 0.33, opacity: 0.25, label: '33%' }
+        { radius: props.radiusKm, opacity: 0.12 },
+        { radius: props.radiusKm * 0.66, opacity: 0.18 },
+        { radius: props.radiusKm * 0.33, opacity: 0.25 }
     ];
 
     rings.forEach((ring, i) => {
         const coords = generateCirclePoints(props.center, ring.radius);
-        map.addSource(`radius-${i}`, {
+        map.addSource('radius-' + i, {
             type: 'geojson',
             data: {
                 type: 'Feature',
@@ -77,45 +90,59 @@ function renderMap(map) {
             }
         });
         map.addLayer({
-            id: `radius-fill-${i}`,
+            id: 'radius-fill-' + i,
             type: 'fill',
-            source: `radius-${i}`,
+            source: 'radius-' + i,
             paint: { 'fill-color': '#2E4A3A', 'fill-opacity': ring.opacity }
         });
         map.addLayer({
-            id: `radius-outline-${i}`,
+            id: 'radius-outline-' + i,
             type: 'line',
-            source: `radius-${i}`,
+            source: 'radius-' + i,
             paint: { 'line-color': '#2E4A3A', 'line-width': 1.5, 'line-dasharray': [4, 2] }
         });
     });
 
-    // Signal markers
-    props.signals.forEach(signal => {
-        const bearing = Math.random() * 360;
-        const dist = signal.distanceKm || (Math.random() * props.radiusKm);
+    props.signals.forEach((signal, index) => {
+        const bearing = signalBearing(signal, index);
+        const fallbackDistance = props.radiusKm * (0.35 + ((index % 3) * 0.2));
+        const dist = Math.min(Number(signal.distanceKm) || fallbackDistance, props.radiusKm);
         const pos = destinationPoint(lng, lat, dist, bearing);
         const color = SEVERITY_COLORS[signal.severity] || '#9CA3AF';
 
         new mapboxgl.Marker({ color })
             .setLngLat(pos)
-            .setPopup(new mapboxgl.Popup().setText(`${signal.title} (${signal.severity})`))
+            .setPopup(new mapboxgl.Popup().setText(signal.title + ' (' + signal.severity + ')'))
             .addTo(map);
     });
 }
 
-onMounted(async () => {
+function renderWhenReady(map) {
+    if (map.loaded()) {
+        renderMap(map);
+        return;
+    }
+    map.on('load', () => renderMap(map));
+}
+
+async function initializeMap() {
     if (!mapContainer.value) return;
+    if (!hasValidCenter(props.center)) return;
+
     try {
         mapInstance = await mapboxService.createMapInstance({
             container: mapContainer.value,
             center: props.center,
             zoom: 10
         });
-        renderMap(mapInstance);
+        renderWhenReady(mapInstance);
     } catch (err) {
         console.error('[CommunityRiskMap] Error initializing map:', err);
     }
+}
+
+onMounted(async () => {
+    await initializeMap();
 });
 
 onUnmounted(() => {
@@ -125,11 +152,12 @@ onUnmounted(() => {
     }
 });
 
-watch(() => [props.center, props.signals], () => {
+watch(() => [props.center, props.signals, props.radiusKm], async () => {
     if (mapInstance) {
         mapInstance.remove();
-        mapContainer.value && (mapInstance = null);
+        mapInstance = null;
     }
+    await initializeMap();
 }, { deep: true });
 </script>
 
