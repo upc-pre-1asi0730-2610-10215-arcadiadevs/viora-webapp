@@ -1,7 +1,9 @@
 export class SignInResource {
-  constructor({ id, username, token }) {
+  constructor({ id, email, fullName, token, role }) {
     this.id = id;
-    this.username = username;
+    this.email = email;
+    this.fullName = fullName;
     this.token = token;
+    this.role = role;
   }
 }

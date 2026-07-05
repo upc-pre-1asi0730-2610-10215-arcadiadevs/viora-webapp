@@ -18,7 +18,7 @@ onMounted(async () => {
   }
   const result = await store.verify(token);
   state.value = result.success ? 'success' : 'error';
-  if (result.success) router.push({ name: 'dashboard' });
+  if (result.success) router.push(result.redirect ?? { name: 'dashboard' });
 });
 </script>
 
@@ -49,7 +49,7 @@ onMounted(async () => {
           {{ store.error || 'This verification link is invalid, expired or already used.' }}
         </p>
         <p class="auth-foot">
-          <router-link to="/iam/sign-in">Back to sign in</router-link> — you can resend the email from there.
+          <router-link to="/login">Back to sign in</router-link> — you can resend the email from there.
         </p>
       </template>
     </div>

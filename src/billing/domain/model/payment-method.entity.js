@@ -8,17 +8,17 @@
  */
 export class PaymentMethod {
     /** @type {number|string|null} */
-    readonly id;
+    id;
     /** @type {string} */
-    readonly brand;
+    brand;
     /** @type {string} */
-    readonly last4;
+    last4;
     /** @type {number} */
-    readonly expMonth;
+    expMonth;
     /** @type {number} */
-    readonly expYear;
+    expYear;
     /** @type {boolean} */
-    readonly isDefault;
+    isDefault;
 
     /**
      * @param {Object} [props={}]

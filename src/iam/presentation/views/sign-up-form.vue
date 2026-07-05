@@ -53,9 +53,34 @@ function resend() {
 </script>
 
 <template>
-  <section class="auth-shell">
+  <section class="auth-shell register-shell">
+    <div class="register-stage" :class="{ 'register-stage--success': submitted }">
+      <aside v-if="!submitted" class="register-story" aria-label="Viora account types">
+        <div class="register-story-brand">
+          <img src="/assets/icons/dashboard/viora-isotipo-white.png" alt="" />
+          <strong>Viora</strong>
+        </div>
+
+        <div class="register-character-wrap" aria-hidden="true">
+          <div class="register-character-card is-producer" :class="{ 'is-active': role === 'ROLE_GROWER' }">
+            <img src="/assets/images/general/olive-producer-character.png" alt="" />
+            <span>Producer</span>
+          </div>
+          <div class="register-character-card is-specialist" :class="{ 'is-active': role === 'ROLE_SPECIALIST' }">
+            <img src="/assets/images/general/phytosanitary-specialist-character.png" alt="" />
+            <span>Specialist</span>
+          </div>
+        </div>
+
+        <div class="register-story-copy">
+          <span class="login-story-eyebrow">Built for the field</span>
+          <h2>One account, two ways to help groves thrive</h2>
+          <p>Producers track their own plots. Specialists assist producers with expert field visits.</p>
+        </div>
+      </aside>
+
     <template v-if="!submitted">
-      <form class="auth-card auth-form" @submit.prevent="submit">
+      <form class="auth-card auth-form register-card" @submit.prevent="submit">
         <div class="auth-brand">
           <img src="/assets/icons/dashboard/viora-isotipo-green.png" alt="Viora" />
           <strong>Viora</strong>
@@ -69,21 +94,25 @@ function resend() {
         <div class="role-grid">
           <button
             type="button"
-            class="role-card"
+            class="role-card is-producer"
             :class="{ 'is-active': role === 'ROLE_GROWER' }"
             @click="role = 'ROLE_GROWER'"
           >
-            <span class="role-icon">&#x1F33F;</span>
+            <span class="role-visual">
+              <img src="/assets/images/general/olive-producer-character-2.png" alt="" />
+            </span>
             <strong>Producer</strong>
             <span>Monitor plots, IoT devices and alerts</span>
           </button>
           <button
             type="button"
-            class="role-card"
+            class="role-card is-specialist"
             :class="{ 'is-active': role === 'ROLE_SPECIALIST' }"
             @click="role = 'ROLE_SPECIALIST'"
           >
-            <span class="role-icon">&#x1FA7A;</span>
+            <span class="role-visual">
+              <img src="/assets/images/general/phytosanitary-specialist-character-2.png" alt="" />
+            </span>
             <strong>Specialist</strong>
             <span>Assist producers with field expertise</span>
           </button>
@@ -120,7 +149,7 @@ function resend() {
           {{ store.busy ? 'Creating account\u2026' : 'Create account' }}
         </button>
 
-        <p class="auth-foot">Already have an account? <router-link to="/iam/sign-in">Sign in</router-link></p>
+        <p class="auth-foot">Already have an account? <router-link to="/login">Sign in</router-link></p>
       </form>
     </template>
 
@@ -139,9 +168,10 @@ function resend() {
         <button type="button" class="auth-submit" :disabled="store.busy" @click="resend">
           {{ store.busy ? 'Sending\u2026' : 'Resend email' }}
         </button>
-        <p class="auth-foot">Verified already? <router-link to="/iam/sign-in">Sign in</router-link></p>
+        <p class="auth-foot">Verified already? <router-link to="/login">Sign in</router-link></p>
       </div>
     </template>
+    </div>
   </section>
 </template>
 
@@ -153,6 +183,95 @@ function resend() {
   padding: 24px;
   background: #f8f4ed;
   font-family: 'Poppins', sans-serif;
+}
+
+.register-shell { padding: 0; }
+
+.register-stage {
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
+  align-items: stretch;
+}
+
+.register-stage--success {
+  grid-template-columns: 1fr;
+  place-items: center;
+  padding: 24px;
+}
+
+.register-stage--success .auth-card { width: min(460px, 100%); }
+
+.register-story {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 40px;
+  background: linear-gradient(160deg, #2e4a3a 0%, #1f2523 100%);
+  color: #fff;
+}
+
+.register-story-brand { display: flex; align-items: center; gap: 10px; }
+.register-story-brand img { width: 32px; height: 32px; }
+.register-story-brand strong { font-size: 18px; font-weight: 600; color: #fff; }
+
+.register-character-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.register-character-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.55;
+  transform: scale(0.94);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.register-character-card img {
+  width: 140px;
+  height: auto;
+  filter: drop-shadow(0 12px 26px rgba(0, 0, 0, 0.35));
+}
+
+.register-character-card span {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.register-character-card.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.register-story-copy { display: flex; flex-direction: column; gap: 10px; max-width: 440px; }
+.register-story-copy h2 { margin: 0; font-size: 24px; font-weight: 600; line-height: 1.3; }
+.register-story-copy p { margin: 0; font-size: 14px; font-weight: 400; line-height: 1.55; color: rgba(255, 255, 255, 0.82); }
+
+.login-story-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a7e0c4;
+}
+
+.register-card {
+  border-radius: 0;
+  box-shadow: none;
+  padding: 44px;
+  justify-content: center;
+  overflow-y: auto;
 }
 
 .auth-card {
@@ -209,7 +328,21 @@ function resend() {
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
-.role-icon { font-size: 24px; }
+.role-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+}
+
+.role-visual img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  filter: grayscale(0.4) opacity(0.75);
+  transition: filter 0.15s ease;
+}
+
 .role-card strong { font-size: 14px; font-weight: 600; color: #333; }
 .role-card span { font-size: 11px; font-weight: 400; color: #828282; text-align: center; line-height: 1.35; }
 
@@ -218,7 +351,7 @@ function resend() {
   background: #f0f7f4;
 }
 
-.role-card.is-active .role-icon { filter: none; }
+.role-card.is-active .role-visual img { filter: none; }
 .role-card.is-active strong { color: #2e4a3a; }
 
 .auth-error, .auth-info {
@@ -266,5 +399,11 @@ function resend() {
   background: rgba(87, 235, 161, 0.22);
   color: #2e7d55;
   font-size: 30px;
+}
+
+@media (max-width: 960px) {
+  .register-stage { grid-template-columns: 1fr; }
+  .register-story { display: none; }
+  .register-card { padding: 32px 22px; }
 }
 </style>

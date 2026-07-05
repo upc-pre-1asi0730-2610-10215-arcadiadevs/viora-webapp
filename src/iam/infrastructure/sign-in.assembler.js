@@ -5,6 +5,9 @@ export class SignInAssembler {
     if (response.status !== 200) {
       return null;
     }
+    if (!response.data?.token || response.data?.id == null) {
+      return null;
+    }
     return new SignInResource(response.data);
   }
 }

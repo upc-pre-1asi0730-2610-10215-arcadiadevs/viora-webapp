@@ -237,7 +237,6 @@ function viewLegal() {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding: 8px 4px 40px;
 }
 
 /* ---------- Search ---------- */

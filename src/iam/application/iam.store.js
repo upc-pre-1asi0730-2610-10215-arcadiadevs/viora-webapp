@@ -3,21 +3,27 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { SignInAssembler } from '../infrastructure/sign-in.assembler.js';
 import { SignUpAssembler } from '../infrastructure/sign-up.assembler.js';
-
-const iamApi = getIamApi();
+import {
+  clearActiveSession,
+  getSessionHomeRoute,
+  readActiveSession,
+  startActiveSession
+} from '../../shared/infrastructure/active-session.js';
 
 export const useIamStore = defineStore('iam', () => {
+  const restoredSession = readActiveSession();
   const busy = ref(false);
   const error = ref(null);
   const info = ref(null);
   const needsVerification = ref(false);
 
-  const isSignedIn = ref(!!localStorage.getItem('token'));
-  const currentEmail = ref(localStorage.getItem('email') || null);
-  const currentFullName = ref(localStorage.getItem('fullName') || null);
-  const currentUserId = ref(Number(localStorage.getItem('userId')) || 0);
-  const currentRole = ref(localStorage.getItem('role') || null);
-  const currentToken = computed(() => isSignedIn.value ? localStorage.getItem('token') : null);
+  const isSignedIn = ref(restoredSession !== null);
+  const currentEmail = ref(restoredSession?.email ?? null);
+  const currentFullName = ref(restoredSession?.fullName ?? null);
+  const currentUserId = ref(restoredSession?.userId ?? 0);
+  const currentRole = ref(restoredSession?.role ?? null);
+  const currentToken = computed(() => readActiveSession()?.token ?? null);
+  const signedInHomeRoute = computed(() => getSessionHomeRoute({ role: currentRole.value }));
 
   function clearMessages() {
     error.value = null;
@@ -31,19 +37,15 @@ export const useIamStore = defineStore('iam', () => {
   }
 
   function enterSession(auth) {
-    if (!auth?.token || auth.id == null) {
+    const session = startActiveSession(auth);
+    if (!session) {
       error.value = 'Unexpected response from the server.';
       return false;
     }
-    currentEmail.value = auth.email ?? '';
-    currentFullName.value = auth.fullName ?? '';
-    currentUserId.value = auth.id;
-    currentRole.value = auth.role ?? 'ROLE_GROWER';
-    localStorage.setItem('token', auth.token);
-    localStorage.setItem('email', auth.email ?? '');
-    localStorage.setItem('fullName', auth.fullName ?? '');
-    localStorage.setItem('userId', String(auth.id));
-    localStorage.setItem('role', auth.role ?? 'ROLE_GROWER');
+    currentEmail.value = session.email;
+    currentFullName.value = session.fullName;
+    currentUserId.value = session.userId;
+    currentRole.value = session.role;
     isSignedIn.value = true;
     return true;
   }
@@ -51,17 +53,16 @@ export const useIamStore = defineStore('iam', () => {
   /**
    * Authenticates the user with the given credentials.
    * @param {import('../domain/model/sign-in.command.js').SignInCommand} command
-   * @returns {Promise<{success: boolean, error?: string}>}
+   * @returns {Promise<{success: boolean, redirect?: string, error?: string}>}
    */
   async function signIn(command) {
     beginRequest();
     try {
-      const response = await iamApi.signIn({ email: command.email.trim().toLowerCase(), password: command.password });
+      const response = await getIamApi().signIn({ email: command.email.trim().toLowerCase(), password: command.password });
       const resource = SignInAssembler.toResourceFromResponse(response);
-      if (resource) {
-        enterSession(resource);
+      if (resource && enterSession(resource)) {
         busy.value = false;
-        return { success: true };
+        return { success: true, redirect: signedInHomeRoute.value };
       }
       busy.value = false;
       error.value = 'Invalid email or password.';
@@ -91,7 +92,7 @@ export const useIamStore = defineStore('iam', () => {
   async function signUp(command) {
     beginRequest();
     try {
-      await iamApi.signUp({
+      await getIamApi().signUp({
         email: command.email.trim().toLowerCase(),
         password: command.password,
         role: command.role,
@@ -117,17 +118,16 @@ export const useIamStore = defineStore('iam', () => {
   /**
    * Verifies the user's email with the given token.
    * @param {string} token
-   * @returns {Promise<{success: boolean, error?: string}>}
+   * @returns {Promise<{success: boolean, redirect?: string, error?: string}>}
    */
   async function verify(token) {
     beginRequest();
     try {
-      const response = await iamApi.verify(token);
+      const response = await getIamApi().verify(token);
       const resource = SignInAssembler.toResourceFromResponse(response);
-      if (resource) {
-        enterSession(resource);
+      if (resource && enterSession(resource)) {
         busy.value = false;
-        return { success: true };
+        return { success: true, redirect: signedInHomeRoute.value };
       }
       busy.value = false;
       error.value = 'Unexpected response from the server.';
@@ -141,7 +141,7 @@ export const useIamStore = defineStore('iam', () => {
 
   function resendVerification(email) {
     beginRequest();
-    iamApi.resendVerification(email.trim().toLowerCase())
+    getIamApi().resendVerification(email.trim().toLowerCase())
       .then(() => {
         busy.value = false;
         info.value = 'Verification email sent. Check your inbox.';
@@ -157,11 +157,7 @@ export const useIamStore = defineStore('iam', () => {
     currentFullName.value = null;
     currentUserId.value = 0;
     currentRole.value = null;
-    localStorage.removeItem('token');
-    localStorage.removeItem('email');
-    localStorage.removeItem('fullName');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('role');
+    clearActiveSession();
     isSignedIn.value = false;
     clearMessages();
   }
@@ -177,6 +173,7 @@ export const useIamStore = defineStore('iam', () => {
     currentUserId,
     currentRole,
     currentToken,
+    signedInHomeRoute,
     clearMessages,
     signIn,
     signUp,

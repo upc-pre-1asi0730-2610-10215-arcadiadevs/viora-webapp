@@ -9,6 +9,9 @@ import workspaceRoutes from "./shared/presentation/workspace-routes.js";
 import iamRoutes from "./iam/presentation/iam-routes.js";
 import { authenticationGuard } from "./iam/infrastructure/authentication.guard.js";
 
+const signInForm = () => import('./iam/presentation/views/sign-in-form.vue');
+const signUpForm = () => import('./iam/presentation/views/sign-up-form.vue');
+const verifyPage = () => import('./iam/presentation/views/verify-page.vue');
 const producerDashboard = () => import('./shared/presentation/views/dashboard-producer.vue');
 const myPlotsOverviewPage = () => import('./agronomic/presentation/views/my-plots-overview.vue');
 const plotFormPage = () => import('./agronomic/presentation/views/plot-form-page.vue');
@@ -17,10 +20,25 @@ const dynamicNutritionPage = () => import('./agronomic/presentation/views/dynami
 const plotOverviewPage = () => import('./agronomic/presentation/views/plot-overview-page.vue');
 const weatherPage = () => import('./agronomic/presentation/views/weather-page.vue');
 
-/**
- * Main application router.
- */
 const routes = [
+    {
+        path: '/login',
+        name: 'iam-sign-in',
+        component: signInForm,
+        meta: { title: 'Sign in', public: true, guest: true }
+    },
+    {
+        path: '/register',
+        name: 'iam-sign-up',
+        component: signUpForm,
+        meta: { title: 'Create account', public: true, guest: true }
+    },
+    {
+        path: '/verify',
+        name: 'iam-verify',
+        component: verifyPage,
+        meta: { title: 'Verify email', public: true }
+    },
     {
         path: '/dashboard',
         name: 'dashboard',
@@ -93,6 +111,25 @@ const routes = [
             description: 'dynamicNutrition.subtitle'
         }
     },
+    { path: '/agronomic/dynamic-nutrition/plan', redirect: { name: 'dynamic-nutrition' } },
+    { path: '/plots', redirect: { name: 'my-plots' } },
+    { path: '/plots/details', redirect: { name: 'my-plots' } },
+    { path: '/alerts', redirect: { name: 'surveillance-alerts' } },
+    { path: '/producer/iot-devices', redirect: { name: 'agronomic-iot-devices' } },
+    { path: '/producer/iot-devices/new', redirect: { name: 'agronomic-iot-device-new' } },
+    {
+        path: '/producer/iot-devices/:id/edit',
+        redirect: to => ({ name: 'agronomic-iot-device-edit', params: { id: to.params.id } })
+    },
+    { path: '/dynamic-nutrition', redirect: { name: 'dynamic-nutrition' } },
+    { path: '/dynamic-nutrition/plan', redirect: { name: 'dynamic-nutrition' } },
+    { path: '/pest-surveillance', redirect: { name: 'surveillance-pest-surveillance' } },
+    { path: '/pest-surveillance/report-symptoms', redirect: { name: 'surveillance-pest-surveillance' } },
+    { path: '/expert-assistance', redirect: { name: 'intervention-expert-assistance' } },
+    { path: '/expert-assistance/request', redirect: { name: 'intervention-expert-assistance' } },
+    { path: '/interventions', redirect: { name: 'intervention-interventions' } },
+    { path: '/expense-history', redirect: { name: 'agronomic-expense-history' } },
+    { path: '/subscription', redirect: { name: 'billing-subscription' } },
     {
         path: '/agronomic',
         name: 'agronomic',
@@ -114,8 +151,8 @@ const routes = [
         children: profileRoutes
     },
     {
-        path: '/subscription',
-        name: 'subscription',
+        path: '/billing',
+        name: 'billing',
         children: billingRoutes
     },
     {
@@ -140,11 +177,8 @@ const router = createRouter({
     routes: routes
 });
 
-/**
- * Global navigation guard: auth guard + document title.
- */
 router.beforeEach((to, from, next) => {
-    document.title = `Dashboard - ${to.name}`;
+    document.title = `Dashboard - ${to.meta.title ?? to.name}`;
     const result = authenticationGuard(to, from);
     if (result === true) {
         next();
