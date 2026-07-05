@@ -1,7 +1,6 @@
 import { BaseApi } from "../../shared/infrastructure/base-api.js";
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
 
-const defaultUserId = import.meta.env.VITE_DEFAULT_USER_ID;
 const alertsEndpointPath = import.meta.env.VITE_ALERTS_ENDPOINT_PATH || "/alerts";
 const communityRiskEndpointPath = import.meta.env.VITE_COMMUNITY_RISK_ENDPOINT_PATH || "/community-risk";
 const pestReportsEndpointPath = import.meta.env.VITE_PEST_REPORTS_ENDPOINT_PATH || "/pest-sighting-reports";
@@ -27,7 +26,7 @@ export class SurveillanceApi extends BaseApi {
     }
 
     getAlerts(params = {}) {
-        const queryParams = { userId: Number(defaultUserId) || 1, ...params };
+        const queryParams = { sort: "recent", limit: 50, ...params };
         return this.#alertsEndpoint.getAll(queryParams);
     }
 
@@ -46,7 +45,7 @@ export class SurveillanceApi extends BaseApi {
     }
 
     confirmAlert(alertId) {
-        return this.http.patch(`${this.#alertsEndpoint.endpointPath}/${alertId}`, { status: "UNDER_REVIEW", raiseSeverity: true });
+        return this.markAlertUnderReview(alertId);
     }
 
     escalateAlert(alertId) {
@@ -62,20 +61,19 @@ export class SurveillanceApi extends BaseApi {
     }
 
     resolveAlert(alertId) {
-        return this.http.patch(`${this.#alertsEndpoint.endpointPath}/${alertId}`, { status: "Resolved" });
+        return this.http.patch(`${this.#alertsEndpoint.endpointPath}/${alertId}`, { status: "RESOLVED" });
     }
 
     dismissAlert(alertId) {
-        return this.http.patch(`${this.#alertsEndpoint.endpointPath}/${alertId}`, { status: "Dismissed" });
+        return this.http.patch(`${this.#alertsEndpoint.endpointPath}/${alertId}`, { status: "DISMISSED" });
     }
 
     getCommunityRisk(plotId, radiusKm = 5) {
         return this.#communityRiskEndpoint.getAll({ plotId, radiusKm });
     }
 
-    getPestReports(params = {}) {
-        const queryParams = { userId: Number(defaultUserId) || 1, ...params };
-        return this.#pestReportsEndpoint.getAll(queryParams);
+    getPestReports() {
+        return this.#pestReportsEndpoint.getAll();
     }
 
     createPestReport(request) {

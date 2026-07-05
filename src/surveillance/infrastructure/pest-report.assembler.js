@@ -1,5 +1,29 @@
 import { PestReport } from "../domain/model/pest-report.entity.js";
 
+const normalizeRiskZone = (value) => {
+    switch (String(value || '').trim().toUpperCase()) {
+        case 'EDGES':
+            return 'EDGES';
+        case 'PARTIAL_PLOT':
+            return 'PARTIAL_PLOT';
+        default:
+            return 'FULL_PLOT';
+    }
+};
+
+const normalizeSeverity = (value) => {
+    switch (String(value || '').trim().toUpperCase()) {
+        case 'CRITICAL':
+            return 'Critical';
+        case 'HIGH':
+            return 'High';
+        case 'MEDIUM':
+            return 'Medium';
+        default:
+            return 'Low';
+    }
+};
+
 /**
  * PestReportAssembler class.
  * Maps raw pest report resources into PestReport domain entities.
@@ -18,10 +42,15 @@ export class PestReportAssembler {
             code: r.code || '',
             plotId: r.plotId ?? null,
             plotName: r.plotName || '',
-            riskZone: r.riskZone || 'PARTIAL_PLOT',
+            riskZone: normalizeRiskZone(r.riskZone),
             symptoms: r.symptoms || [],
-            description: r.description || '',
-            result: r.result || 'Under review',
+            observedSeverity: normalizeSeverity(r.observedSeverity),
+            notes: r.notes || r.description || '',
+            evaluated: r.evaluated ?? false,
+            calculatedRisk: r.calculatedRisk || '',
+            probableThreat: r.probableThreat || '',
+            status: r.status || '',
+            alertConfirmed: r.alertConfirmed ?? false,
             date: r.date || r.createdAt || '',
             reportedBy: r.reportedBy || ''
         });
@@ -35,7 +64,7 @@ export class PestReportAssembler {
     static toEntitiesFromResponse(response) {
         if (!response || response.status !== 200 || response.data == null) {
             console.error(
-                `[PestReportAssembler] Mapping error: Invalid response status ${response?.status}`,
+                '[PestReportAssembler] Mapping error: Invalid response status ' + response?.status,
             );
             return [];
         }
@@ -49,7 +78,7 @@ export class PestReportAssembler {
             !Array.isArray(data.results)
         ) {
             console.error(
-                `[PestReportAssembler] Mapping error: ${response.status}, ${data.code || "ERROR"}, ${data.message || "Request failed"}`,
+                '[PestReportAssembler] Mapping error: ' + response.status + ', ' + (data.code || "ERROR") + ', ' + (data.message || "Request failed"),
             );
             return [];
         }
