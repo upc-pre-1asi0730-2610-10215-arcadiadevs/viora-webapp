@@ -14,6 +14,7 @@ export class IotDevice {
      * @param {number} [data.leafHumidity=0] - Current leaf humidity reading (%).
      * @param {string} [data.status='active'] - Operational status.
      * @param {string|Date} [data.lastUpdate=new Date()] - Last synchronization date.
+     * @param {string} [data.activationCode=''] - Claim code used when registering a new device.
      */
     constructor({
         id = null,
@@ -23,7 +24,8 @@ export class IotDevice {
         temperature = 0,
         leafHumidity = 0,
         status = 'active',
-        lastUpdate = new Date()
+        lastUpdate = new Date(),
+        activationCode = ''
     } = {}) {
         this.id = id;
         this.name = name;
@@ -33,5 +35,6 @@ export class IotDevice {
         this.leafHumidity = leafHumidity;
         this.status = status;
         this.lastUpdate = lastUpdate;
+        this.activationCode = activationCode;
     }
 }
