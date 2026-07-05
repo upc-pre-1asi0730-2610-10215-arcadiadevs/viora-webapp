@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import useIamStore from '../../application/iam.store.js';
 import { SignInCommand } from '../../domain/model/sign-in.command.js';
@@ -10,8 +10,41 @@ const store = useIamStore();
 const email = ref('');
 const password = ref('');
 
+const carouselSlides = [
+  { src: '/assets/images/onboarding/carrusel_1.png', label: 'Satellite monitoring landscape' },
+  { src: '/assets/images/onboarding/carrusel_2.png', label: 'Field observation detail' },
+  { src: '/assets/images/onboarding/carrusel_3.png', label: 'Farm intervention planning' }
+];
+const activeSlide = ref(0);
+const carouselDelayMs = 5000;
+let carouselTimer = null;
+
+function startCarousel() {
+  carouselTimer = setInterval(() => {
+    activeSlide.value = (activeSlide.value + 1) % carouselSlides.length;
+  }, carouselDelayMs);
+}
+
+function stopCarousel() {
+  if (carouselTimer !== null) {
+    clearInterval(carouselTimer);
+    carouselTimer = null;
+  }
+}
+
+function selectSlide(index) {
+  activeSlide.value = index;
+  stopCarousel();
+  startCarousel();
+}
+
 onMounted(() => {
   store.clearMessages();
+  startCarousel();
+});
+
+onUnmounted(() => {
+  stopCarousel();
 });
 
 const canSubmit = () => email.value.trim().length > 3 && password.value.length >= 8 && !store.busy;
@@ -20,7 +53,7 @@ async function submit() {
   if (!canSubmit()) return;
   const command = new SignInCommand({ email: email.value, password: password.value });
   const result = await store.signIn(command);
-  if (result.success) router.push({ name: 'dashboard' });
+  if (result.success) router.push(result.redirect ?? { name: 'dashboard' });
 }
 
 function resend() {
@@ -31,15 +64,52 @@ function resend() {
 </script>
 
 <template>
-  <section class="auth-shell">
-    <form class="auth-card auth-form" @submit.prevent="submit">
-      <div class="auth-brand">
-        <img src="/assets/icons/dashboard/viora-isotipo-green.png" alt="Viora" />
-        <strong>Viora</strong>
-      </div>
+  <section class="auth-shell login-shell">
+    <div class="login-stage">
+      <aside class="login-story" aria-label="Viora monitoring highlights">
+        <div class="login-story-slides" aria-hidden="true">
+          <img
+            v-for="(slide, index) in carouselSlides"
+            :key="slide.src"
+            :src="slide.src"
+            alt=""
+            class="login-story-slide"
+            :class="{ 'is-active': activeSlide === index }"
+          />
+        </div>
 
-      <h1 class="auth-title">Welcome back</h1>
-      <p class="auth-subtitle">Sign in to monitor your groves, alerts and interventions.</p>
+        <div class="login-story-brand">
+          <img src="/assets/icons/dashboard/viora-isotipo-white.png" alt="" />
+          <strong>Viora</strong>
+        </div>
+
+        <div class="login-story-copy">
+          <span class="login-story-eyebrow">Grove intelligence</span>
+          <h2>See every plot, alert and intervention in one view</h2>
+          <p>Track soil health, weather risk and field visits without leaving your dashboard.</p>
+          <div class="login-story-dots" role="tablist" aria-label="Carousel images">
+            <button
+              v-for="(slide, index) in carouselSlides"
+              :key="slide.src"
+              type="button"
+              class="login-story-dot"
+              :class="{ 'is-active': activeSlide === index }"
+              :aria-label="`Show ${slide.label}`"
+              :aria-pressed="activeSlide === index"
+              @click="selectSlide(index)"
+            ></button>
+          </div>
+        </div>
+      </aside>
+
+      <form class="auth-card auth-form login-card" @submit.prevent="submit">
+        <div class="auth-brand">
+          <img src="/assets/icons/dashboard/viora-isotipo-green.png" alt="Viora" />
+          <strong>Viora</strong>
+        </div>
+
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-subtitle">Sign in to monitor your groves, alerts and interventions.</p>
 
       <p v-if="store.error" class="auth-error">&#x26A0; {{ store.error }}</p>
       <p v-if="store.info" class="auth-info">&#x2714; {{ store.info }}</p>
@@ -77,8 +147,9 @@ function resend() {
         {{ store.busy ? 'Signing in\u2026' : 'Sign in' }}
       </button>
 
-      <p class="auth-foot">New to Viora? <router-link to="/iam/sign-up">Create an account</router-link></p>
-    </form>
+      <p class="auth-foot">New to Viora? <router-link to="/register">Create an account</router-link></p>
+      </form>
+    </div>
   </section>
 </template>
 
@@ -90,6 +161,109 @@ function resend() {
   padding: 24px;
   background: #f8f4ed;
   font-family: 'Poppins', sans-serif;
+}
+
+.login-shell { padding: 0; }
+
+.login-stage {
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 460px);
+  align-items: stretch;
+}
+
+.login-story {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px;
+  overflow: hidden;
+  background: #1f2523;
+}
+
+.login-story-slides {
+  position: absolute;
+  inset: 0;
+}
+
+.login-story-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.login-story-slide.is-active { opacity: 1; }
+
+.login-story::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(31, 37, 35, 0.05) 0%, rgba(31, 37, 35, 0.75) 100%);
+}
+
+.login-story-brand {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: auto;
+}
+
+.login-story-brand img { width: 32px; height: 32px; }
+.login-story-brand strong { font-size: 18px; font-weight: 600; color: #fff; }
+
+.login-story-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 420px;
+  color: #fff;
+}
+
+.login-story-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a7e0c4;
+}
+
+.login-story-copy h2 { margin: 0; font-size: 26px; font-weight: 600; line-height: 1.3; }
+.login-story-copy p { margin: 0; font-size: 14px; font-weight: 400; line-height: 1.55; color: rgba(255, 255, 255, 0.82); }
+
+.login-story-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.login-story-dot {
+  width: 24px;
+  height: 4px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease;
+}
+
+.login-story-dot.is-active { background: #c15a2e; }
+
+.login-card {
+  border-radius: 0;
+  box-shadow: none;
+  justify-content: center;
+  padding: 48px 44px;
 }
 
 .auth-card {
@@ -182,4 +356,10 @@ function resend() {
 .auth-foot { margin: 4px 0 0; text-align: center; font-size: 13px; font-weight: 400; color: #6f6a62; }
 .auth-foot a { color: #2e4a3a; font-weight: 600; text-decoration: none; }
 .auth-foot a:hover { text-decoration: underline; }
+
+@media (max-width: 960px) {
+  .login-stage { grid-template-columns: 1fr; }
+  .login-story { display: none; }
+  .login-card { padding: 36px 24px; }
+}
 </style>

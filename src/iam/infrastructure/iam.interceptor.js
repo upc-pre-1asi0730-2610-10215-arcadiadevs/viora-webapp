@@ -1,10 +1,10 @@
-import useIamStore from '../application/iam.store.js';
 import { registerRequestInterceptor } from '../../shared/infrastructure/interceptor-registry.js';
+import { getActiveToken } from '../../shared/infrastructure/active-session.js';
 
 export const iamInterceptor = (config) => {
-  const store = useIamStore();
-  if (store.isSignedIn) {
-    config.headers.Authorization = `Bearer ${store.currentToken}`;
+  const token = getActiveToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 };
