@@ -28,7 +28,8 @@ const workspaceRoutes = [
   //   profile     → profile-routes.js
   //   support     → support-routes.js
   placeholder('/agronomic/plots/import', 'my-plots-import', 'plotImport.title', 'plotImport.subtitle'),
-  placeholder('/profile', 'profile', 'sidebar.openProfile', 'comingSoon.subtitle-profile')
+  placeholder('/profile', 'profile', 'sidebar.openProfile', 'comingSoon.subtitle-profile'),
+  placeholder('/specialist', 'specialist-workspace', 'Specialist Workspace', 'Review producer requests, cases, and field interventions — coming soon.')
 ];
 
 export default workspaceRoutes;
