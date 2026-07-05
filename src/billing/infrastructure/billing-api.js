@@ -5,12 +5,11 @@
  */
 import { BaseApi } from '../../shared/infrastructure/base-api.js';
 import { BaseEndpoint } from '../../shared/infrastructure/base-endpoint.js';
-import { ReferralCodeAssembler, CouponAssembler } from './billing-response.js';
+import { requireActiveUserId } from '../../shared/infrastructure/active-session.js';
 
 const referralsEndpointPath = import.meta.env.VITE_REFERRALS_ENDPOINT_PATH || '/referrals';
 const couponsEndpointPath = import.meta.env.VITE_COUPONS_ENDPOINT_PATH || '/coupons';
-
-const defaultUserId = import.meta.env.VITE_DEFAULT_USER_ID;
+const couponRedemptionsEndpointPath = import.meta.env.VITE_COUPON_REDEMPTIONS_ENDPOINT_PATH || '/coupon-redemptions';
 
 /**
  * @class BillingApi
@@ -21,11 +20,14 @@ export class BillingApi extends BaseApi {
     #referralsEndpoint;
     /** @type {BaseEndpoint} */
     #couponsEndpoint;
+    /** @type {BaseEndpoint} */
+    #couponRedemptionsEndpoint;
 
     constructor() {
         super();
         this.#referralsEndpoint = new BaseEndpoint(this, referralsEndpointPath);
         this.#couponsEndpoint = new BaseEndpoint(this, couponsEndpointPath);
+        this.#couponRedemptionsEndpoint = new BaseEndpoint(this, couponRedemptionsEndpointPath);
     }
 
     /**
@@ -33,7 +35,7 @@ export class BillingApi extends BaseApi {
      * @returns {Promise<import('axios').AxiosResponse<Object>>}
      */
     getReferralCode() {
-        return this.#referralsEndpoint.getById(defaultUserId);
+        return this.#referralsEndpoint.getById(requireActiveUserId());
     }
 
     /**
@@ -41,7 +43,7 @@ export class BillingApi extends BaseApi {
      * @returns {Promise<import('axios').AxiosResponse<Object>>}
      */
     getCoupons() {
-        return this.#couponsEndpoint.getAll({ userId: defaultUserId });
+        return this.#couponsEndpoint.getAll({ userId: requireActiveUserId() });
     }
 
     /**
@@ -50,9 +52,6 @@ export class BillingApi extends BaseApi {
      * @returns {Promise<import('axios').AxiosResponse<Object>>}
      */
     redeemCoupon(code) {
-        return this.#couponsEndpoint.http.post(
-            `${this.#couponsEndpoint.endpointPath}/redeem`,
-            { userId: defaultUserId, code },
-        );
+        return this.#couponRedemptionsEndpoint.create({ userId: requireActiveUserId(), code });
     }
 }

@@ -33,25 +33,25 @@ export function formatMoney(cents, currency) {
  */
 export class Plan {
     /** @type {number|string|null} */
-    readonly id;
+    id;
     /** @type {string} */
-    readonly code;
+    code;
     /** @type {string} */
-    readonly name;
+    name;
     /** @type {number} */
-    readonly priceCents;
+    priceCents;
     /** @type {string} */
-    readonly currency;
+    currency;
     /** @type {PlanInterval} */
-    readonly interval;
+    interval;
     /** @type {string} */
-    readonly tagline;
+    tagline;
     /** @type {string[]} */
-    readonly features;
+    features;
     /** @type {number} */
-    readonly plotLimit;
+    plotLimit;
     /** @type {number} */
-    readonly iotLimit;
+    iotLimit;
 
     /**
      * @param {Object} [props={}]
