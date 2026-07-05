@@ -265,7 +265,7 @@
                       <i class="pi pi-copy"></i> Copy
                     </pv-button>
                   </div>
-                  <div class="contact-row" v-if="contactData.whatsapp">
+                  <div class="contact-row">
                     <div><span class="contact-label">WhatsApp</span><strong>{{ contactData.whatsapp }}</strong></div>
                     <pv-button type="button" class="ghost-button ghost-button--sm" @click="openWhatsApp">
                       <i class="pi pi-comments"></i> Open
@@ -277,6 +277,13 @@
                   <i class="pi pi-info-circle"></i>
                   Contact details are only visible to you and will remain accessible for the duration of the case.
                 </p>
+
+                <pv-button type="button" class="ghost-button block" @click="openWhatsApp">
+                  <i class="pi pi-comments"></i> Open WhatsApp
+                </pv-button>
+                <pv-button type="button" class="ghost-button block" @click="backToOverview">
+                  <i class="pi pi-arrow-left"></i> Back to case detail
+                </pv-button>
               </template>
             </pv-card>
           </template>
@@ -365,11 +372,13 @@ import DashboardHeader from '../../../shared/presentation/components/dashboard-h
 import { useInterventionStore } from '../../application/intervention.store.js';
 import { useSurveillanceStore } from '../../../surveillance/application/surveillance.store.js';
 import { useAgronomicStore } from '../../../agronomic/application/agronomic.store.js';
+import { useExpenseStore } from '../../../agronomic/application/expense.store.js';
 import { ServiceProposal } from '../../domain/model/service-proposal.entity.js';
 
 const store = useInterventionStore();
 const surveillance = useSurveillanceStore();
 const agronomic = useAgronomicStore();
+const expense = useExpenseStore();
 const route = useRoute();
 const router = useRouter();
 
@@ -533,8 +542,33 @@ function severityClass(severity) {
 function handleAcceptProposal() {
     const code = caseCode.value;
     if (code) {
-        store.acceptProposal(code);
+        store.acceptProposal(code, (ok) => {
+            if (ok) registerSpecialistExpense();
+        });
     }
+}
+
+/**
+ * Records the accepted proposal's cost as a real specialist expense so it feeds
+ * Expense History (PEST_INTERVENTION / SPECIALIST, flagged ALERT_CONFIRMED and
+ * linked to this case). Best-effort: a failure here doesn't block acceptance.
+ */
+function registerSpecialistExpense() {
+    const proposal = store.activeProposal;
+    if (!request.value || request.value.plotId == null || proposal?.amount == null) return;
+
+    expense.submitExpense({
+        plotId: Number(request.value.plotId),
+        type: 'PEST_INTERVENTION',
+        category: 'SPECIALIST',
+        linkedActionCode: request.value.referenceCode || undefined,
+        amount: proposal.amount,
+        currency: proposal.currency ?? 'PEN',
+        expenseDate: new Date().toISOString().slice(0, 10),
+        paymentStatus: 'PENDING',
+        note: proposal.serviceTitle || undefined,
+        status: 'ALERT_CONFIRMED',
+    });
 }
 
 function simulateResponse() {
@@ -563,6 +597,7 @@ function copy(value) {
 }
 
 function openWhatsApp() {
+    if (!contactData.value.whatsapp) return;
     const number = contactData.value.whatsapp.replace(/[^\d]/g, '');
     if (!number) return;
     window.open(`https://wa.me/${number}`, '_blank');
