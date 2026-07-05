@@ -10,9 +10,13 @@ import { ref } from "vue";
 
 import { getIamApi } from "../infrastructure/iam-api-instance.js";
 import { UserSessionAssembler } from "../infrastructure/iam-response.js";
+import { getActiveUserId } from "../../shared/infrastructure/active-session.js";
 
-const iamApi = getIamApi();
-const defaultUserId = import.meta.env.VITE_DEFAULT_USER_ID;
+function requireActiveUserId() {
+    const userId = getActiveUserId();
+    if (!userId) throw new Error("No active user session.");
+    return userId;
+}
 
 /**
  * Reactive store that exposes IAM security commands and queries.
@@ -31,7 +35,7 @@ export const useSecurityStore = defineStore("security", () => {
     async function loadSessions() {
         try {
             loadingSessions.value = true;
-            const response = await iamApi.getSessions(defaultUserId);
+            const response = await getIamApi().getSessions(requireActiveUserId());
             const resources = response?.data ?? [];
             sessions.value = UserSessionAssembler.toEntitiesFromResponse(resources);
         } catch {
@@ -44,7 +48,7 @@ export const useSecurityStore = defineStore("security", () => {
     /** Revokes a session, dropping it from the list on success. */
     async function revokeSession(sessionId) {
         try {
-            await iamApi.revokeSession(defaultUserId, sessionId);
+            await getIamApi().revokeSession(requireActiveUserId(), sessionId);
             sessions.value = sessions.value.filter(
                 (session) => String(session.id) !== String(sessionId),
             );
@@ -57,7 +61,7 @@ export const useSecurityStore = defineStore("security", () => {
     async function changePassword(request, onDone) {
         try {
             changingPassword.value = true;
-            await iamApi.changePassword(defaultUserId, request);
+            await getIamApi().changePassword(requireActiveUserId(), request);
             onDone?.(true);
         } catch (err) {
             onDone?.(
@@ -74,7 +78,7 @@ export const useSecurityStore = defineStore("security", () => {
     async function deactivateAccount(onDone) {
         try {
             deactivating.value = true;
-            await iamApi.deactivateAccount(defaultUserId);
+            await getIamApi().deactivateAccount(requireActiveUserId());
             onDone?.(true);
         } catch {
             onDone?.(false);

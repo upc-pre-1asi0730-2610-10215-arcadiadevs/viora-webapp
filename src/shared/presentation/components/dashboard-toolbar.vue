@@ -9,11 +9,11 @@ const props = defineProps({
   },
   scopeOptions: {
     type: Array,
-    required: true
+    default: () => []
   },
   selectedScope: {
     type: [String, Number],
-    required: true
+    default: 'all'
   },
   timeRangeOptions: {
     type: Array,
@@ -81,8 +81,9 @@ const findScopeOption = (value) => {
       </template>
     </div>
 
-    <div class="filter-buttons">
+    <div v-if="scopeOptions.length > 0 || timeRangeOptions.length > 0" class="filter-buttons">
       <pv-dropdown
+          v-if="scopeOptions.length > 0"
           v-model="internalScope"
           :options="scopeOptions"
           optionLabel="label"
@@ -113,6 +114,7 @@ const findScopeOption = (value) => {
       </pv-dropdown>
 
       <pv-select-button
+          v-if="timeRangeOptions.length > 0"
           v-model="internalTimeRange"
           :options="timeRangeOptions"
           optionLabel="label"

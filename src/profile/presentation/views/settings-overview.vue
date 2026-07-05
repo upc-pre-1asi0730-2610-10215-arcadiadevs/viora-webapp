@@ -15,21 +15,27 @@ import { useProfileStore } from '../../application/profile.store.js';
 const store = useProfileStore();
 
 // BillingStore (Referrals tab) — may not exist yet; gracefully degrade.
-let billing = null;
-try {
-    const mod = await import('../../../billing/application/billing.store.js');
-    billing = mod.useBillingStore();
-} catch {
-    // Billing bounded context not yet ported; referrals tab renders placeholders.
-}
+const billing = ref(null);
 
 // SecurityStore (Security tab)
-let security = null;
-try {
-    const mod = await import('../../../iam/application/security.store.js');
-    security = mod.useSecurityStore();
-} catch {
-    // Security bounded context not yet available.
+const security = ref(null);
+
+async function loadBillingStore() {
+    try {
+        const mod = await import('../../../billing/application/billing.store.js');
+        billing.value = mod.useBillingStore();
+    } catch {
+        // Billing bounded context not yet ported; referrals tab renders placeholders.
+    }
+}
+
+async function loadSecurityStore() {
+    try {
+        const mod = await import('../../../iam/application/security.store.js');
+        security.value = mod.useSecurityStore();
+    } catch {
+        // Security bounded context not yet available.
+    }
 }
 
 // ── Tabs ───────────────────────────────────────────────────────────────
@@ -121,7 +127,7 @@ const canUpdatePassword = computed(
         currentPassword.value.length > 0 &&
         newPassword.value.length >= 8 &&
         newPassword.value === confirmPassword.value &&
-        !(security?.changingPassword?.value),
+        !(security.value?.changingPassword),
 );
 
 // ── Tab activation ─────────────────────────────────────────────────────
@@ -130,13 +136,15 @@ function selectTab(tabId) {
     ensureTabData(tabId);
 }
 
-function ensureTabData(tabId) {
+async function ensureTabData(tabId) {
     if (loadedTabs.has(tabId)) return;
     loadedTabs.add(tabId);
-    if (tabId === 'referrals' && billing) {
-        billing.load();
-    } else if (tabId === 'security' && security) {
-        security.loadSessions();
+    if (tabId === 'referrals') {
+        if (!billing.value) await loadBillingStore();
+        billing.value?.load();
+    } else if (tabId === 'security') {
+        if (!security.value) await loadSecurityStore();
+        security.value?.loadSessions();
     }
 }
 
@@ -144,10 +152,10 @@ function ensureTabData(tabId) {
 function resetDraft() {
     store.load();
     store.loadFarmTotals();
-    if (activeTab.value === 'referrals' && billing) {
-        billing.load();
-    } else if (activeTab.value === 'security' && security) {
-        security.loadSessions();
+    if (activeTab.value === 'referrals' && billing.value) {
+        billing.value.load();
+    } else if (activeTab.value === 'security' && security.value) {
+        security.value.loadSessions();
     }
 }
 
@@ -165,7 +173,7 @@ function saveChanges() {
 
 // ── Referrals actions ──────────────────────────────────────────────────
 function copyReferralCode() {
-    const code = billing?.referralCode?.code;
+    const code = billing.value?.referralCode?.code;
     if (!code) return;
     navigator.clipboard?.writeText(code).then(() => {
         codeCopied.value = true;
@@ -174,8 +182,8 @@ function copyReferralCode() {
 }
 
 function shareReferral() {
-    if (!billing?.referralCode) return;
-    const referral = billing.referralCode;
+    if (!billing.value?.referralCode) return;
+    const referral = billing.value.referralCode;
     const shareData = {
         title: 'Join me on Viora',
         text: `Use my referral code ${referral.code} to join Viora.`,
@@ -192,8 +200,8 @@ function shareReferral() {
 
 function redeemCoupon() {
     const code = redeemInput.value.trim();
-    if (!code || !billing?.redeeming?.value) return;
-    billing.redeem(code, (ok) => {
+    if (!code || !billing.value?.redeeming) return;
+    billing.value.redeem(code, (ok) => {
         if (ok) redeemInput.value = '';
     });
 }
@@ -250,7 +258,7 @@ function updatePassword() {
         passwordMessage.value = { tone: 'error', text: 'New password and confirmation do not match.' };
         return;
     }
-    security?.changePassword(
+    security.value?.changePassword(
         { currentPassword: currentPassword.value, newPassword: newPassword.value },
         (ok, message) => {
             if (ok) {
@@ -266,7 +274,7 @@ function updatePassword() {
 }
 
 function signOutSession(sessionId) {
-    security?.revokeSession(sessionId);
+    security.value?.revokeSession(sessionId);
 }
 
 function openDeactivate() {
@@ -278,7 +286,7 @@ function closeDeactivate() {
 }
 
 function confirmDeactivate() {
-    security?.deactivateAccount((ok) => {
+    security.value?.deactivateAccount((ok) => {
         if (ok) {
             accountDeactivated.value = true;
             deactivateModalOpen.value = false;
@@ -290,6 +298,8 @@ function confirmDeactivate() {
 onMounted(() => {
     store.load();
     store.loadFarmTotals();
+    loadBillingStore();
+    loadSecurityStore();
 });
 </script>
 
@@ -339,6 +349,9 @@ onMounted(() => {
                 <span class="identity-name">{{ fullName || 'Your name' }}</span>
                 <span class="identity-role">{{ jobTitle || 'Job title' }} &middot; {{ store.profile.roleLabel }}</span>
               </div>
+              <pv-button type="button" class="ghost-btn ghost-btn--sm">
+                <i class="pi pi-camera"></i> Change photo
+              </pv-button>
             </div>
 
             <div class="form-grid">
@@ -454,7 +467,7 @@ onMounted(() => {
     </div>
 
     <!-- ============ REFERRALS ============ -->
-    <div v-if="activeTab === 'referrals'">
+    <template v-if="activeTab === 'referrals'">
       <pv-card class="section-card">
         <template #content>
           <div class="section-head">
@@ -497,7 +510,7 @@ onMounted(() => {
                 <span class="step-text">You will be able to claim your coupon when your partner registers for the first time.</span>
               </div>
 
-              <pv-button type="button" class="save-btn block" label="Refer a partner by text, email or more" @click="shareReferral" />
+              <pv-button type="button" class="save-btn save-btn--full" icon="pi pi-share-alt" label="Refer a partner by text, email or more" @click="shareReferral" />
             </div>
           </div>
         </template>
@@ -625,10 +638,10 @@ onMounted(() => {
           </template>
         </template>
       </pv-card>
-    </div>
+    </template>
 
     <!-- ============ SECURITY ============ -->
-    <div v-if="activeTab === 'security'">
+    <template v-if="activeTab === 'security'">
       <!-- Password -->
       <pv-card class="section-card">
         <template #content>
@@ -728,7 +741,7 @@ onMounted(() => {
           />
         </template>
       </pv-card>
-    </div>
+    </template>
 
     <!-- Deactivate confirmation modal -->
     <pv-dialog v-model:visible="deactivateModalOpen" modal :closable="true" header="Deactivate account" class="deactivate-dialog">
@@ -755,7 +768,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 22px;
-  padding: 8px 4px 40px;
 }
 
 /* ---------- Section tabs ---------- */
@@ -863,6 +875,8 @@ onMounted(() => {
   margin-bottom: 20px;
   border-bottom: 1px solid #f0ece4;
 }
+
+.identity-row .ghost-btn { margin-left: auto; }
 
 .avatar {
   flex: 0 0 auto;
@@ -1115,7 +1129,7 @@ onMounted(() => {
   border-radius: 10px;
 }
 
-.save-btn.block {
+.save-btn--full {
   width: 100%;
 }
 

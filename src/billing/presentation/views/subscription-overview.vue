@@ -148,29 +148,29 @@ function closePayment() {
 
         <!-- Payment result banners -->
         <div v-if="paymentResult === 'approved'" class="banner banner--success">
-            <span class="banner-icon material-icons">check_circle</span>
+            <i class="pi pi-check-circle banner-icon"></i>
             Payment approved — your plan is being updated. Refresh in a moment if it isn't reflected yet.
             <button type="button" class="banner-close" @click="dismissPaymentResult()">
-                <span class="material-icons">close</span>
+                <i class="pi pi-times"></i>
             </button>
         </div>
         <div v-else-if="paymentResult === 'pending'" class="banner banner--info">
-            <span class="banner-icon material-icons">schedule</span>
+            <i class="pi pi-clock banner-icon"></i>
             Payment pending confirmation. Your plan updates as soon as MercadoPago confirms it.
             <button type="button" class="banner-close" @click="dismissPaymentResult()">
-                <span class="material-icons">close</span>
+                <i class="pi pi-times"></i>
             </button>
         </div>
         <div v-else-if="paymentResult === 'failure'" class="banner banner--error">
-            <span class="banner-icon material-icons">error_outline</span>
+            <i class="pi pi-exclamation-circle banner-icon"></i>
             The payment could not be completed. No changes were made — you can try again.
             <button type="button" class="banner-close" @click="dismissPaymentResult()">
-                <span class="material-icons">close</span>
+                <i class="pi pi-times"></i>
             </button>
         </div>
 
         <div v-if="store.error" class="banner banner--error">
-            <span class="banner-icon material-icons">error_outline</span> {{ store.error }}
+            <i class="pi pi-exclamation-circle banner-icon"></i> {{ store.error }}
         </div>
 
         <div class="subscription-grid">
@@ -179,7 +179,7 @@ function closePayment() {
                 <!-- Current plan hero -->
                 <div class="section-card">
                     <div class="plan-hero-head">
-                        <span class="material-icons hero-icon">diamond</span>
+                        <i class="pi pi-crown hero-icon"></i>
                         <div>
                             <h2 class="card-title">{{ store.subscription?.planName || store.currentPlan?.name || 'Your plan' }}</h2>
                             <p class="hero-sub">{{ store.subscription?.renewalCaption || 'Manage your subscription' }}</p>
@@ -226,7 +226,7 @@ function closePayment() {
                 <div id="available-plans" class="section-card">
                     <div class="section-head">
                         <div>
-                            <h2 class="card-title"><span class="material-icons title-icon">star</span> Available plans</h2>
+                            <h2 class="card-title"><i class="pi pi-star-fill title-icon"></i> Available plans</h2>
                             <p class="card-sub">Compare tiers and switch anytime — changes apply at the next billing cycle.</p>
                         </div>
                     </div>
@@ -247,7 +247,7 @@ function closePayment() {
 
                             <ul class="plan-features">
                                 <li v-for="feature in plan.features" :key="feature">
-                                    <span class="material-icons">check</span> {{ feature }}
+                                    <i class="pi pi-check"></i> {{ feature }}
                                 </li>
                             </ul>
 
@@ -277,11 +277,11 @@ function closePayment() {
                 <!-- Payment method -->
                 <div class="section-card">
                     <div class="section-head">
-                        <h2 class="card-title"><span class="material-icons title-icon">credit_card</span> Payment method</h2>
+                        <h2 class="card-title"><i class="pi pi-credit-card title-icon"></i> Payment method</h2>
                     </div>
 
                     <div v-if="store.defaultPaymentMethod" class="method-row">
-                        <span class="method-icon"><span class="material-icons">credit_card</span></span>
+                        <span class="method-icon"><i class="pi pi-credit-card"></i></span>
                         <div class="method-text">
                             <span class="method-name">{{ store.defaultPaymentMethod.label }}</span>
                             <span class="method-exp">{{ store.defaultPaymentMethod.expiresLabel }}</span>
@@ -331,7 +331,7 @@ function closePayment() {
                 <div class="section-card">
                     <div class="section-head">
                         <div>
-                            <h2 class="card-title"><span class="material-icons title-icon">description</span> Billing history</h2>
+                            <h2 class="card-title"><i class="pi pi-file title-icon"></i> Billing history</h2>
                             <p class="card-sub">Invoices from the last 6 billing cycles.</p>
                         </div>
                     </div>
@@ -351,7 +351,7 @@ function closePayment() {
                             <span><span class="pill" :class="{ 'pill--paid': invoice.isPaid }">{{ invoice.statusLabel }}</span></span>
                             <span>
                                 <button type="button" class="download-btn" aria-label="Download invoice">
-                                    <span class="material-icons">download</span>
+                                    <i class="pi pi-download"></i>
                                 </button>
                             </span>
                         </div>
@@ -370,7 +370,7 @@ function closePayment() {
                     <h2>Switch to {{ confirmPlan.name }}</h2>
                     <p class="modal-subtitle">Changes apply at your next billing cycle.</p>
                 </div>
-                <button type="button" @click="closeSwitch()"><span class="material-icons">close</span></button>
+                <button type="button" @click="closeSwitch()"><i class="pi pi-times"></i></button>
             </div>
 
             <div class="switch-summary">
@@ -379,7 +379,7 @@ function closePayment() {
             </div>
 
             <p class="modal-note">
-                <span class="material-icons">lock</span>
+                <i class="pi pi-lock"></i>
                 You'll be redirected to MercadoPago's secure checkout to complete the payment.
             </p>
             <p v-if="store.error" class="field-error">{{ store.error }}</p>
@@ -405,7 +405,7 @@ function closePayment() {
                     <h2>Cancel subscription</h2>
                     <p class="modal-subtitle">This takes effect at the end of your billing period.</p>
                 </div>
-                <button type="button" @click="closeCancel()"><span class="material-icons">close</span></button>
+                <button type="button" @click="closeCancel()"><i class="pi pi-times"></i></button>
             </div>
             <p class="modal-body-text">
                 You'll keep access to {{ store.subscription?.planName || 'your plan' }} until
@@ -433,7 +433,7 @@ function closePayment() {
                     <h2>Update payment method</h2>
                     <p class="modal-subtitle">Your card is handled securely by MercadoPago.</p>
                 </div>
-                <button type="button" @click="closePayment()"><span class="material-icons">close</span></button>
+                <button type="button" @click="closePayment()"><i class="pi pi-times"></i></button>
             </div>
             <p class="modal-body-text">
                 Viora never stores your full card details. Your payment method updates automatically the next time you
@@ -451,7 +451,6 @@ function closePayment() {
     display: flex;
     flex-direction: column;
     gap: 22px;
-    padding: 8px 4px 40px;
 }
 
 .subscription-grid {
@@ -738,7 +737,7 @@ function closePayment() {
     line-height: 1.4;
 }
 
-.plan-features .material-icons {
+.plan-features .pi {
     flex: 0 0 auto;
     font-size: 18px;
     width: 18px;
@@ -796,7 +795,7 @@ function closePayment() {
     color: #ffffff;
 }
 
-.method-icon .material-icons {
+.method-icon .pi {
     font-size: 20px;
     width: 20px;
     height: 20px;
@@ -928,7 +927,7 @@ function closePayment() {
     place-items: center;
 }
 
-.download-btn .material-icons {
+.download-btn .pi {
     font-size: 18px;
     width: 18px;
     height: 18px;
@@ -1087,7 +1086,7 @@ function closePayment() {
     line-height: 1.5;
 }
 
-.modal-note .material-icons {
+.modal-note .pi {
     flex: 0 0 auto;
     font-size: 16px;
     width: 16px;

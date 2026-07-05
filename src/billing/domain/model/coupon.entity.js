@@ -10,17 +10,17 @@
  */
 export class Coupon {
     /** @type {number|string|null} */
-    readonly id;
+    id;
     /** @type {string} */
-    readonly code;
+    code;
     /** @type {string} */
-    readonly description;
+    description;
     /** @type {number} */
-    readonly discountPercent;
+    discountPercent;
     /** ISO timestamp of the expiry, or null when the coupon never expires. */
-    readonly validUntil;
+    validUntil;
     /** @type {string} */
-    readonly conditions;
+    conditions;
 
     /**
      * @param {Object} [props={}]

@@ -5,9 +5,15 @@
  *
  * @component
  */
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 import Layout from './shared/presentation/components/layout.vue';
+
+const route = useRoute();
+const isPublicRoute = computed(() => route.meta.public === true);
 </script>
 
 <template>
-  <Layout />
+  <router-view v-if="isPublicRoute" />
+  <Layout v-else />
 </template>

@@ -6,19 +6,13 @@
  */
 import { BaseApi } from '../../shared/infrastructure/base-api.js';
 import { BaseEndpoint } from '../../shared/infrastructure/base-endpoint.js';
-import {
-    PlanAssembler,
-    SubscriptionAssembler,
-    InvoiceAssembler,
-    PaymentMethodAssembler,
-} from './subscription-response.js';
+import { requireActiveUserId } from '../../shared/infrastructure/active-session.js';
 
 const plansEndpointPath = import.meta.env.VITE_PLANS_ENDPOINT_PATH || '/plans';
 const subscriptionsEndpointPath = import.meta.env.VITE_SUBSCRIPTIONS_ENDPOINT_PATH || '/subscriptions';
+const checkoutsEndpointPath = import.meta.env.VITE_CHECKOUTS_ENDPOINT_PATH || '/checkouts';
 const invoicesEndpointPath = import.meta.env.VITE_INVOICES_ENDPOINT_PATH || '/invoices';
 const paymentMethodsEndpointPath = import.meta.env.VITE_PAYMENT_METHODS_ENDPOINT_PATH || '/payment-methods';
-
-const defaultUserId = import.meta.env.VITE_DEFAULT_USER_ID;
 
 /**
  * @class SubscriptionApi
@@ -30,6 +24,8 @@ export class SubscriptionApi extends BaseApi {
     /** @type {BaseEndpoint} */
     #subscriptionsEndpoint;
     /** @type {BaseEndpoint} */
+    #checkoutsEndpoint;
+    /** @type {BaseEndpoint} */
     #invoicesEndpoint;
     /** @type {BaseEndpoint} */
     #paymentMethodsEndpoint;
@@ -38,6 +34,7 @@ export class SubscriptionApi extends BaseApi {
         super();
         this.#plansEndpoint = new BaseEndpoint(this, plansEndpointPath);
         this.#subscriptionsEndpoint = new BaseEndpoint(this, subscriptionsEndpointPath);
+        this.#checkoutsEndpoint = new BaseEndpoint(this, checkoutsEndpointPath);
         this.#invoicesEndpoint = new BaseEndpoint(this, invoicesEndpointPath);
         this.#paymentMethodsEndpoint = new BaseEndpoint(this, paymentMethodsEndpointPath);
     }
@@ -53,21 +50,21 @@ export class SubscriptionApi extends BaseApi {
      * @returns {Promise<import('axios').AxiosResponse<import('./subscription-response.js').SubscriptionResource>>}
      */
     getSubscription() {
-        return this.#subscriptionsEndpoint.getById(defaultUserId);
+        return this.#subscriptionsEndpoint.getById(requireActiveUserId());
     }
 
     /**
      * @returns {Promise<import('axios').AxiosResponse<import('./subscription-response.js').InvoiceResource[]>>}
      */
     getInvoices() {
-        return this.#invoicesEndpoint.getAll({ userId: defaultUserId });
+        return this.#invoicesEndpoint.getAll({ userId: requireActiveUserId() });
     }
 
     /**
      * @returns {Promise<import('axios').AxiosResponse<import('./subscription-response.js').PaymentMethodResource[]>>}
      */
     getPaymentMethods() {
-        return this.#paymentMethodsEndpoint.getAll({ userId: defaultUserId });
+        return this.#paymentMethodsEndpoint.getAll({ userId: requireActiveUserId() });
     }
 
     /**
@@ -77,10 +74,7 @@ export class SubscriptionApi extends BaseApi {
      * @returns {Promise<import('axios').AxiosResponse<import('./subscription-response.js').CheckoutResource>>}
      */
     checkout(planCode, interval) {
-        return this.#subscriptionsEndpoint.http.post(
-            `${this.#subscriptionsEndpoint.endpointPath}/${defaultUserId}/checkout`,
-            { planCode, interval },
-        );
+        return this.#checkoutsEndpoint.create({ userId: requireActiveUserId(), planCode, interval });
     }
 
     /**
@@ -88,9 +82,9 @@ export class SubscriptionApi extends BaseApi {
      * @returns {Promise<import('axios').AxiosResponse<import('./subscription-response.js').SubscriptionResource>>}
      */
     cancel() {
-        return this.#subscriptionsEndpoint.http.post(
-            `${this.#subscriptionsEndpoint.endpointPath}/${defaultUserId}/cancel`,
-            {},
+        return this.#subscriptionsEndpoint.http.patch(
+            `${this.#subscriptionsEndpoint.endpointPath}/${requireActiveUserId()}`,
+            { status: 'CANCELED' },
         );
     }
 }

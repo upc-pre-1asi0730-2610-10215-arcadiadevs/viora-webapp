@@ -1,4 +1,20 @@
 {
+  "users": [
+    {
+      "id": 1,
+      "email": "demo@viora.com",
+      "password": "demo1234",
+      "fullName": "Demo User",
+      "role": "ROLE_GROWER"
+    },
+    {
+      "id": 2,
+      "email": "specialist@viora.com",
+      "password": "demo1234",
+      "fullName": "Demo Specialist",
+      "role": "ROLE_SPECIALIST"
+    }
+  ],
   "plots": [
     {
       "id": 1,

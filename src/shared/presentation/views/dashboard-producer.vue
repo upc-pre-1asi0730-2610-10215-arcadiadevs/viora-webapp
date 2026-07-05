@@ -25,6 +25,7 @@ import RecommendedActionsCard from "../../../surveillance/presentation/component
 import TrendAnalysisCard from "../../../agronomic/presentation/components/trend-analysis-card.vue";
 import DashboardToolbar from "../components/dashboard-toolbar.vue";
 import LanguageSwitcher from "../components/language-switcher.vue";
+import DashboardHeader from "../components/dashboard-header.vue";
 import IotDevicesCard from '../../../agronomic/presentation/components/iot-devices-card.vue';
 import IotSensorCard from '../../../agronomic/presentation/components/iot-sensor-card.vue';
 
@@ -39,6 +40,12 @@ const scopeLabel = computed(() => {
   if (agronomicStore.dashboardScope === 'all') return t('dashboard.scope.allPlots');
   return agronomicStore.selectedDashboardPlot?.name || t('dashboard.scope.allPlots');
 });
+
+const breadcrumbs = computed(() => [
+  { label: t('sidebar.dashboard'), route: '/dashboard' },
+  { label: t('dashboard.overview'), disabled: true },
+  { label: scopeLabel.value, disabled: true }
+]);
 
 const activePlotOverviewId = computed(() => {
   return agronomicStore.selectedDashboardPlot?.id
@@ -66,6 +73,7 @@ const timeRangeOptions = computed(() => [
 ]);
 
 const lastUpdatedText = computed(() => DateTimeFormatter.formatRelativeTime(agronomicStore.monitoringSummary?.updatedAt));
+const updatedLabel = computed(() => `${t('dashboard.updated-label')} ${lastUpdatedText.value}`);
 
 const onScopeChange = (newScope) => agronomicStore.setDashboardScope(newScope);
 const onTimeRangeChange = (newRange) => agronomicStore.setDashboardTimeRange(newRange);
@@ -86,27 +94,16 @@ onMounted(() => {
 
   <div class="producer-dashboard-container">
 
-    <header class="dashboard-header-bar">
-      <div class="header-left">
-        <nav class="dashboard-breadcrumb" aria-label="Page breadcrumb">
-          <router-link to="/dashboard" class="breadcrumb-item">{{ t('sidebar.dashboard') }}</router-link>
-          <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-item">{{ t('dashboard.overview') }}</span>
-          <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-item is-current">{{ scopeLabel }}</span>
-        </nav>
-        <p class="header-subtitle">{{ t('dashboard.header-description') }}</p>
-      </div>
-
-      <div class="dashboard-actions">
-        <div class="status-sync-box">
-          <span class="status-label">{{ t('dashboard.updated-label') }}</span>
-          <span class="status-time">{{ lastUpdatedText }}</span>
-        </div>
+    <DashboardHeader
+      :breadcrumbs="breadcrumbs"
+      :subtitle="t('dashboard.header-description')"
+      :updated-label="updatedLabel"
+      @refresh="onRefreshSummary"
+    >
+      <template #actions>
         <LanguageSwitcher />
-        <pv-button icon="pi pi-refresh" class="refresh-btn-viora" @click="onRefreshSummary" />
-      </div>
-    </header>
+      </template>
+    </DashboardHeader>
 
     <div class="dashboard-header-row">
       <DashboardToolbar
@@ -177,11 +174,11 @@ onMounted(() => {
       <RecommendedActionsCard />
     </section>
 
-    <section class="w-full max-w-full mx-auto px-4 lg:px-0 pb-10">
+    <section class="analysis-section">
       <AgronomicAnalysisWidget />
     </section>
 
-    <section class="w-full max-w-full mx-auto px-4 lg:px-0 pb-10">
+    <section class="analysis-section">
       <TrendAnalysisCard />
     </section>
   </div>
@@ -233,64 +230,6 @@ onMounted(() => {
   padding: 0;
 }
 
-.dashboard-header-bar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.header-left {
-  min-width: 0;
-}
-
-.dashboard-breadcrumb {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.breadcrumb-item {
-  color: #8c877f;
-  font-family: var(--viora-font);
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.2;
-  text-decoration: none;
-}
-
-a.breadcrumb-item:hover {
-  color: #2e4a3a;
-}
-
-.breadcrumb-item.is-current {
-  color: #1f2523;
-}
-
-.breadcrumb-separator {
-  color: #c8c2b8;
-  font-size: 20px;
-  font-weight: 500;
-}
-
-.header-subtitle {
-  margin: 6px 0 0;
-  color: #8c877f;
-  font-family: var(--viora-font);
-  font-size: 14px;
-  font-weight: 400;
-}
-
-.dashboard-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
 .dashboard-header-row {
   display: flex;
   align-items: center;
@@ -299,30 +238,6 @@ a.breadcrumb-item:hover {
 }
 
 .toolbar-flex { flex: 1; }
-
-.status-sync-box {
-  background: transparent;
-  border: 1.5px solid #2E4A3A;
-  border-radius: 8px;
-  padding: 6px 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--viora-font);
-  height: 42px;
-}
-
-.status-label { color: #8C877F; font-size: 12px; font-weight: 500; }
-.status-time { color: #2E4A3A; font-size: 12px; font-weight: 500; }
-
-.refresh-btn-viora {
-  background: transparent !important;
-  border: 1.5px solid #2E4A3A !important;
-  color: #2E4A3A !important;
-  border-radius: 8px !important;
-  width: 42px; height: 42px;
-  padding: 0 !important;
-}
 
 .kpi-grid-container {
   display: grid;
@@ -355,9 +270,11 @@ a.breadcrumb-item:hover {
 .surveillance-row {
   display: grid;
   grid-template-columns: minmax(0, 4fr) minmax(220px, 0.8fr);
-  gap: 24px;
-  margin-top: 24px;
+  gap: 26px;
   margin-bottom: 26px;
-  padding: 0 16px;
+}
+
+.analysis-section {
+  margin-bottom: 26px;
 }
 </style>

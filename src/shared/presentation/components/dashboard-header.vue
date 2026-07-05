@@ -28,7 +28,7 @@ const emit = defineEmits(['refresh']);
         >
           {{ crumb.label }}
         </router-link>
-        <span v-else :class="['breadcrumb-text', { 'is-disabled': crumb.disabled }]">
+        <span v-else class="breadcrumb-text">
           {{ crumb.label }}
         </span>
         <span v-if="index < breadcrumbs.length - 1" class="breadcrumb-sep">/</span>
@@ -39,6 +39,7 @@ const emit = defineEmits(['refresh']);
       <p v-if="subtitle" class="header-subtitle">{{ subtitle }}</p>
       <div class="header-actions">
         <span v-if="updatedLabel" class="sync-label">{{ updatedLabel }}</span>
+        <slot name="actions" />
         <pv-button
           type="button"
           class="refresh-btn"
@@ -62,34 +63,31 @@ const emit = defineEmits(['refresh']);
 .header-breadcrumbs {
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
   font-family: 'Poppins', sans-serif;
-  font-size: 13px;
-  color: #8c877f;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  color: #1f2523;
 }
 
 .breadcrumb-link {
-  color: #2e4a3a;
+  color: #1f2523;
   text-decoration: none;
-  font-weight: 500;
 }
 
 .breadcrumb-link:hover {
-  text-decoration: underline;
+  color: #2e4a3a;
 }
 
 .breadcrumb-text {
-  color: #4f4f4f;
-  font-weight: 500;
-}
-
-.breadcrumb-text.is-disabled {
-  color: #8c877f;
-  font-weight: 400;
+  color: #1f2523;
 }
 
 .breadcrumb-sep {
-  color: #ccc;
+  color: #1f2523;
 }
 
 .header-row {
@@ -99,10 +97,10 @@ const emit = defineEmits(['refresh']);
 }
 
 .header-subtitle {
-  margin: 0;
-  color: #6b6660;
+  margin: 8px 0 0;
+  color: #6b716d;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .header-actions {
@@ -113,9 +111,16 @@ const emit = defineEmits(['refresh']);
 }
 
 .sync-label {
-  color: #8c877f;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border: 1px solid #2e4a3a;
+  border-radius: 999px;
+  color: #2e4a3a;
   font-family: 'Poppins', sans-serif;
   font-size: 12px;
+  font-weight: 500;
 }
 
 .refresh-btn {

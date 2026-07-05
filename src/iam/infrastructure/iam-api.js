@@ -1,7 +1,7 @@
 import { BaseApi } from '../../shared/infrastructure/base-api.js';
 import { BaseEndpoint } from '../../shared/infrastructure/base-endpoint.js';
 
-const authPath = import.meta.env.VITE_AUTH_ENDPOINT_PATH || '/auth';
+const authPath = import.meta.env.VITE_AUTH_ENDPOINT_PATH || '/authentication';
 const usersPath = import.meta.env.VITE_USERS_ENDPOINT_PATH || '/users';
 
 export class IamApi extends BaseApi {
@@ -15,11 +15,20 @@ export class IamApi extends BaseApi {
   }
 
   signIn(request) {
-    return this.http.post(`${this.#authEndpoint.endpointPath}/sign-in`, request);
+    return this.http.post(`${this.#authEndpoint.endpointPath}/sign-in`, {
+      username: request.username ?? request.email,
+      password: request.password
+    });
   }
 
   signUp(request) {
-    return this.http.post(`${this.#authEndpoint.endpointPath}/sign-up`, request);
+    const email = request.email;
+    return this.http.post(`${this.#authEndpoint.endpointPath}/sign-up`, {
+      username: request.username ?? email,
+      password: request.password,
+      email,
+      fullName: request.fullName
+    });
   }
 
   verify(token) {
@@ -43,6 +52,6 @@ export class IamApi extends BaseApi {
   }
 
   deactivateAccount(userId) {
-    return this.http.patch(`${this.#usersEndpoint.endpointPath}/${userId}/deactivate`, {});
+    return this.http.patch(`${this.#usersEndpoint.endpointPath}/${userId}`, { active: false });
   }
 }

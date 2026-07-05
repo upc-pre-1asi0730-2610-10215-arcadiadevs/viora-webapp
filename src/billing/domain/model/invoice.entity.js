@@ -11,17 +11,17 @@ import { formatMoney } from './plan.entity.js';
  */
 export class Invoice {
     /** @type {number|string|null} */
-    readonly id;
+    id;
     /** @type {string|null} */
-    readonly issuedAt;
+    issuedAt;
     /** @type {string} */
-    readonly description;
+    description;
     /** @type {number} */
-    readonly amountCents;
+    amountCents;
     /** @type {string} */
-    readonly currency;
+    currency;
     /** @type {InvoiceStatus} */
-    readonly status;
+    status;
 
     /**
      * @param {Object} [props={}]
