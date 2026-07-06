@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.8] - 2026-07-06
+
+### Added
+
+- eslint 9 flat config with an `import/no-restricted-paths` rule enforcing that each bounded context's `domain/` and `infrastructure/` are private; only a context's own `application/*.store.js` may be imported cross-context. `npm run lint` added.
+
+### Fixed
+
+- `profile.store.js` now loads farm totals through `useagronomicstore()` instead of instantiating agronomic's raw api/assembler classes directly, the last real cross-context boundary violation surfaced by the new lint rule
+
 ## [2.7.7] - 2026-07-06
 
 ### Removed
