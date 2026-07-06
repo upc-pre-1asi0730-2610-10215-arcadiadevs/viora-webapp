@@ -12,7 +12,7 @@ import { authenticationGuard } from "./iam/infrastructure/authentication.guard.j
 const signInForm = () => import('./iam/presentation/views/sign-in-form.vue');
 const signUpForm = () => import('./iam/presentation/views/sign-up-form.vue');
 const verifyPage = () => import('./iam/presentation/views/verify-page.vue');
-const producerDashboard = () => import('./shared/presentation/views/dashboard-producer.vue');
+const dashboardRoleView = () => import('./shared/presentation/views/dashboard-role-view.vue');
 const myPlotsOverviewPage = () => import('./agronomic/presentation/views/my-plots-overview.vue');
 const plotFormPage = () => import('./agronomic/presentation/views/plot-form-page.vue');
 const plotDetailPage = () => import('./agronomic/presentation/views/plot-detail-page.vue');
@@ -42,7 +42,7 @@ const routes = [
     {
         path: '/dashboard',
         name: 'dashboard',
-        component: producerDashboard,
+        component: dashboardRoleView,
         meta: {
             title: 'option.dashboard',
             description: 'dashboard.header-description'
