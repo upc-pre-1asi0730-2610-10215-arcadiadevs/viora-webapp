@@ -98,6 +98,7 @@ export const useIamStore = defineStore('iam', () => {
         password: command.password,
         role: command.role,
         fullName: command.fullName,
+        phone: command.phone,
         referralCode: command.referralCode
       });
       busy.value = false;

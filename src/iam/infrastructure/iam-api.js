@@ -27,7 +27,10 @@ export class IamApi extends BaseApi {
       username: request.username ?? email,
       password: request.password,
       email,
-      fullName: request.fullName
+      fullName: request.fullName,
+      role: request.role,
+      referralCode: request.referralCode,
+      phone: request.phone
     });
   }
 

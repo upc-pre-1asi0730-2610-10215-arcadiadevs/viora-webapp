@@ -10,13 +10,15 @@ export class SignUpCommand {
      * @param {string} params.email - User's email address.
      * @param {string} params.password - User's password.
      * @param {string} [params.fullName=''] - User's full name.
+     * @param {string} [params.phone=''] - User's phone number.
      * @param {string} [params.role='ROLE_GROWER'] - User's role.
      * @param {string|null} [params.referralCode=null] - Optional referral code.
      */
-    constructor({ email, password, fullName = '', role = 'ROLE_GROWER', referralCode = null }) {
+    constructor({ email, password, fullName = '', phone = '', role = 'ROLE_GROWER', referralCode = null }) {
         this.email = email;
         this.password = password;
         this.fullName = fullName;
+        this.phone = phone;
         this.role = role;
         this.referralCode = referralCode;
     }
