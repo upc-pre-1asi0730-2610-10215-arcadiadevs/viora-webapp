@@ -549,25 +549,20 @@ function handleAcceptProposal() {
 }
 
 /**
- * Records the accepted proposal's cost as a real specialist expense so it feeds
- * Expense History (PEST_INTERVENTION / SPECIALIST, flagged ALERT_CONFIRMED and
- * linked to this case). Best-effort: a failure here doesn't block acceptance.
+ * Records the accepted proposal's cost through Agronomic so the expense
+ * classification remains owned by that bounded context. Best-effort: a failure
+ * here doesn't block acceptance.
  */
 function registerSpecialistExpense() {
     const proposal = store.activeProposal;
     if (!request.value || request.value.plotId == null || proposal?.amount == null) return;
 
-    expense.submitExpense({
+    expense.recordFromSpecialistIntervention({
         plotId: Number(request.value.plotId),
-        type: 'PEST_INTERVENTION',
-        category: 'SPECIALIST',
-        linkedActionCode: request.value.referenceCode || undefined,
+        interventionReferenceCode: request.value.referenceCode,
         amount: proposal.amount,
         currency: proposal.currency ?? 'PEN',
-        expenseDate: new Date().toISOString().slice(0, 10),
-        paymentStatus: 'PENDING',
-        note: proposal.serviceTitle || undefined,
-        status: 'ALERT_CONFIRMED',
+        serviceTitle: proposal.serviceTitle,
     });
 }
 
