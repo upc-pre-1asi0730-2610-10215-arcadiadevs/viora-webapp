@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.18] - 2026-07-06
+
+### Added
+
+- Specialist photo/identity polish across `case-detail.vue` and `expert-assistance-overview.vue` (Phase 8, final phase of the specialist-parity roadmap): `SpecialistCandidate` gains `photoUrl`, avatars render the photo when present and fall back to initials otherwise. `successRate`/`distanceKm` now default to `null` instead of `0` — the UI shows "No ratings yet" / "—" rather than a fabricated 0% or 0km when the backend hasn't provided real match data yet.
+
+This completes the specialist-side feature parity port from os-viora-webapp (`docs/specialist-parity-roadmap.md`, Phases 0-8).
+
 ## [2.7.17] - 2026-07-06
 
 ### Added
