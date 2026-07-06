@@ -48,8 +48,7 @@ export const useExpenseStore = defineStore('expense', () => {
     loadingExpenses.value = true;
     try {
       const response = await expenseApi.getExpenses(plotId);
-      const data = response?.data ?? [];
-      expenses.value = ExpenseAssembler.toEntitiesFromResources(data);
+      expenses.value = ExpenseAssembler.toEntitiesFromResponse(response);
       expensesLoaded.value = true;
       lastSyncedAt.value = Date.now();
     } catch (error) {
