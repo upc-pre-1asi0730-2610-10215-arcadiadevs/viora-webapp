@@ -10,7 +10,7 @@ const profileRoutes = [
         name: 'settings-overview',
         component: settingsOverview,
         meta: {
-            title: 'Settings',
+            title: 'sidebar.settings',
             description: 'Manage your account, marketplace visibility, and security preferences.',
         },
     },

@@ -24,6 +24,7 @@ export const useIamStore = defineStore('iam', () => {
   const currentRole = ref(restoredSession?.role ?? null);
   const currentToken = computed(() => readActiveSession()?.token ?? null);
   const signedInHomeRoute = computed(() => getSessionHomeRoute({ role: currentRole.value }));
+  const isSpecialist = computed(() => currentRole.value === 'ROLE_SPECIALIST');
 
   function clearMessages() {
     error.value = null;
@@ -174,6 +175,7 @@ export const useIamStore = defineStore('iam', () => {
     currentRole,
     currentToken,
     signedInHomeRoute,
+    isSpecialist,
     clearMessages,
     signIn,
     signUp,

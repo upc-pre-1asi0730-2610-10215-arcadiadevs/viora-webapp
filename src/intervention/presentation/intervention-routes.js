@@ -9,6 +9,7 @@ const interventionsOverview = () => import('./views/interventions-overview.vue')
 const interventionRoutes = [
     {
         path: '',
+        name: 'intervention-index',
         redirect: { name: 'intervention-expert-assistance' }
     },
     {

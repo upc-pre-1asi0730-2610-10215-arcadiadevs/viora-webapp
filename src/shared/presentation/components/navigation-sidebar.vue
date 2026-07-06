@@ -35,10 +35,10 @@ const toggleSidebar = () => {
 };
 
 /**
- * Primary navigation items for the sidebar.
+ * Primary navigation for the grower (producer) segment.
  * @type {import('vue').ComputedRef<Array<{label: string, route: string, iconPath: string}>>}
  */
-const mainItems = computed(() => [
+const growerItems = computed(() => [
   {
     label: t('sidebar.dashboard'),
     route: '/dashboard',
@@ -86,6 +86,42 @@ const mainItems = computed(() => [
     iconPath: '/assets/icons/dashboard/construct-outline.svg'
   }
 ]);
+
+/**
+ * Primary navigation for the specialist segment. Distinct workspace: the
+ * specialist reviews incoming producer requests and manages field
+ * interventions rather than tending their own plots.
+ * @type {import('vue').ComputedRef<Array<{label: string, route: string, iconPath: string}>>}
+ */
+const specialistItems = computed(() => [
+  {
+    label: t('sidebar.dashboard'),
+    route: '/dashboard',
+    iconPath: '/assets/icons/dashboard/grid-outline.svg',
+    exact: true
+  },
+  {
+    label: t('sidebar.interventionMarketplace'),
+    route: '/specialist/marketplace',
+    iconPath: '/assets/icons/dashboard/construct-outline.svg'
+  },
+  {
+    label: t('sidebar.myRequests'),
+    route: '/specialist/requests',
+    iconPath: '/assets/icons/dashboard/file-tray-stacked-outline.svg'
+  },
+  {
+    label: t('sidebar.fieldInspection'),
+    route: '/specialist/field-inspection',
+    iconPath: '/assets/icons/dashboard/megaphone-outline.svg'
+  }
+]);
+
+/**
+ * Primary navigation, chosen by the signed-in user's segment.
+ * @type {import('vue').ComputedRef<Array<{label: string, route: string, iconPath: string}>>}
+ */
+const mainItems = computed(() => iamStore.isSpecialist ? specialistItems.value : growerItems.value);
 
 /**
  * Secondary navigation items (utility/settings).

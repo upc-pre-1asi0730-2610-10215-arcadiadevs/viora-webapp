@@ -8,6 +8,7 @@ const pestSurveillanceOverview = () => import('./views/pest-surveillance-overvie
 const surveillanceRoutes = [
     {
         path: '',
+        name: 'surveillance-index',
         redirect: { name: 'surveillance-alerts' }
     },
     {
