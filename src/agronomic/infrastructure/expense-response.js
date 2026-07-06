@@ -10,8 +10,8 @@ function normalize(value, known, fallback) {
   return known.includes(upper) ? upper : fallback;
 }
 
-export const ExpenseAssembler = {
-  toEntityFromResource(resource) {
+export class ExpenseAssembler {
+  static toEntityFromResource(resource) {
     return new Expense({
       id: resource.id ?? null,
       growerId: resource.growerId ?? null,
@@ -28,9 +28,10 @@ export const ExpenseAssembler = {
       createdAt: resource.createdAt ?? null,
       updatedAt: resource.updatedAt ?? null
     });
-  },
-
-  toEntitiesFromResources(resources) {
-    return resources.map(r => ExpenseAssembler.toEntityFromResource(r));
   }
-};
+
+  static toEntitiesFromResponse(response) {
+    const resources = Array.isArray(response?.data) ? response.data : [];
+    return resources.map(r => this.toEntityFromResource(r));
+  }
+}
