@@ -8,12 +8,12 @@
  */
 import useIamStore from '../../../iam/application/iam.store.js';
 import DashboardProducer from './dashboard-producer.vue';
-import ComingSoon from './coming-soon.vue';
+import SpecialistDashboardOverview from './specialist-dashboard-overview.vue';
 
 const iamStore = useIamStore();
 </script>
 
 <template>
   <DashboardProducer v-if="!iamStore.isSpecialist" />
-  <ComingSoon v-else />
+  <SpecialistDashboardOverview v-else />
 </template>

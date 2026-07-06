@@ -518,5 +518,57 @@
     "intro": "Hecho con",
     "use": "usando",
     "author": "por el equipo de desarrollo de {brand}"
+  },
+  "specialistDashboard": {
+    "overview": "Resumen",
+    "subtitle": "Revisá las solicitudes de productores, riesgos zonales y el rendimiento de tus casos aceptados",
+    "noSyncYet": "Sin sincronizar aún",
+    "noDataYet": "Sin datos aún",
+    "emptyState": {
+      "title": "Sin datos aún",
+      "body": "No pudimos cargar los datos del dashboard. Intentá actualizar o volvé a revisar en un momento."
+    },
+    "kpis": {
+      "resolved": "Intervenciones resueltas",
+      "thisMonth": "Este mes",
+      "acceptance": "Tasa de aceptación",
+      "phytosanitary": "Eficiencia fitosanitaria",
+      "status": {
+        "optimal": "Óptimo",
+        "watch": "Atención",
+        "critical": "Crítico"
+      }
+    },
+    "zonal": {
+      "title": "Radar de riesgo zonal",
+      "subtitle": "Riesgos activos cerca de tu zona asignada",
+      "fullMap": "Ver mapa completo",
+      "kmAway": "km de distancia",
+      "empty": "No se detectaron riesgos zonales por el momento."
+    },
+    "severity": {
+      "HIGH": "Alto",
+      "MEDIUM": "Medio",
+      "LOW": "Bajo"
+    },
+    "incoming": {
+      "title": "Solicitudes entrantes",
+      "new": "nuevas",
+      "plot": "Parcela",
+      "problem": "Problema",
+      "date": "Fecha",
+      "action": "Acción",
+      "verify": "Verificar",
+      "decline": "Rechazar",
+      "empty": "No hay solicitudes entrantes por el momento."
+    },
+    "performance": {
+      "title": "Rendimiento de casos aceptados",
+      "subtitle": "Casos aceptados a lo largo del tiempo",
+      "monthly": "Mensual",
+      "annual": "Anual",
+      "legend": "Casos aceptados",
+      "empty": "Aún no hay suficientes datos para mostrar el gráfico de rendimiento."
+    }
   }
 }
