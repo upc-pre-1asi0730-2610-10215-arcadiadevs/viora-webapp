@@ -23,6 +23,11 @@
  * @property {string} [language]
  * @property {string} [location]
  * @property {string} [specialtyArea]
+ * @property {number|null} [latitude]
+ * @property {number|null} [longitude]
+ * @property {number} [serviceRadiusKm]
+ * @property {string} [serviceTags]
+ * @property {boolean} [marketplaceVisible]
  * @property {number} [totalHectares]
  * @property {number} [plotCount]
  */
@@ -48,6 +53,16 @@ export class UserProfile {
     location;
     /** @type {string} */
     specialtyArea;
+    /** @type {number|null} */
+    latitude;
+    /** @type {number|null} */
+    longitude;
+    /** @type {number} */
+    serviceRadiusKm;
+    /** @type {string} */
+    serviceTags;
+    /** @type {boolean} */
+    marketplaceVisible;
     /** @type {number} */
     totalHectares;
     /** @type {number} */
@@ -67,6 +82,11 @@ export class UserProfile {
         language = 'English',
         location = '',
         specialtyArea = '',
+        latitude = null,
+        longitude = null,
+        serviceRadiusKm = 150,
+        serviceTags = '',
+        marketplaceVisible = false,
         totalHectares = 0,
         plotCount = 0,
     } = {}) {
@@ -80,6 +100,11 @@ export class UserProfile {
         this.language = language;
         this.location = location;
         this.specialtyArea = specialtyArea;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.serviceRadiusKm = serviceRadiusKm;
+        this.serviceTags = serviceTags;
+        this.marketplaceVisible = marketplaceVisible;
         this.totalHectares = totalHectares;
         this.plotCount = plotCount;
     }
@@ -118,6 +143,11 @@ export class UserProfile {
             language: this.language,
             location: this.location,
             specialtyArea: this.specialtyArea,
+            latitude: this.latitude,
+            longitude: this.longitude,
+            serviceRadiusKm: this.serviceRadiusKm,
+            serviceTags: this.serviceTags,
+            marketplaceVisible: this.marketplaceVisible,
             totalHectares: this.totalHectares,
             plotCount: this.plotCount,
             ...changes,

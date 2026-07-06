@@ -8,11 +8,14 @@
  * @component
  */
 import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import DashboardHeader from '../../../shared/presentation/components/dashboard-header.vue';
-import { useProfileStore } from '../../application/profile.store.js';
+import LocationPickerModal from '../../../shared/presentation/components/location-picker-modal.vue';
+import { SPECIALIST_SERVICE_TAGS, parseServiceTags, useProfileStore } from '../../application/profile.store.js';
 
 // ── Stores ─────────────────────────────────────────────────────────────
 const store = useProfileStore();
+const { t } = useI18n();
 
 // BillingStore (Referrals tab) — may not exist yet; gracefully degrade.
 const billing = ref(null);
@@ -59,6 +62,10 @@ const breadcrumbs = computed(() => {
 
 // ── Language options ───────────────────────────────────────────────────
 const languageOptions = ['English', 'Español', 'Português'];
+const radiusMin = 25;
+const radiusMax = 500;
+const radiusDefault = 150;
+const serviceTagOptions = SPECIALIST_SERVICE_TAGS;
 
 // ── Profile draft ──────────────────────────────────────────────────────
 const fullName = ref('');
@@ -68,6 +75,13 @@ const jobTitle = ref('');
 const language = ref('');
 const location = ref('');
 const specialtyArea = ref('');
+const latitude = ref(null);
+const longitude = ref(null);
+const serviceRadiusKm = ref(radiusDefault);
+const serviceTags = ref('');
+const marketplaceVisible = ref(false);
+const phoneRequiredError = ref(false);
+const showLocationPicker = ref(false);
 
 const applyDraftFrom = (profile) => {
     fullName.value = profile.fullName;
@@ -77,6 +91,11 @@ const applyDraftFrom = (profile) => {
     language.value = profile.language;
     location.value = profile.location;
     specialtyArea.value = profile.specialtyArea;
+    latitude.value = profile.latitude;
+    longitude.value = profile.longitude;
+    serviceRadiusKm.value = normalizeRadius(profile.serviceRadiusKm);
+    serviceTags.value = profile.serviceTags;
+    marketplaceVisible.value = profile.marketplaceVisible;
 };
 
 watch(
@@ -90,10 +109,72 @@ const preview = computed(() =>
         fullName: fullName.value,
         specialtyArea: specialtyArea.value,
         location: location.value,
+        latitude: latitude.value,
+        longitude: longitude.value,
+        serviceRadiusKm: normalizeRadius(serviceRadiusKm.value),
+        serviceTags: serviceTags.value,
+        marketplaceVisible: marketplaceVisible.value,
         totalHectares: store.farmTotalHectares,
         plotCount: store.farmPlotCount,
     }),
 );
+
+const isSpecialistProfile = computed(() => store.profile.role === 'specialist');
+
+const parsedServiceTags = computed(() => parseServiceTags(serviceTags.value));
+
+const previewTags = computed(() =>
+    parsedServiceTags.value.map((value) => ({
+        value,
+        labelKey: serviceTagOptions.find((option) => option.value === value)?.labelKey ?? null,
+    })),
+);
+
+const pickerInitialLat = computed(() => toNumberOrNull(latitude.value));
+const pickerInitialLng = computed(() => toNumberOrNull(longitude.value));
+
+function toNumberOrNull(value) {
+    if (value == null || value === '') return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+}
+
+function normalizeRadius(value) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed) || parsed <= 0) return radiusDefault;
+    return Math.min(radiusMax, Math.max(radiusMin, Math.round(parsed)));
+}
+
+function setRadius(value) {
+    serviceRadiusKm.value = normalizeRadius(value);
+}
+
+function isTagSelected(value) {
+    return parsedServiceTags.value.includes(value);
+}
+
+function toggleServiceTag(value) {
+    const current = parsedServiceTags.value;
+    const next = current.includes(value)
+        ? current.filter((tag) => tag !== value)
+        : [...current, value];
+    serviceTags.value = next.join(', ');
+}
+
+function openLocationPicker() {
+    showLocationPicker.value = true;
+}
+
+function closeLocationPicker() {
+    showLocationPicker.value = false;
+}
+
+function onLocationPicked(picked) {
+    latitude.value = picked.latitude;
+    longitude.value = picked.longitude;
+    if (picked.label) location.value = picked.label;
+    showLocationPicker.value = false;
+}
 
 // ── Referrals state ────────────────────────────────────────────────────
 const codeCopied = ref(false);
@@ -160,6 +241,13 @@ function resetDraft() {
 }
 
 function saveChanges() {
+    const specialist = isSpecialistProfile.value;
+    if (specialist && phone.value.trim() === '') {
+        phoneRequiredError.value = true;
+        return;
+    }
+    phoneRequiredError.value = false;
+
     store.save({
         fullName: fullName.value.trim(),
         email: email.value.trim(),
@@ -168,6 +256,11 @@ function saveChanges() {
         language: language.value,
         location: location.value.trim(),
         specialtyArea: specialtyArea.value.trim(),
+        latitude: specialist ? toNumberOrNull(latitude.value) : undefined,
+        longitude: specialist ? toNumberOrNull(longitude.value) : undefined,
+        serviceRadiusKm: specialist ? normalizeRadius(serviceRadiusKm.value) : undefined,
+        serviceTags: specialist ? serviceTags.value.trim() : undefined,
+        marketplaceVisible: specialist ? marketplaceVisible.value : undefined,
     });
 }
 
@@ -365,7 +458,8 @@ onMounted(() => {
               </label>
               <label class="field">
                 <span>Phone number</span>
-                <pv-input-text v-model="phone" type="tel" />
+                <pv-input-text v-model="phone" type="tel" :class="{ 'p-invalid': phoneRequiredError }" />
+                <small v-if="phoneRequiredError" class="field-error">{{ t('settingsPage.profile.phoneRequiredError') }}</small>
               </label>
               <label class="field">
                 <span>Job title</span>
@@ -403,30 +497,115 @@ onMounted(() => {
               <div>
                 <h2 class="section-title">Marketplace visibility</h2>
                 <p class="section-subtitle">
-                  Shown on your profile card when specialists receive your assistance requests.
+                  {{ isSpecialistProfile
+                    ? 'Configure how producers discover your specialist profile in the marketplace.'
+                    : 'Shown on your profile card when specialists receive your assistance requests.' }}
                 </p>
               </div>
             </div>
 
-            <div class="form-grid">
-              <label class="field">
-                <span>Grove focus</span>
-                <pv-input-text v-model="specialtyArea" placeholder="e.g. Olive oil production" />
-              </label>
-              <label class="field">
-                <span>Location</span>
-                <pv-input-text v-model="location" placeholder="e.g. Valle de Ica, Peru" />
-              </label>
-            </div>
-
-            <div class="field">
-              <span>Total farmed area</span>
-              <div class="readonly-metric">
-                <i class="pi pi-leaf metric-icon"></i>
-                <strong>{{ preview.farmSizeLabel }}</strong>
-                <span class="readonly-hint">Summed automatically from your plots in My Plots.</span>
+            <!-- Producer: grove focus, location, read-only farm size -->
+            <template v-if="!isSpecialistProfile">
+              <div class="form-grid">
+                <label class="field">
+                  <span>Grove focus</span>
+                  <pv-input-text v-model="specialtyArea" placeholder="e.g. Olive oil production" />
+                </label>
+                <label class="field">
+                  <span>Location</span>
+                  <pv-input-text v-model="location" placeholder="e.g. Valle de Ica, Peru" />
+                </label>
               </div>
-            </div>
+
+              <div class="field">
+                <span>Total farmed area</span>
+                <div class="readonly-metric">
+                  <i class="pi pi-leaf metric-icon"></i>
+                  <strong>{{ preview.farmSizeLabel }}</strong>
+                  <span class="readonly-hint">Summed automatically from your plots in My Plots.</span>
+                </div>
+              </div>
+            </template>
+
+            <!-- Specialist: specialty area, map-picked base location, service tags, radius, visibility toggle -->
+            <template v-else>
+              <div class="form-grid">
+                <label class="field">
+                  <span>Specialty area</span>
+                  <pv-input-text v-model="specialtyArea" placeholder="e.g. Phytosanitary specialist" />
+                </label>
+                <div class="field">
+                  <span>Base location</span>
+                  <div class="location-control">
+                    <div class="location-status">
+                      <i class="pi pi-map-marker"></i>
+                      <span v-if="latitude != null && longitude != null">{{ location || t('settingsPage.profile.locationSet') }}</span>
+                      <span v-else class="muted">{{ t('settingsPage.profile.locationUnset') }}</span>
+                    </div>
+                    <button type="button" class="btn-map" @click="openLocationPicker">
+                      <i class="pi pi-map"></i>
+                      {{ t('settingsPage.profile.setOnMap') }}
+                    </button>
+                  </div>
+                  <span class="field-hint">{{ t('settingsPage.profile.baseLocationHint') }}</span>
+                </div>
+              </div>
+
+              <div class="field specialist-field-block">
+                <span>Service tags</span>
+                <div class="tag-chips">
+                  <button
+                    v-for="option in serviceTagOptions"
+                    :key="option.value"
+                    type="button"
+                    class="tag-chip"
+                    :class="{ 'is-active': isTagSelected(option.value) }"
+                    @click="toggleServiceTag(option.value)"
+                  >
+                    <i :class="isTagSelected(option.value) ? 'pi pi-check' : 'pi pi-plus'"></i>
+                    {{ t(option.labelKey) }}
+                  </button>
+                </div>
+                <span class="field-hint">{{ t('settingsPage.profile.serviceTagsHint') }}</span>
+              </div>
+
+              <div class="form-grid specialist-field-block">
+                <div class="field">
+                  <span>Service radius</span>
+                  <div class="radius-control">
+                    <input
+                      type="range"
+                      :min="radiusMin"
+                      :max="radiusMax"
+                      step="5"
+                      :value="normalizeRadius(serviceRadiusKm)"
+                      @input="setRadius($event.target.value)"
+                    />
+                    <label class="radius-input">
+                      <input
+                        type="number"
+                        :min="radiusMin"
+                        :max="radiusMax"
+                        :value="normalizeRadius(serviceRadiusKm)"
+                        @input="setRadius($event.target.value)"
+                      />
+                      <span>km</span>
+                    </label>
+                  </div>
+                  <span class="field-hint">{{ t('settingsPage.profile.serviceRadiusHint') }}</span>
+                </div>
+
+                <div class="field">
+                  <span>Marketplace listing</span>
+                  <label class="toggle-row">
+                    <input v-model="marketplaceVisible" type="checkbox" />
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                    <span class="toggle-copy">{{ t('settingsPage.profile.marketplaceVisible') }}</span>
+                  </label>
+                  <span class="field-hint">{{ t('settingsPage.profile.marketplaceVisibleHint') }}</span>
+                </div>
+              </div>
+            </template>
           </template>
         </pv-card>
       </div>
@@ -437,20 +616,31 @@ onMounted(() => {
 
         <div class="preview-card">
           <div class="preview-badges">
-            <span class="badge badge--best"><i class="pi pi-leaf"></i> Producer</span>
+            <span class="badge badge--best"><i :class="isSpecialistProfile ? 'pi pi-wrench' : 'pi pi-leaf'"></i> {{ isSpecialistProfile ? 'Specialist' : 'Producer' }}</span>
+              <span v-if="isSpecialistProfile && marketplaceVisible" class="badge badge--avail"><i class="pi pi-eye"></i> Visible</span>
           </div>
 
           <div class="preview-identity">
             <span class="avatar">{{ preview.initials }}</span>
             <div class="identity-text">
               <span class="preview-name">{{ preview.fullName || 'Your name' }}</span>
-              <span class="preview-role">{{ preview.specialtyArea || 'Grove focus' }}</span>
+              <span class="preview-role">{{ preview.specialtyArea || (isSpecialistProfile ? 'Specialty area' : 'Grove focus') }}</span>
             </div>
           </div>
 
           <div class="preview-meta">
             <span v-if="preview.location"><i class="pi pi-map-marker"></i> {{ preview.location }}</span>
-            <span><i class="pi pi-leaf"></i> {{ preview.farmSizeLabel }}</span>
+            <span v-if="!isSpecialistProfile"><i class="pi pi-leaf"></i> {{ preview.farmSizeLabel }}</span>
+            <span v-if="isSpecialistProfile"><i class="pi pi-compass"></i> {{ normalizeRadius(serviceRadiusKm) }} km radius</span>
+          </div>
+
+          <div v-if="isSpecialistProfile" class="specialist-tags">
+            <span v-for="tag in previewTags" :key="tag.value" class="specialist-tag">
+              {{ tag.labelKey ? t(tag.labelKey) : tag.value }}
+            </span>
+            <span v-if="previewTags.length === 0" class="specialist-tag specialist-tag--empty">
+              {{ t('settingsPage.profile.noTagsSelected') }}
+            </span>
           </div>
 
           <div class="preview-foot">
@@ -465,6 +655,14 @@ onMounted(() => {
         </p>
       </aside>
     </div>
+
+    <LocationPickerModal
+      v-if="showLocationPicker"
+      :initial-lat="pickerInitialLat"
+      :initial-lng="pickerInitialLng"
+      @confirmed="onLocationPicked"
+      @dismissed="closeLocationPicker"
+    />
 
     <!-- ============ REFERRALS ============ -->
     <template v-if="activeTab === 'referrals'">
@@ -999,6 +1197,189 @@ onMounted(() => {
   font-family: 'Poppins', sans-serif;
 }
 
+
+/* ---------- Specialist marketplace ---------- */
+.specialist-field-block {
+  margin-top: 18px;
+}
+
+.field-hint {
+  font-size: 12px;
+  font-weight: 400;
+  color: #8c877f;
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.45;
+}
+
+.tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-chip,
+.btn-map {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  border-radius: 999px;
+  border: 1px solid #ddd7cd;
+  background: #ffffff;
+  color: #4f5651;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tag-chip {
+  padding: 0 12px;
+}
+
+.tag-chip i,
+.btn-map i {
+  font-size: 12px;
+}
+
+.tag-chip.is-active {
+  border-color: #2e4a3a;
+  background: #eef5ef;
+  color: #2e4a3a;
+}
+
+.location-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.location-status {
+  flex: 1;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 0 12px;
+  border: 1px solid #e2ddd4;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #333333;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+}
+
+.location-status span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.location-status i {
+  flex: 0 0 auto;
+  color: #8c877f;
+}
+
+.muted {
+  color: #8c877f;
+}
+
+.btn-map {
+  flex: 0 0 auto;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  color: #2e4a3a;
+  background: #eef2ea;
+}
+
+.radius-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+
+.radius-control > input[type='range'] {
+  flex: 1;
+  accent-color: #2e4a3a;
+}
+
+.radius-input {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid #e2ddd4;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #4f5651;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+}
+
+.radius-input input {
+  width: 72px;
+  border: none;
+  outline: none;
+  color: #333333;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+}
+
+.toggle-row input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toggle-track {
+  position: relative;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 24px;
+  border-radius: 999px;
+  background: #d8d2c7;
+  transition: background 0.2s ease;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(31, 37, 35, 0.18);
+  transition: transform 0.2s ease;
+}
+
+.toggle-row input:checked + .toggle-track {
+  background: #2e4a3a;
+}
+
+.toggle-row input:checked + .toggle-track .toggle-thumb {
+  transform: translateX(18px);
+}
+
+.toggle-copy {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333333;
+  font-family: 'Poppins', sans-serif;
+}
+
 /* ---------- Preview column ---------- */
 .preview-caption {
   margin: 0;
@@ -1045,6 +1426,34 @@ onMounted(() => {
 .badge--best {
   background: #57eba1;
   color: #2e4a3a;
+}
+
+.badge--avail {
+  background: #eef5ef;
+  color: #2e4a3a;
+}
+
+.specialist-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.specialist-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #f3f0ea;
+  color: #4f5651;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.specialist-tag--empty {
+  color: #8c877f;
 }
 
 .preview-identity {
@@ -1821,6 +2230,19 @@ onMounted(() => {
   }
   .coupon-grid {
     grid-template-columns: 1fr;
+  }
+  .location-control,
+  .radius-control {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .btn-map,
+  .radius-input {
+    width: 100%;
+    justify-content: center;
+  }
+  .radius-input input {
+    flex: 1;
   }
 }
 </style>

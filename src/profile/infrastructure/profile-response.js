@@ -13,6 +13,11 @@ import { UserProfile } from '../domain/model/user-profile.entity.js';
  * @property {string|null} language
  * @property {string|null} location
  * @property {string|null} specialtyArea
+ * @property {number|null} latitude
+ * @property {number|null} longitude
+ * @property {number|null} serviceRadiusKm
+ * @property {string|null} serviceTags
+ * @property {boolean|null} marketplaceVisible
  */
 
 /**
@@ -25,6 +30,11 @@ import { UserProfile } from '../domain/model/user-profile.entity.js';
  * @property {string} language
  * @property {string} location
  * @property {string} specialtyArea
+ * @property {number|null} latitude
+ * @property {number|null} longitude
+ * @property {number|null} serviceRadiusKm
+ * @property {string} serviceTags
+ * @property {boolean} marketplaceVisible
  */
 
 /** Producer-facing caption for the backend role enum. */
@@ -61,6 +71,11 @@ export class ProfileAssembler {
             language: resource.language ?? 'English',
             location: resource.location ?? '',
             specialtyArea: resource.specialtyArea ?? '',
+            latitude: resource.latitude ?? null,
+            longitude: resource.longitude ?? null,
+            serviceRadiusKm: resource.serviceRadiusKm ?? 150,
+            serviceTags: resource.serviceTags ?? '',
+            marketplaceVisible: resource.marketplaceVisible ?? false,
         });
     }
 }
