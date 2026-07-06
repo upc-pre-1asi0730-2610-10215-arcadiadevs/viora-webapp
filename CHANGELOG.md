@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.11] - 2026-07-06
+
+### Added
+
+- Specialist dashboard domain, API gateway, and Pinia store (Phase 1 of the specialist-parity roadmap, porting os-viora-webapp): read model entity, response assembler, and a store with `load`/`refresh`, monthly/annual performance toggle, and optimistic `verify`/`decline` actions on incoming producer requests. On fetch failure the store surfaces a real empty state — no fabricated data — matching the existing `interventions.store.js` convention. Local mock server gained matching `specialist-dashboard` fixtures and `verifications`/`declines` routes.
+
 ## [2.7.10] - 2026-07-06
 
 ### Added
