@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.9] - 2026-07-06
+
+### Fixed
+
+- `referral-code.entity.js` was a stray copy-paste of `subscription.entity.js` (wrong class, wrong fields) — rewrote it to the `ReferralCode` shape its own callers already expected (`userId`, `code`, `rewardPercent`, `rewardLabel`, `shareLink`), fixing the "ReferralCode is not exported" build failure
+- `subscription.entity.js` used typescript's `readonly` field modifier in a plain `.js` file, which no js parser could parse; removed it to match every other entity in the app
+
 ## [2.7.8] - 2026-07-06
 
 ### Added
