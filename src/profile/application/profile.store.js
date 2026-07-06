@@ -3,9 +3,10 @@
  * Owns the account holder's editable profile that backs the Settings screens.
  *
  * CONTEXT MAP: This store depends on the Agronomic bounded context to compute
- * farm totals (totalHectares, plotCount). The dependency is documented here
- * and flows through the application layer — the presentation layer never
- * imports from agronomic infrastructure directly.
+ * farm totals (totalHectares, plotCount). Per Rule A in
+ * docs/architecture-decisions/cross-context-composition.md, that dependency
+ * goes through Agronomic's own store (its sanctioned public entry point),
+ * never its raw infrastructure/assembler classes directly.
  *
  * @module useProfileStore
  */
@@ -14,17 +15,17 @@ import { computed, ref } from 'vue';
 
 import { UserProfile } from '../domain/model/user-profile.entity.js';
 import { ProfileApi } from '../infrastructure/profile-api.js';
-import { AgronomicApi } from '../../agronomic/infrastructure/agronomic-api.js';
-import { PlotAssembler } from '../../agronomic/infrastructure/plot.assembler.js';
+import { useAgronomicStore } from '../../agronomic/application/agronomic.store.js';
 
 const profileApi = new ProfileApi();
-const agronomicApi = new AgronomicApi();
 
 /**
  * Reactive store that exposes Profile commands and queries.
  * @returns {Object} Store state and actions.
  */
 export const useProfileStore = defineStore('profile', () => {
+    const agronomicStore = useAgronomicStore();
+
     /** @type {import('vue').Ref<UserProfile>} */
     const profile = ref(new UserProfile());
 
@@ -82,17 +83,18 @@ export const useProfileStore = defineStore('profile', () => {
     }
 
     /**
-     * Loads farm totals (total hectares, plot count) from the Agronomic context.
+     * Loads farm totals (total hectares, plot count) from the Agronomic context,
+     * via Agronomic's own store rather than its raw infrastructure.
      * Context Map: profile depends on agronomic for marketplace visibility data.
      */
     async function loadFarmTotals() {
         try {
-            const response = await agronomicApi.getPlots();
-            const resources = response?.data ?? [];
-            const plots = PlotAssembler.toEntitiesFromResponse(resources);
-            const hectares = plots.reduce((sum, p) => sum + (p.areaSize || 0), 0);
+            if (!agronomicStore.plotsLoaded) {
+                await agronomicStore.fetchPlots();
+            }
+            const hectares = agronomicStore.plots.reduce((sum, p) => sum + (p.areaSize || 0), 0);
             farmTotalHectares.value = Number(hectares.toFixed(1));
-            farmPlotCount.value = plots.length;
+            farmPlotCount.value = agronomicStore.plots.length;
         } catch {
             // Non-critical: farm totals are display-only.
         }
