@@ -185,12 +185,7 @@
                 <span>{{ nextActionLabel }}</span>
               </div>
 
-              <template v-if="nextAction === 'simulate'">
-                <pv-button type="button" class="primary-button block" :disabled="store.loading.action" @click="handleSimulatePrescription">
-                  <i class="pi pi-bolt"></i> Simulate specialist prescription
-                </pv-button>
-              </template>
-              <template v-else-if="nextAction === 'certify'">
+              <template v-if="nextAction === 'certify'">
                 <pv-button type="button" class="primary-button block" @click="openModal('certify')">
                   <i class="pi pi-verified"></i> Certify application
                 </pv-button>
@@ -515,13 +510,6 @@ function severityClass(severity) {
 
 function formatEnumLabel(value) {
     return value.charAt(0) + value.slice(1).toLowerCase().replace(/_/g, ' ');
-}
-
-function handleSimulatePrescription() {
-    const item = selected.value;
-    if (item?.interventionRequestId != null) {
-        store.simulatePrescription(item.interventionRequestId);
-    }
 }
 
 function openModal(kind) {

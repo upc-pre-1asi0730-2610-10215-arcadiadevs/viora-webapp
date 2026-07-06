@@ -247,33 +247,6 @@ export const useInterventionStore = defineStore('intervention', () => {
         }
     }
 
-    async function simulateSpecialistResponse(code, onDone) {
-        const request = findRequestByCode(code);
-        if (!request || request.id == null) {
-            onDone?.(false);
-            return;
-        }
-
-        try {
-            loading.value.case = true;
-            const response = await interventionApi.simulateSpecialistResponse(request.id);
-            const resource = response?.data;
-            if (resource) {
-                const updated = InterventionRequestAssembler.toEntityFromResource(resource);
-                if (request.plotId != null) {
-                    await loadRequests(request.plotId);
-                }
-                await loadCaseArtifacts(updated);
-            }
-            onDone?.(true);
-        } catch (error) {
-            errors.value.push(error);
-            onDone?.(false);
-        } finally {
-            loading.value.case = false;
-        }
-    }
-
     async function submitRequest(request, onDone) {
         try {
             loading.value.submitting = true;
@@ -329,7 +302,6 @@ export const useInterventionStore = defineStore('intervention', () => {
         loadContact,
         acceptProposal,
         declineProposal,
-        simulateSpecialistResponse,
         submitRequest,
         specialistName,
         clearErrors,
