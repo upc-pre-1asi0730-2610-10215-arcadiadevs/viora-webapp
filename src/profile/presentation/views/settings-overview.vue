@@ -612,7 +612,7 @@ onMounted(() => {
 
       <!-- Right column: live preview -->
       <aside class="preview-column">
-        <p class="preview-caption">How specialists see your request</p>
+        <p class="preview-caption">{{ isSpecialistProfile ? 'How producers see your profile' : 'How specialists see your request' }}</p>
 
         <div class="preview-card">
           <div class="preview-badges">
@@ -629,7 +629,7 @@ onMounted(() => {
           </div>
 
           <div class="preview-meta">
-            <span v-if="preview.location"><i class="pi pi-map-marker"></i> {{ preview.location }}</span>
+            <span v-if="latitude != null && longitude != null"><i class="pi pi-map-marker"></i> {{ preview.location }}</span>
             <span v-if="!isSpecialistProfile"><i class="pi pi-leaf"></i> {{ preview.farmSizeLabel }}</span>
             <span v-if="isSpecialistProfile"><i class="pi pi-compass"></i> {{ normalizeRadius(serviceRadiusKm) }} km radius</span>
           </div>
@@ -650,8 +650,14 @@ onMounted(() => {
 
         <p class="preview-note">
           <i class="pi pi-info-circle"></i>
-          This preview updates live as you edit. It is exactly what a specialist sees when you send an assistance
-          request from Expert Assistance.
+          <template v-if="isSpecialistProfile">
+            This preview updates live as you edit. It is exactly what a producer sees when browsing your listing
+            in the specialist marketplace.
+          </template>
+          <template v-else>
+            This preview updates live as you edit. It is exactly what a specialist sees when you send an assistance
+            request from Expert Assistance.
+          </template>
         </p>
       </aside>
     </div>

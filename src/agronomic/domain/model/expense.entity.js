@@ -1,3 +1,5 @@
+import { formatMajorMoney } from '../../../shared/domain/model/money.js';
+
 const TYPE_TAG = {
   CLIMATE_MITIGATION: 'Climate',
   PEST_INTERVENTION: 'Pest'
@@ -23,12 +25,6 @@ const PAYMENT_LABEL = {
 const STATUS_LABEL = {
   REGISTERED: 'Registered',
   ALERT_CONFIRMED: 'Alert confirmed'
-};
-
-const CURRENCY_SYMBOLS = {
-  PEN: 'S/',
-  USD: '$',
-  EUR: '\u20AC'
 };
 
 export class Expense {
@@ -75,8 +71,7 @@ export class Expense {
   get dateLabel() { return Expense.formatDate(this.expenseDate); }
 
   static formatMoney(amount, currency = 'PEN') {
-    const symbol = CURRENCY_SYMBOLS[currency] ?? currency;
-    return `${symbol} ${(amount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return formatMajorMoney(amount, currency);
   }
 
   static formatDate(raw) {
