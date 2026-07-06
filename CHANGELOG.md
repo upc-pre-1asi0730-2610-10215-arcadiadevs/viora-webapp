@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.14] - 2026-07-06
+
+### Added
+
+- Specialist Intervention Marketplace overview view (Phase 4 of the specialist-parity roadmap, porting os-viora-webapp): `specialist-marketplace-overview.vue` renders the Phase 3 read model — KPI cards, incoming case cards with decline/review actions, a compact case log table, and a submit-proposal modal with the same default proposal values as the reference. Registers the `/specialist/marketplace` route, which previously had no route at all (the sidebar link was pointing nowhere).
+
 ## [2.7.13] - 2026-07-06
 
 ### Added
