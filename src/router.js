@@ -8,11 +8,12 @@ import supportRoutes from "./support/presentation/support-routes.js";
 import workspaceRoutes from "./shared/presentation/workspace-routes.js";
 import iamRoutes from "./iam/presentation/iam-routes.js";
 import { authenticationGuard } from "./iam/infrastructure/authentication.guard.js";
+import i18n from "./i18n.js";
 
 const signInForm = () => import('./iam/presentation/views/sign-in-form.vue');
 const signUpForm = () => import('./iam/presentation/views/sign-up-form.vue');
 const verifyPage = () => import('./iam/presentation/views/verify-page.vue');
-const producerDashboard = () => import('./shared/presentation/views/dashboard-producer.vue');
+const dashboardRoleView = () => import('./shared/presentation/views/dashboard-role-view.vue');
 const myPlotsOverviewPage = () => import('./agronomic/presentation/views/my-plots-overview.vue');
 const plotFormPage = () => import('./agronomic/presentation/views/plot-form-page.vue');
 const plotDetailPage = () => import('./agronomic/presentation/views/plot-detail-page.vue');
@@ -42,7 +43,7 @@ const routes = [
     {
         path: '/dashboard',
         name: 'dashboard',
-        component: producerDashboard,
+        component: dashboardRoleView,
         meta: {
             title: 'option.dashboard',
             description: 'dashboard.header-description'
@@ -177,14 +178,10 @@ const router = createRouter({
     routes: routes
 });
 
-router.beforeEach((to, from, next) => {
-    document.title = `Dashboard - ${to.meta.title ?? to.name}`;
-    const result = authenticationGuard(to, from);
-    if (result === true) {
-        next();
-    } else {
-        next(result);
-    }
+router.beforeEach((to, from) => {
+    const rawTitle = to.meta.title ?? to.name;
+    document.title = `Dashboard - ${i18n.global.t(rawTitle)}`;
+    return authenticationGuard(to, from);
 });
 
 export default router;

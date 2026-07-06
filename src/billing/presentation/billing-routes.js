@@ -9,6 +9,7 @@ const subscriptionOverview = () => import('./views/subscription-overview.vue');
 const billingRoutes = [
     {
         path: '',
+        name: 'billing-index',
         redirect: { name: 'billing-subscription' },
     },
     {

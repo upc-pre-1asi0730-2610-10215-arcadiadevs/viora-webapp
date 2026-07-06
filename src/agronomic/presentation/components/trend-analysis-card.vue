@@ -20,9 +20,9 @@ const { t } = useI18n();
 const store = useAgronomicStore();
 
 const timeRangeOptions = [
-  { value: '7days', label: '7 days', labelKey: 'time.7days' },
-  { value: '30days', label: '30 days', labelKey: 'time.30days' },
-  { value: 'campaign', label: 'Campaign', labelKey: 'time.campaign' }
+  { value: '7days', label: '7 days', labelKey: 'dashboard.time-range-7days' },
+  { value: '30days', label: '30 days', labelKey: 'dashboard.time-range-30days' },
+  { value: 'campaign', label: 'Campaign', labelKey: 'dashboard.time-range-campaign' }
 ];
 
 const chartData = computed(() => {

@@ -93,7 +93,8 @@
   "common": {
     "risk": "Riesgo",
     "updated": "Actualizado",
-    "refresh": "Actualizar"
+    "refresh": "Actualizar",
+    "loading": "Cargando"
   },
   "myPlots": {
     "overview": "Resumen",
@@ -408,6 +409,9 @@
     "expertAssistance": "Asistencia de Expertos",
     "interventions": "Intervenciones",
     "expenseHistory": "Historial de Gastos",
+    "interventionMarketplace": "Mercado de Intervenciones",
+    "myRequests": "Mis Solicitudes",
+    "fieldInspection": "Inspección de Campo",
     "settings": "Configuración",
     "subscription": "Suscripción",
     "support": "Soporte",
@@ -500,6 +504,15 @@
       "plot": "Selecciona una parcela...",
       "activation-code": "VIORA-SP01-7K3M"
     }
+  },
+  "errors": {
+    "occurred": "Ocurrió un error. Por favor, intentá de nuevo."
+  },
+  "surveillance": {
+    "alerts-title": "Alertas",
+    "alerts-description": "Seguí las alertas agrícolas activas en tus parcelas.",
+    "pest-surveillance-title": "Vigilancia de plagas",
+    "pest-surveillance-description": "Monitoreá los reportes de vigilancia de plagas y enfermedades."
   },
   "authoring-phrase": {
     "intro": "Hecho con",
