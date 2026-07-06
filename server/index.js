@@ -297,6 +297,38 @@ app.post('/api/v1/intervention-requests', (req, res) => {
   res.status(201).json(request);
 });
 
+app.get('/api/v1/specialist-dashboard', (req, res) => {
+  res.json(collection('specialist-dashboard').value());
+});
+
+app.post('/api/v1/intervention-requests/:id/verifications', (req, res) => {
+  const request = findById('intervention-requests', req.params.id);
+  if (!request) return res.status(404).json({ message: 'Intervention request not found.' });
+  collection('intervention-requests')
+    .find({ id: numericId(req.params.id) })
+    .assign({ status: 'ACCEPTED', updatedAt: new Date().toISOString() })
+    .write();
+  const dashboard = collection('specialist-dashboard');
+  dashboard.assign({
+    incomingRequests: dashboard.value().incomingRequests.filter((item) => item.id !== numericId(req.params.id)),
+  }).write();
+  res.status(200).json({ ...request, status: 'ACCEPTED' });
+});
+
+app.post('/api/v1/intervention-requests/:id/declines', (req, res) => {
+  const request = findById('intervention-requests', req.params.id);
+  if (!request) return res.status(404).json({ message: 'Intervention request not found.' });
+  collection('intervention-requests')
+    .find({ id: numericId(req.params.id) })
+    .assign({ status: 'DECLINED', updatedAt: new Date().toISOString(), declineReason: req.body?.reason ?? '' })
+    .write();
+  const dashboard = collection('specialist-dashboard');
+  dashboard.assign({
+    incomingRequests: dashboard.value().incomingRequests.filter((item) => item.id !== numericId(req.params.id)),
+  }).write();
+  res.status(200).json({ ...request, status: 'DECLINED' });
+});
+
 app.get('/api/v1/specialist-candidates', (req, res) => {
   const alertId = req.query.alertId ? numericId(req.query.alertId) : null;
   const limit = req.query.limit ? numericId(req.query.limit) : undefined;
