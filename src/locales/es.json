@@ -570,5 +570,76 @@
       "legend": "Casos aceptados",
       "empty": "Aún no hay suficientes datos para mostrar el gráfico de rendimiento."
     }
+  },
+  "specialistMarketplace": {
+    "breadcrumb": {
+      "marketplace": "Mercado de intervenciones",
+      "overview": "Resumen"
+    },
+    "subtitle": "Revisá los casos entrantes de productores, enviá propuestas y seguí tu tasa de respuesta",
+    "noSyncYet": "Sin sincronizar aún",
+    "noDataYet": "Sin datos aún",
+    "empty": "No hay casos entrantes por el momento.",
+    "emptyError": "No pudimos cargar tus casos entrantes. Intentá actualizar o volvé a revisar en un momento.",
+    "kpis": {
+      "newCases": "Casos nuevos",
+      "new": "nuevos",
+      "newCasesFoot": "Esperando tu respuesta",
+      "contact": "Visibilidad de contacto",
+      "public": "Público",
+      "contactFoot": "Los productores ven tu perfil público antes de que se acepte una propuesta.",
+      "viewProfile": "Ver perfil",
+      "acceptance": "Tasa de aceptación",
+      "active": "Casos activos",
+      "activeFoot": "Actualmente en curso"
+    },
+    "producers": {
+      "title": "Casos entrantes",
+      "subtitle": "Casos de productores enrutados a vos y a la espera de una respuesta",
+      "count": "{count} nuevos"
+    },
+    "severity": {
+      "CRITICAL": "Crítico",
+      "HIGH": "Alto",
+      "MEDIUM": "Medio",
+      "LOW": "Bajo"
+    },
+    "card": {
+      "new": "Nuevo",
+      "producer": "Productor",
+      "producerFallback": "Productor desconocido",
+      "production": "producción",
+      "ha": "ha",
+      "plots": "{count} parcelas",
+      "ndvi": "NDVI",
+      "decline": "Rechazar",
+      "review": "Enviar propuesta"
+    },
+    "log": {
+      "title": "Registro de casos",
+      "subtitle": "Índice tabular de los mismos casos entrantes",
+      "viewPipeline": "Ver flujo",
+      "colRequest": "Solicitud",
+      "colProducer": "Productor",
+      "colProblem": "Problema",
+      "colReceived": "Recibido",
+      "colAction": "Acción",
+      "review": "Revisar",
+      "empty": "No hay casos entrantes por el momento."
+    },
+    "modal": {
+      "title": "Enviar propuesta",
+      "subtitle": "Enviá una propuesta de servicio para este caso",
+      "serviceTitle": "Título del servicio",
+      "duration": "Duración",
+      "scope": "Alcance",
+      "scopeHint": "Un ítem por línea",
+      "amount": "Monto",
+      "currency": "Moneda",
+      "details": "Detalles",
+      "cancel": "Cancelar",
+      "send": "Enviar propuesta",
+      "sending": "Enviando..."
+    }
   }
 }

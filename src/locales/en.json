@@ -570,5 +570,76 @@
       "legend": "Accepted cases",
       "empty": "Not enough data to render the performance chart yet."
     }
+  },
+  "specialistMarketplace": {
+    "breadcrumb": {
+      "marketplace": "Intervention Marketplace",
+      "overview": "Overview"
+    },
+    "subtitle": "Review incoming producer cases, send proposals, and track your response rate",
+    "noSyncYet": "No sync yet",
+    "noDataYet": "No data yet",
+    "empty": "No incoming cases right now.",
+    "emptyError": "We could not load your incoming cases. Try refreshing, or check back shortly.",
+    "kpis": {
+      "newCases": "New cases",
+      "new": "new",
+      "newCasesFoot": "Awaiting your response",
+      "contact": "Contact visibility",
+      "public": "Public",
+      "contactFoot": "Producers see your public profile before a proposal is accepted.",
+      "viewProfile": "View profile",
+      "acceptance": "Acceptance rate",
+      "active": "Active cases",
+      "activeFoot": "Currently in progress"
+    },
+    "producers": {
+      "title": "Incoming cases",
+      "subtitle": "Producer cases routed to you and awaiting a response",
+      "count": "{count} new"
+    },
+    "severity": {
+      "CRITICAL": "Critical",
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low"
+    },
+    "card": {
+      "new": "New",
+      "producer": "Producer",
+      "producerFallback": "Unknown producer",
+      "production": "production",
+      "ha": "ha",
+      "plots": "{count} plots",
+      "ndvi": "NDVI",
+      "decline": "Decline",
+      "review": "Send proposal"
+    },
+    "log": {
+      "title": "Case log",
+      "subtitle": "Tabular index of the same incoming cases",
+      "viewPipeline": "View pipeline",
+      "colRequest": "Request",
+      "colProducer": "Producer",
+      "colProblem": "Problem",
+      "colReceived": "Received",
+      "colAction": "Action",
+      "review": "Review",
+      "empty": "No incoming cases right now."
+    },
+    "modal": {
+      "title": "Send proposal",
+      "subtitle": "Submit a service proposal for this case",
+      "serviceTitle": "Service title",
+      "duration": "Duration",
+      "scope": "Scope",
+      "scopeHint": "One item per line",
+      "amount": "Amount",
+      "currency": "Currency",
+      "details": "Details",
+      "cancel": "Cancel",
+      "send": "Send proposal",
+      "sending": "Sending..."
+    }
   }
 }

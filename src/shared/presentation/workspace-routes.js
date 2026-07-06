@@ -10,6 +10,7 @@
  */
 const comingSoon = () => import('./views/coming-soon.vue');
 const specialistDashboardOverview = () => import('./views/specialist-dashboard-overview.vue');
+const specialistMarketplaceOverview = () => import('./views/specialist-marketplace-overview.vue');
 
 const placeholder = (path, name, sectionLabel, subtitle) => ({
   path,
@@ -35,6 +36,12 @@ const workspaceRoutes = [
     name: 'specialist-workspace',
     component: specialistDashboardOverview,
     meta: { title: 'Specialist Workspace', sectionLabel: 'Specialist Workspace' }
+  },
+  {
+    path: '/specialist/marketplace',
+    name: 'specialist-marketplace',
+    component: specialistMarketplaceOverview,
+    meta: { title: 'sidebar.interventionMarketplace', sectionLabel: 'sidebar.interventionMarketplace' }
   }
 ];
 
