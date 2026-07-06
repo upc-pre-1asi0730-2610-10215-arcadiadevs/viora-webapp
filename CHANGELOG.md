@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.13] - 2026-07-06
+
+### Added
+
+- Specialist Intervention Marketplace domain, API gateway, and Pinia store (Phase 3 of the specialist-parity roadmap, porting os-viora-webapp): read model entity (`SpecialistMarketplace`/case list), response assembler, and a store with `load`/`refresh`, `submitProposal` (with the `specialistId` assignment guard) and `decline` actions on incoming cases, mirroring Phase 1's specialist-dashboard trio (cache-once loading, `errors` ref, optimistic removal with reload-on-error reconciliation).
+
 ## [2.7.12] - 2026-07-06
 
 ### Added
