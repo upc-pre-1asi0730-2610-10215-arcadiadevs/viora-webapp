@@ -1,4 +1,84 @@
 {
+  "coupons": [
+    {
+      "id": 1,
+      "userId": 1,
+      "code": "WELCOME10",
+      "description": "10% off your next subscription",
+      "discountPercent": 10,
+      "validUntil": "2026-12-31",
+      "conditions": "Valid for one billing cycle."
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "code": "REFER15",
+      "description": "15% off from a successful referral",
+      "discountPercent": 15,
+      "validUntil": "2026-09-30",
+      "conditions": "Applies once a referred grower subscribes."
+    }
+  ],
+  "invoices": [
+    {
+      "id": 1,
+      "userId": 1,
+      "issuedAt": "2026-03-01T00:00:00Z",
+      "description": "Pro plan - March 2026",
+      "amountCents": 14900,
+      "currency": "USD",
+      "status": "PAID"
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "issuedAt": "2026-04-01T00:00:00Z",
+      "description": "Pro plan - April 2026",
+      "amountCents": 14900,
+      "currency": "USD",
+      "status": "PAID"
+    },
+    {
+      "id": 3,
+      "userId": 1,
+      "issuedAt": "2026-05-01T00:00:00Z",
+      "description": "Pro plan - May 2026",
+      "amountCents": 14900,
+      "currency": "USD",
+      "status": "PENDING"
+    }
+  ],
+  "payment-methods": [
+    {
+      "id": 1,
+      "userId": 1,
+      "brand": "Visa",
+      "last4": "4242",
+      "expMonth": 8,
+      "expYear": 2028,
+      "isDefault": true
+    }
+  ],
+  "sessions": [
+    {
+      "id": 1,
+      "userId": 1,
+      "device": "MacBook Pro",
+      "client": "Chrome",
+      "location": "Tacna, Peru",
+      "lastActiveAt": "2026-07-06T12:00:00Z",
+      "current": true
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "device": "iPhone 14",
+      "client": "Safari",
+      "location": "Tacna, Peru",
+      "lastActiveAt": "2026-07-04T09:15:00Z",
+      "current": false
+    }
+  ],
   "users": [
     {
       "id": 1,
@@ -21,11 +101,26 @@
       "userId": 1,
       "name": "Santa Rosa",
       "polygonCoordinates": [
-        [-70.2912, -18.0834],
-        [-70.2868, -18.0831],
-        [-70.2865, -18.0872],
-        [-70.2914, -18.0875],
-        [-70.2912, -18.0834]
+        [
+          -70.2912,
+          -18.0834
+        ],
+        [
+          -70.2868,
+          -18.0831
+        ],
+        [
+          -70.2865,
+          -18.0872
+        ],
+        [
+          -70.2914,
+          -18.0875
+        ],
+        [
+          -70.2912,
+          -18.0834
+        ]
       ],
       "areaSize": 12.5,
       "lastUpdate": "2026-05-04T21:00:00Z",
@@ -52,11 +147,26 @@
       "userId": 1,
       "name": "El Olivar",
       "polygonCoordinates": [
-        [-70.3038, -18.0711],
-        [-70.2995, -18.0708],
-        [-70.2992, -18.0746],
-        [-70.3041, -18.0749],
-        [-70.3038, -18.0711]
+        [
+          -70.3038,
+          -18.0711
+        ],
+        [
+          -70.2995,
+          -18.0708
+        ],
+        [
+          -70.2992,
+          -18.0746
+        ],
+        [
+          -70.3041,
+          -18.0749
+        ],
+        [
+          -70.3038,
+          -18.0711
+        ]
       ],
       "areaSize": 8.2,
       "lastUpdate": "2026-05-08T20:30:00Z",
@@ -94,11 +204,26 @@
         "cropType": "Olive",
         "variety": "Sevillana",
         "polygonCoordinates": [
-          [-70.2912, -18.0834],
-          [-70.2868, -18.0831],
-          [-70.2865, -18.0872],
-          [-70.2914, -18.0875],
-          [-70.2912, -18.0834]
+          [
+            -70.2912,
+            -18.0834
+          ],
+          [
+            -70.2868,
+            -18.0831
+          ],
+          [
+            -70.2865,
+            -18.0872
+          ],
+          [
+            -70.2914,
+            -18.0875
+          ],
+          [
+            -70.2912,
+            -18.0834
+          ]
         ],
         "areaSizeHectares": 12.5,
         "currentNdvi": 0.62,
@@ -120,11 +245,26 @@
         "cropType": "Olive",
         "variety": "Criolla",
         "polygonCoordinates": [
-          [-70.3038, -18.0711],
-          [-70.2995, -18.0708],
-          [-70.2992, -18.0746],
-          [-70.3041, -18.0749],
-          [-70.3038, -18.0711]
+          [
+            -70.3038,
+            -18.0711
+          ],
+          [
+            -70.2995,
+            -18.0708
+          ],
+          [
+            -70.2992,
+            -18.0746
+          ],
+          [
+            -70.3041,
+            -18.0749
+          ],
+          [
+            -70.3038,
+            -18.0711
+          ]
         ],
         "areaSizeHectares": 8.2,
         "currentNdvi": 0.45,
@@ -190,10 +330,42 @@
       "id": "all-last-30-days",
       "plotId": "all",
       "timeRange": "LAST_30_DAYS",
-      "labels": ["01 May", "05 May", "10 May", "15 May", "20 May", "25 May", "30 May"],
-      "ndviSeries": [0.55, 0.58, 0.62, 0.65, 0.61, 0.59, 0.63],
-      "cpSeries": [450, 480, 510, 545, 580, 605, 620],
-      "chillHoursSeries": [450, 480, 510, 545, 580, 605, 620],
+      "labels": [
+        "01 May",
+        "05 May",
+        "10 May",
+        "15 May",
+        "20 May",
+        "25 May",
+        "30 May"
+      ],
+      "ndviSeries": [
+        0.55,
+        0.58,
+        0.62,
+        0.65,
+        0.61,
+        0.59,
+        0.63
+      ],
+      "cpSeries": [
+        450,
+        480,
+        510,
+        545,
+        580,
+        605,
+        620
+      ],
+      "chillHoursSeries": [
+        450,
+        480,
+        510,
+        545,
+        580,
+        605,
+        620
+      ],
       "threshold": 600,
       "chillRequirementSource": "PLOT_CONFIGURATION",
       "chillMetricModel": "DYNAMIC_MODEL",
@@ -201,18 +373,68 @@
       "trend": "Stable",
       "statusLabel": "Stable",
       "observation": "Slight recovery after the last low-vigor event.",
-      "ndviTrend": { "currentValue": 0.63, "previousValue": 0.59, "change": 0.04, "changePercent": 6.8, "direction": "UP" },
-      "chillPortionsTrend": { "currentValue": 620, "previousValue": 605, "change": 15, "changePercent": 2.5, "direction": "UP" },
-      "chillHoursTrend": { "currentValue": 620, "previousValue": 605, "change": 15, "changePercent": 2.5, "direction": "UP" }
+      "ndviTrend": {
+        "currentValue": 0.63,
+        "previousValue": 0.59,
+        "change": 0.04,
+        "changePercent": 6.8,
+        "direction": "UP"
+      },
+      "chillPortionsTrend": {
+        "currentValue": 620,
+        "previousValue": 605,
+        "change": 15,
+        "changePercent": 2.5,
+        "direction": "UP"
+      },
+      "chillHoursTrend": {
+        "currentValue": 620,
+        "previousValue": 605,
+        "change": 15,
+        "changePercent": 2.5,
+        "direction": "UP"
+      }
     },
     {
       "id": "plot1-last-30-days",
       "plotId": "1",
       "timeRange": "LAST_30_DAYS",
-      "labels": ["01 May", "05 May", "10 May", "15 May", "20 May", "25 May", "30 May"],
-      "ndviSeries": [0.62, 0.64, 0.68, 0.7, 0.68, 0.67, 0.69],
-      "cpSeries": [500, 520, 550, 580, 602, 615, 630],
-      "chillHoursSeries": [500, 520, 550, 580, 602, 615, 630],
+      "labels": [
+        "01 May",
+        "05 May",
+        "10 May",
+        "15 May",
+        "20 May",
+        "25 May",
+        "30 May"
+      ],
+      "ndviSeries": [
+        0.62,
+        0.64,
+        0.68,
+        0.7,
+        0.68,
+        0.67,
+        0.69
+      ],
+      "cpSeries": [
+        500,
+        520,
+        550,
+        580,
+        602,
+        615,
+        630
+      ],
+      "chillHoursSeries": [
+        500,
+        520,
+        550,
+        580,
+        602,
+        615,
+        630
+      ],
       "threshold": 600,
       "chillRequirementSource": "PLOT_CONFIGURATION",
       "chillMetricModel": "DYNAMIC_MODEL",
@@ -220,18 +442,68 @@
       "trend": "Up",
       "statusLabel": "Healthy",
       "observation": "Sustained growth above the critical threshold.",
-      "ndviTrend": { "currentValue": 0.69, "previousValue": 0.67, "change": 0.02, "changePercent": 3.0, "direction": "UP" },
-      "chillPortionsTrend": { "currentValue": 630, "previousValue": 615, "change": 15, "changePercent": 2.4, "direction": "UP" },
-      "chillHoursTrend": { "currentValue": 630, "previousValue": 615, "change": 15, "changePercent": 2.4, "direction": "UP" }
+      "ndviTrend": {
+        "currentValue": 0.69,
+        "previousValue": 0.67,
+        "change": 0.02,
+        "changePercent": 3,
+        "direction": "UP"
+      },
+      "chillPortionsTrend": {
+        "currentValue": 630,
+        "previousValue": 615,
+        "change": 15,
+        "changePercent": 2.4,
+        "direction": "UP"
+      },
+      "chillHoursTrend": {
+        "currentValue": 630,
+        "previousValue": 615,
+        "change": 15,
+        "changePercent": 2.4,
+        "direction": "UP"
+      }
     },
     {
       "id": "plot2-last-30-days",
       "plotId": "2",
       "timeRange": "LAST_30_DAYS",
-      "labels": ["01 May", "05 May", "10 May", "15 May", "20 May", "25 May", "30 May"],
-      "ndviSeries": [0.42, 0.45, 0.44, 0.46, 0.45, 0.44, 0.45],
-      "cpSeries": [400, 415, 430, 445, 460, 475, 490],
-      "chillHoursSeries": [400, 415, 430, 445, 460, 475, 490],
+      "labels": [
+        "01 May",
+        "05 May",
+        "10 May",
+        "15 May",
+        "20 May",
+        "25 May",
+        "30 May"
+      ],
+      "ndviSeries": [
+        0.42,
+        0.45,
+        0.44,
+        0.46,
+        0.45,
+        0.44,
+        0.45
+      ],
+      "cpSeries": [
+        400,
+        415,
+        430,
+        445,
+        460,
+        475,
+        490
+      ],
+      "chillHoursSeries": [
+        400,
+        415,
+        430,
+        445,
+        460,
+        475,
+        490
+      ],
       "threshold": 600,
       "chillRequirementSource": "PLOT_CONFIGURATION",
       "chillMetricModel": "DYNAMIC_MODEL",
@@ -239,9 +511,27 @@
       "trend": "Down",
       "statusLabel": "Review",
       "observation": "Water stress detected, requires immediate review.",
-      "ndviTrend": { "currentValue": 0.45, "previousValue": 0.44, "change": 0.01, "changePercent": 2.3, "direction": "STABLE" },
-      "chillPortionsTrend": { "currentValue": 490, "previousValue": 475, "change": 15, "changePercent": 3.2, "direction": "UP" },
-      "chillHoursTrend": { "currentValue": 490, "previousValue": 475, "change": 15, "changePercent": 3.2, "direction": "UP" }
+      "ndviTrend": {
+        "currentValue": 0.45,
+        "previousValue": 0.44,
+        "change": 0.01,
+        "changePercent": 2.3,
+        "direction": "STABLE"
+      },
+      "chillPortionsTrend": {
+        "currentValue": 490,
+        "previousValue": 475,
+        "change": 15,
+        "changePercent": 3.2,
+        "direction": "UP"
+      },
+      "chillHoursTrend": {
+        "currentValue": 490,
+        "previousValue": 475,
+        "change": 15,
+        "changePercent": 3.2,
+        "direction": "UP"
+      }
     }
   ],
   "plot-weather-forecasts": [
@@ -305,7 +595,7 @@
           "humidityPercentage": 56,
           "precipitationMillimeters": 0,
           "windSpeedMetersPerSecond": 2.2,
-          "windGustMetersPerSecond": 4.0
+          "windGustMetersPerSecond": 4
         }
       ],
       "daily": [
@@ -392,7 +682,7 @@
           "humidityPercentage": 55,
           "precipitationMillimeters": 0,
           "windSpeedMetersPerSecond": 3.1,
-          "windGustMetersPerSecond": 5.0
+          "windGustMetersPerSecond": 5
         },
         {
           "timestamp": "2026-05-11T22:00:00Z",
@@ -427,8 +717,8 @@
           "weatherStatus": "CLEAR",
           "humidityPercentage": 50,
           "precipitationMillimeters": 0,
-          "windSpeedMetersPerSecond": 3.0,
-          "windGustMetersPerSecond": 5.0
+          "windSpeedMetersPerSecond": 3,
+          "windGustMetersPerSecond": 5
         },
         {
           "timestamp": "2026-05-12T10:00:00Z",
@@ -449,7 +739,7 @@
           "dominantStatus": "CLEAR",
           "averageHumidityPercentage": 54,
           "totalPrecipitationMillimeters": 0,
-          "maxWindGustMetersPerSecond": 5.0
+          "maxWindGustMetersPerSecond": 5
         },
         {
           "date": "2026-05-12",
@@ -521,8 +811,20 @@
         "direction": "UP",
         "changeRate": 0.03,
         "series": [
-          { "timestamp": "2026-05-01T00:00:00Z", "mean": 0.6, "minimum": 0.52, "maximum": 0.68, "median": 0.61 },
-          { "timestamp": "2026-05-04T00:00:00Z", "mean": 0.62, "minimum": 0.55, "maximum": 0.7, "median": 0.63 }
+          {
+            "timestamp": "2026-05-01T00:00:00Z",
+            "mean": 0.6,
+            "minimum": 0.52,
+            "maximum": 0.68,
+            "median": 0.61
+          },
+          {
+            "timestamp": "2026-05-04T00:00:00Z",
+            "mean": 0.62,
+            "minimum": 0.55,
+            "maximum": 0.7,
+            "median": 0.63
+          }
         ]
       },
       "chillPortions": 602,
@@ -569,8 +871,20 @@
         "direction": "DOWN",
         "changeRate": -0.02,
         "series": [
-          { "timestamp": "2026-05-02T00:00:00Z", "mean": 0.47, "minimum": 0.4, "maximum": 0.55, "median": 0.46 },
-          { "timestamp": "2026-05-08T00:00:00Z", "mean": 0.45, "minimum": 0.38, "maximum": 0.52, "median": 0.44 }
+          {
+            "timestamp": "2026-05-02T00:00:00Z",
+            "mean": 0.47,
+            "minimum": 0.4,
+            "maximum": 0.55,
+            "median": 0.46
+          },
+          {
+            "timestamp": "2026-05-08T00:00:00Z",
+            "mean": 0.45,
+            "minimum": 0.38,
+            "maximum": 0.52,
+            "median": 0.44
+          }
         ]
       },
       "chillPortions": 490,
@@ -620,11 +934,26 @@
       "variety": "Sevillana",
       "notes": "Reference plot for the dashboard overview.",
       "polygonCoordinates": [
-        [-70.2912, -18.0834],
-        [-70.2868, -18.0831],
-        [-70.2865, -18.0872],
-        [-70.2914, -18.0875],
-        [-70.2912, -18.0834]
+        [
+          -70.2912,
+          -18.0834
+        ],
+        [
+          -70.2868,
+          -18.0831
+        ],
+        [
+          -70.2865,
+          -18.0872
+        ],
+        [
+          -70.2914,
+          -18.0875
+        ],
+        [
+          -70.2912,
+          -18.0834
+        ]
       ],
       "areaSizeHectares": 12.5,
       "boundaryPointCount": 4,
@@ -660,9 +989,21 @@
         }
       ],
       "recentConfigurationActivity": [
-        { "type": "SATELLITE_SYNC", "description": "Satellite monitoring synchronized.", "occurredAt": "2026-05-04T21:05:00Z" },
-        { "type": "CLIMATE_LINK", "description": "Climate monitoring linked.", "occurredAt": "2026-05-01T06:51:00Z" },
-        { "type": "BOUNDARY_REGISTERED", "description": "Plot boundary registered.", "occurredAt": "2026-05-01T06:51:00Z" }
+        {
+          "type": "SATELLITE_SYNC",
+          "description": "Satellite monitoring synchronized.",
+          "occurredAt": "2026-05-04T21:05:00Z"
+        },
+        {
+          "type": "CLIMATE_LINK",
+          "description": "Climate monitoring linked.",
+          "occurredAt": "2026-05-01T06:51:00Z"
+        },
+        {
+          "type": "BOUNDARY_REGISTERED",
+          "description": "Plot boundary registered.",
+          "occurredAt": "2026-05-01T06:51:00Z"
+        }
       ]
     },
     {
@@ -676,11 +1017,26 @@
       "variety": "Criolla",
       "notes": "Plot under review due to moderate water stress.",
       "polygonCoordinates": [
-        [-70.3038, -18.0711],
-        [-70.2995, -18.0708],
-        [-70.2992, -18.0746],
-        [-70.3041, -18.0749],
-        [-70.3038, -18.0711]
+        [
+          -70.3038,
+          -18.0711
+        ],
+        [
+          -70.2995,
+          -18.0708
+        ],
+        [
+          -70.2992,
+          -18.0746
+        ],
+        [
+          -70.3041,
+          -18.0749
+        ],
+        [
+          -70.3038,
+          -18.0711
+        ]
       ],
       "areaSizeHectares": 8.2,
       "boundaryPointCount": 4,
@@ -709,8 +1065,16 @@
         }
       ],
       "recentConfigurationActivity": [
-        { "type": "CLIMATE_LINK", "description": "Climate monitoring linked.", "occurredAt": "2026-05-02T07:10:00Z" },
-        { "type": "BOUNDARY_REGISTERED", "description": "Plot boundary registered.", "occurredAt": "2026-05-02T07:10:00Z" }
+        {
+          "type": "CLIMATE_LINK",
+          "description": "Climate monitoring linked.",
+          "occurredAt": "2026-05-02T07:10:00Z"
+        },
+        {
+          "type": "BOUNDARY_REGISTERED",
+          "description": "Plot boundary registered.",
+          "occurredAt": "2026-05-02T07:10:00Z"
+        }
       ]
     }
   ],
@@ -721,11 +1085,32 @@
       "plotId": 1,
       "status": "RECOMMENDED",
       "inputRecommendations": [
-        { "value": "Foliar nutrition support", "purpose": "Improve stress response and recovery", "dosage": 2.5, "dosageUnit": "L/ha", "status": "RECOMMENDED" },
-        { "value": "Potassium-calcium support", "purpose": "Support flowering consistency and reduce abortion risk", "dosage": 3, "dosageUnit": "kg/ha", "status": "RECOMMENDED" },
-        { "value": "Biostimulant support", "purpose": "Reinforce vegetative recovery after stress periods", "dosage": 1.2, "dosageUnit": "L/ha", "status": "OPTIONAL" }
+        {
+          "value": "Foliar nutrition support",
+          "purpose": "Improve stress response and recovery",
+          "dosage": 2.5,
+          "dosageUnit": "L/ha",
+          "status": "RECOMMENDED"
+        },
+        {
+          "value": "Potassium-calcium support",
+          "purpose": "Support flowering consistency and reduce abortion risk",
+          "dosage": 3,
+          "dosageUnit": "kg/ha",
+          "status": "RECOMMENDED"
+        },
+        {
+          "value": "Biostimulant support",
+          "purpose": "Reinforce vegetative recovery after stress periods",
+          "dosage": 1.2,
+          "dosageUnit": "L/ha",
+          "status": "OPTIONAL"
+        }
       ],
-      "applicationWindow": { "startDate": "2026-06-18", "endDate": "2026-06-21" },
+      "applicationWindow": {
+        "startDate": "2026-06-18",
+        "endDate": "2026-06-21"
+      },
       "rationale": {
         "summary": "Plan generated from HIGH risk using AgroMonitoring NDVI 0.62 captured on 2026-06-18 and weather observed on 2026-06-19; temperature anomaly is +1.5 C against the configured agronomic reference.",
         "triggeringRiskLevel": "HIGH",
@@ -742,11 +1127,32 @@
       "plotId": 2,
       "status": "RECOMMENDED",
       "inputRecommendations": [
-        { "value": "Foliar nutrition support", "purpose": "Improve stress response and recovery", "dosage": 2, "dosageUnit": "L/ha", "status": "RECOMMENDED" },
-        { "value": "Potassium-calcium support", "purpose": "Support flowering consistency and reduce abortion risk", "dosage": 2.5, "dosageUnit": "kg/ha", "status": "RECOMMENDED" },
-        { "value": "Biostimulant support", "purpose": "Reinforce vegetative recovery after stress periods", "dosage": 1, "dosageUnit": "L/ha", "status": "OPTIONAL" }
+        {
+          "value": "Foliar nutrition support",
+          "purpose": "Improve stress response and recovery",
+          "dosage": 2,
+          "dosageUnit": "L/ha",
+          "status": "RECOMMENDED"
+        },
+        {
+          "value": "Potassium-calcium support",
+          "purpose": "Support flowering consistency and reduce abortion risk",
+          "dosage": 2.5,
+          "dosageUnit": "kg/ha",
+          "status": "RECOMMENDED"
+        },
+        {
+          "value": "Biostimulant support",
+          "purpose": "Reinforce vegetative recovery after stress periods",
+          "dosage": 1,
+          "dosageUnit": "L/ha",
+          "status": "OPTIONAL"
+        }
       ],
-      "applicationWindow": { "startDate": "2026-06-19", "endDate": "2026-06-22" },
+      "applicationWindow": {
+        "startDate": "2026-06-19",
+        "endDate": "2026-06-22"
+      },
       "rationale": {
         "summary": "Plan generated from MEDIUM risk using AgroMonitoring NDVI 0.45 captured on 2026-06-18 and weather observed on 2026-06-19; temperature anomaly is +2.1 C against the configured agronomic reference.",
         "triggeringRiskLevel": "MODERATE",
@@ -800,6 +1206,7 @@
       "severity": "Critical",
       "date": "2026-05-11T10:30:00Z",
       "status": "Active",
+      "plotId": 1,
       "plot": {
         "name": "Santa Rosa",
         "location": "La Yarada - Los Palos",
@@ -813,6 +1220,7 @@
       "severity": "High",
       "date": "2026-05-10T14:20:00Z",
       "status": "Under review",
+      "plotId": 2,
       "plot": {
         "name": "El Olivar",
         "location": "Sama Inclán",
@@ -826,6 +1234,7 @@
       "severity": "Medium",
       "date": "2026-05-11T02:00:00Z",
       "status": "Suggest",
+      "plotId": 1,
       "plot": {
         "name": "Santa Rosa",
         "location": "La Yarada - Los Palos",
@@ -866,6 +1275,341 @@
       "leafHumidity": 70,
       "status": "active",
       "lastUpdate": "2026-05-11T11:45:00Z"
+    }
+  ],
+  "expenses": [
+    {
+      "id": 1,
+      "plotId": 1,
+      "category": "Irrigation",
+      "amount": 320.5,
+      "currency": "PEN",
+      "date": "2026-05-02",
+      "description": "Drip irrigation maintenance"
+    },
+    {
+      "id": 2,
+      "plotId": 1,
+      "category": "Fertilizer",
+      "amount": 540,
+      "currency": "PEN",
+      "date": "2026-05-08",
+      "description": "Foliar nutrition support supplies"
+    },
+    {
+      "id": 3,
+      "plotId": 1,
+      "category": "Labor",
+      "amount": 210,
+      "currency": "PEN",
+      "date": "2026-05-15",
+      "description": "Pruning crew, north sector"
+    },
+    {
+      "id": 4,
+      "plotId": 2,
+      "category": "Pest control",
+      "amount": 180,
+      "currency": "PEN",
+      "date": "2026-05-06",
+      "description": "Cochinilla treatment application"
+    },
+    {
+      "id": 5,
+      "plotId": 2,
+      "category": "Irrigation",
+      "amount": 275,
+      "currency": "PEN",
+      "date": "2026-05-12",
+      "description": "Supplementary irrigation cycle"
+    }
+  ],
+  "pest-sighting-reports": [
+    {
+      "id": 1,
+      "plotId": 1,
+      "plotName": "Santa Rosa",
+      "reporterUserId": 1,
+      "riskZone": "EDGES",
+      "symptoms": [
+        "leaf-spotting",
+        "cochinilla-presence"
+      ],
+      "observedSeverity": "HIGH",
+      "notes": "Cochinilla spotted on leaves in the northern sector.",
+      "evaluated": true,
+      "calculatedRisk": "High",
+      "probableThreat": "Cochinilla infestation",
+      "status": "Active",
+      "alertConfirmed": true,
+      "date": "2026-05-11T10:15:00Z",
+      "reportedBy": "Demo User"
+    },
+    {
+      "id": 2,
+      "plotId": 2,
+      "plotName": "El Olivar",
+      "reporterUserId": 1,
+      "riskZone": "PARTIAL_PLOT",
+      "symptoms": [
+        "fruit-fly-damage"
+      ],
+      "observedSeverity": "MEDIUM",
+      "notes": "A few fruits showing fly damage near the well area.",
+      "evaluated": false,
+      "calculatedRisk": "",
+      "probableThreat": "",
+      "status": "Pending",
+      "alertConfirmed": false,
+      "date": "2026-05-10T09:40:00Z",
+      "reportedBy": "Demo User"
+    }
+  ],
+  "symptom-dictionary-items": [
+    {
+      "id": "leaf-spotting",
+      "description": "Dark circular spots on leaf surface"
+    },
+    {
+      "id": "leaf-yellowing",
+      "description": "Uniform yellowing of leaves (chlorosis)"
+    },
+    {
+      "id": "fruit-fly-damage",
+      "description": "Puncture marks and soft rot on fruit"
+    },
+    {
+      "id": "cochinilla-presence",
+      "description": "White cottony masses on leaves and branches"
+    },
+    {
+      "id": "wilting-shoots",
+      "description": "New shoots wilting despite adequate irrigation"
+    },
+    {
+      "id": "root-rot",
+      "description": "Soft, discolored roots with foul odor"
+    },
+    {
+      "id": "leaf-curling",
+      "description": "Leaves curling inward at the margins"
+    },
+    {
+      "id": "bark-lesions",
+      "description": "Sunken lesions or cankers on the bark"
+    }
+  ],
+  "community-risk": [
+    {
+      "id": 1,
+      "plotId": 1,
+      "plotName": "Santa Rosa",
+      "radiusKm": 5,
+      "signals": [
+        {
+          "id": 1,
+          "title": "Cochinilla outbreak reported nearby",
+          "distanceKm": 2.3,
+          "severity": "High",
+          "probableThreat": "Cochinilla infestation"
+        },
+        {
+          "id": 2,
+          "title": "Low NDVI cluster detected",
+          "distanceKm": 4.1,
+          "severity": "Medium",
+          "probableThreat": "Water stress"
+        }
+      ],
+      "preventiveRecommendations": [
+        "Inspect leaf undersides for early cochinilla signs.",
+        "Coordinate with neighboring plots on treatment timing."
+      ]
+    },
+    {
+      "id": 2,
+      "plotId": 2,
+      "plotName": "El Olivar",
+      "radiusKm": 5,
+      "signals": [
+        {
+          "id": 3,
+          "title": "Fruit fly sightings in adjacent plots",
+          "distanceKm": 3.6,
+          "severity": "Medium",
+          "probableThreat": "Fruit fly damage"
+        }
+      ],
+      "preventiveRecommendations": [
+        "Set up pheromone traps along the plot perimeter."
+      ]
+    }
+  ],
+  "specialist-candidates": [
+    {
+      "id": 890,
+      "name": "Valeria Rojas",
+      "role": "Phytosanitary specialist",
+      "successRate": 96,
+      "caseCount": 24,
+      "distanceKm": 6.4,
+      "tags": [
+        "Xylella monitoring",
+        "Biological stress",
+        "Field inspection"
+      ],
+      "availability": "AVAILABLE_TODAY",
+      "available": true,
+      "alertId": 1
+    },
+    {
+      "id": 891,
+      "name": "Marco Salcedo",
+      "role": "Agricultural pest technician",
+      "successRate": 92,
+      "caseCount": 17,
+      "distanceKm": 9.1,
+      "tags": [
+        "Leaf symptoms",
+        "Low-vigor inspection",
+        "Treatment follow-up"
+      ],
+      "availability": "AVAILABLE_TOMORROW",
+      "available": true,
+      "alertId": 1
+    },
+    {
+      "id": 892,
+      "name": "Camila Torres",
+      "role": "Crop health consultant",
+      "successRate": 94,
+      "caseCount": 31,
+      "distanceKm": 12.8,
+      "tags": [
+        "Olive disease assessment",
+        "Technical prescriptions"
+      ],
+      "availability": "AVAILABLE_THIS_WEEK",
+      "available": true,
+      "alertId": 2
+    }
+  ],
+  "intervention-requests": [
+    {
+      "id": 1,
+      "referenceCode": "REQ-1001",
+      "growerId": 1,
+      "plotId": 1,
+      "specialistId": 2,
+      "alertId": 1,
+      "reason": "Cochinilla infestation confirmed on northern sector",
+      "message": "Requesting urgent field inspection and treatment plan.",
+      "status": "ACCEPTED",
+      "createdAt": "2026-05-11T11:00:00Z",
+      "updatedAt": "2026-05-11T15:30:00Z"
+    },
+    {
+      "id": 2,
+      "referenceCode": "REQ-1002",
+      "growerId": 1,
+      "plotId": 2,
+      "specialistId": null,
+      "alertId": 2,
+      "reason": "Low NDVI anomaly near the well area",
+      "message": "Would like a specialist opinion on water stress.",
+      "status": "PENDING",
+      "createdAt": "2026-05-10T15:00:00Z",
+      "updatedAt": "2026-05-10T15:00:00Z"
+    },
+    {
+      "id": 3,
+      "referenceCode": "REQ-1003",
+      "growerId": 1,
+      "plotId": 1,
+      "specialistId": 890,
+      "alertId": 1,
+      "reason": "Possible pest symptom report pattern detected from symptom report and NDVI variation.",
+      "message": "",
+      "status": "PENDING",
+      "createdAt": "2026-07-06T15:09:52.298Z",
+      "updatedAt": "2026-07-06T15:09:52.298Z"
+    }
+  ],
+  "service-proposals": [
+    {
+      "id": 1,
+      "interventionRequestId": 1,
+      "specialistId": 2,
+      "serviceTitle": "Cochinilla treatment and follow-up",
+      "durationLabel": "2 visits over 14 days",
+      "scope": [
+        "Field inspection",
+        "Phytosanitary application",
+        "Recovery follow-up"
+      ],
+      "proposedDate": "2026-05-13",
+      "amount": 350,
+      "currency": "PEN",
+      "proposalDetails": "Includes product application and a 14-day recovery check.",
+      "status": "ACCEPTED"
+    }
+  ],
+  "specialists": [
+    {
+      "id": 2,
+      "userId": 2,
+      "fullName": "Demo Specialist",
+      "name": "Demo Specialist",
+      "role": "Phytosanitary specialist",
+      "phone": "+51 952 111 222",
+      "email": "specialist@viora.com",
+      "whatsapp": "+51 952 111 222"
+    }
+  ],
+  "interventions": [
+    {
+      "code": "INT-1001",
+      "interventionRequestId": 1,
+      "referenceCode": "REQ-1001",
+      "plotId": 1,
+      "alertId": 1,
+      "specialistId": 2,
+      "serviceProposalId": 1,
+      "treatmentPrescriptionId": 1,
+      "interventionExecutionId": null,
+      "interventionOutcomeId": null,
+      "status": "PRESCRIPTION_ISSUED",
+      "serviceTitle": "Cochinilla treatment and follow-up",
+      "amount": 350,
+      "currency": "PEN"
+    }
+  ],
+  "treatment-prescriptions": [
+    {
+      "id": 1,
+      "serviceProposalId": 1,
+      "status": "ISSUED",
+      "agrochemicalPrescription": {
+        "applicationMethod": "Foliar spray",
+        "sprayVolumeAmount": 200,
+        "sprayVolumeUnit": "L/ha",
+        "preHarvestIntervalDays": 7,
+        "agronomistRecommendations": "Apply targeted insecticide to affected zones and monitor recovery for 14 days.",
+        "requiredPPE": [
+          "Gloves",
+          "Mask",
+          "Goggles"
+        ],
+        "products": [
+          {
+            "productName": "Insecticide A",
+            "dosageAmount": 1.5,
+            "dosageUnit": "L/ha",
+            "sessionsCount": 2,
+            "technicalRecommendation": "Apply at dawn or dusk"
+          }
+        ]
+      }
     }
   ]
 }

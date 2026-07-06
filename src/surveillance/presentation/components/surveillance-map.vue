@@ -43,37 +43,39 @@ onMounted(async () => {
 
         const mapboxgl = window.mapboxgl;
 
-        // Draw plot boundary polygon
-        if (props.boundary.length >= 3) {
-            const coords = [...props.boundary, props.boundary[0]];
-            mapInstance.addSource('plot-boundary', {
-                type: 'geojson',
-                data: {
-                    type: 'Feature',
-                    geometry: { type: 'Polygon', coordinates: [coords] }
-                }
-            });
-            mapInstance.addLayer({
-                id: 'plot-boundary-fill',
-                type: 'fill',
-                source: 'plot-boundary',
-                paint: { 'fill-color': '#2E4A3A', 'fill-opacity': 0.08 }
-            });
-            mapInstance.addLayer({
-                id: 'plot-boundary-outline',
-                type: 'line',
-                source: 'plot-boundary',
-                paint: { 'line-color': '#2E4A3A', 'line-width': 2.5 }
-            });
-        }
+        mapInstance.on('load', () => {
+            // Draw plot boundary polygon
+            if (props.boundary.length >= 3) {
+                const coords = [...props.boundary, props.boundary[0]];
+                mapInstance.addSource('plot-boundary', {
+                    type: 'geojson',
+                    data: {
+                        type: 'Feature',
+                        geometry: { type: 'Polygon', coordinates: [coords] }
+                    }
+                });
+                mapInstance.addLayer({
+                    id: 'plot-boundary-fill',
+                    type: 'fill',
+                    source: 'plot-boundary',
+                    paint: { 'fill-color': '#2E4A3A', 'fill-opacity': 0.08 }
+                });
+                mapInstance.addLayer({
+                    id: 'plot-boundary-outline',
+                    type: 'line',
+                    source: 'plot-boundary',
+                    paint: { 'line-color': '#2E4A3A', 'line-width': 2.5 }
+                });
+            }
 
-        // Place risk markers
-        props.markers.forEach(marker => {
-            const color = ZONE_COLORS[marker.riskZone] || '#9CA3AF';
-            new mapboxgl.Marker({ color })
-                .setLngLat(marker.lngLat)
-                .setPopup(new mapboxgl.Popup().setText(marker.label || marker.riskZone))
-                .addTo(mapInstance);
+            // Place risk markers
+            props.markers.forEach(marker => {
+                const color = ZONE_COLORS[marker.riskZone] || '#9CA3AF';
+                new mapboxgl.Marker({ color })
+                    .setLngLat(marker.lngLat)
+                    .setPopup(new mapboxgl.Popup().setText(marker.label || marker.riskZone))
+                    .addTo(mapInstance);
+            });
         });
     } catch (err) {
         console.error('[SurveillanceMap] Error initializing map:', err);

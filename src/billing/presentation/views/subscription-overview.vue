@@ -17,9 +17,9 @@ const breadcrumbs = [
     { label: 'Overview', disabled: true },
 ];
 
-// Real usage, derived from My Plots / IoT devices.
-const plotsUsed = ref(0);
-const iotUsed = ref(0);
+// Real usage, derived reactively from My Plots / IoT devices.
+const plotsUsed = computed(() => agronomicStore.plots.length);
+const iotUsed = computed(() => agronomicStore.iotDevices.length);
 
 // Modal state.
 const confirmPlan = ref(null);
@@ -72,14 +72,6 @@ function refresh() {
 function loadUsage() {
     agronomicStore.fetchPlots();
     agronomicStore.fetchIotDevices();
-    // Usage counts update reactively when plots/iotDevices change
-    updateUsageCounts();
-}
-
-function updateUsageCounts() {
-    // Derive counts from store data
-    plotsUsed.value = agronomicStore.plots.length;
-    iotUsed.value = agronomicStore.iotDevices.length;
 }
 
 function isCurrentPlan(plan) {

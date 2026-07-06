@@ -28,3 +28,4 @@ dist-ssr
 .firebase/
 .env.development
 .env.production
+.playwright-mcp/

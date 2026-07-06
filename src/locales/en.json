@@ -93,7 +93,8 @@
   "common": {
     "risk": "Risk",
     "updated": "Updated",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "loading": "Loading"
   },
   "myPlots": {
     "overview": "Overview",
@@ -503,6 +504,15 @@
       "plot": "Select a plot...",
       "activation-code": "VIORA-SP01-7K3M"
     }
+  },
+  "errors": {
+    "occurred": "An error occurred. Please try again."
+  },
+  "surveillance": {
+    "alerts-title": "Alerts",
+    "alerts-description": "Track active agricultural alerts across your plots.",
+    "pest-surveillance-title": "Pest Surveillance",
+    "pest-surveillance-description": "Monitor pest and disease surveillance reports."
   },
   "authoring-phrase": {
     "intro": "Made with",

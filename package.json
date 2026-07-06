@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "mock": "node server/index.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "deploy": "npm run build && firebase deploy --only hosting"
   },
   "dependencies": {
     "@primeuix/themes": "^2.0.3",
@@ -30,6 +31,7 @@
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-vue": "^10.9.2",
+    "firebase-tools": "^15.22.4",
     "vite": "^8.0.12"
   }
 }

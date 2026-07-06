@@ -337,7 +337,8 @@ const plotSummary = computed(() => {
     const plot = selectedPlot.value;
     if (!plot) return '';
     const location = plot.location || 'Unknown location';
-    return `${plot.name} \u00b7 ${location} \u00b7 ${plot.areaSizeLabel}`;
+    const areaLabel = `${(plot.areaSize ?? 0).toFixed(1)} ha`;
+    return `${plot.name} \u00b7 ${location} \u00b7 ${areaLabel}`;
 });
 
 const toolbarViewOptions = computed(() => {

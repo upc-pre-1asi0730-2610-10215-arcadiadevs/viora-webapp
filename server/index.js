@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -101,6 +101,130 @@ app.get('/api/v1/plots/:id/iot-devices', (req, res) => {
   res.json(collection('iot-devices').filter({ plotId }).value());
 });
 
+// ─── Chill requirement (plot configuration) ───
+
+app.put('/api/v1/plots/:id/chill-requirement', (req, res) => {
+  const plots = collection('plots');
+  const id = numericId(req.params.id);
+  const plot = plots.find({ id }).value();
+  if (!plot) return res.status(404).json({ message: 'Plot not found.' });
+  const chillRequirement = { ...req.body };
+  plots.find({ id }).assign({ chillRequirement }).write();
+  res.json(chillRequirement);
+});
+
+app.delete('/api/v1/plots/:id/chill-requirement', (req, res) => {
+  const plots = collection('plots');
+  const id = numericId(req.params.id);
+  const plot = plots.find({ id }).value();
+  if (!plot) return res.status(404).json({ message: 'Plot not found.' });
+  plots.find({ id }).assign({ chillRequirement: null }).write();
+  res.json({ chillRequirement: null });
+});
+
+// ─── Nested IoT devices (create/update/delete under a plot) ───
+
+app.post('/api/v1/plots/:plotId/iot-devices', (req, res) => {
+  const plotId = numericId(req.params.plotId);
+  const devices = collection('iot-devices');
+  const id = (devices.map('id').max().value() || 0) + 1;
+  const deviceName = req.body.deviceName || req.body.name || `Device ${id}`;
+  const status = String(req.body.status || 'active').toLowerCase();
+  const device = {
+    id,
+    plotId,
+    name: deviceName,
+    deviceName,
+    soilMoisture: req.body.soilMoisture ?? 0,
+    temperature: req.body.temperature ?? 0,
+    leafHumidity: req.body.leafHumidity ?? 0,
+    status,
+    activationCode: req.body.activationCode || '',
+    lastUpdate: new Date().toISOString()
+  };
+  devices.push(device).write();
+  res.status(201).json(device);
+});
+
+app.patch('/api/v1/plots/:plotId/iot-devices/:id', (req, res) => {
+  const plotId = numericId(req.params.plotId);
+  const id = numericId(req.params.id);
+  const devices = collection('iot-devices');
+  const device = devices.find({ id, plotId }).value();
+  if (!device) return res.status(404).json({ message: 'IoT device not found.' });
+  const status = req.body.iotDeviceStatus
+    ? String(req.body.iotDeviceStatus).toLowerCase()
+    : device.status;
+  const updated = {
+    ...device,
+    name: req.body.deviceName || device.name,
+    deviceName: req.body.deviceName || device.deviceName,
+    status,
+    lastUpdate: new Date().toISOString()
+  };
+  devices.find({ id, plotId }).assign(updated).write();
+  res.json(updated);
+});
+
+app.delete('/api/v1/plots/:plotId/iot-devices/:id', (req, res) => {
+  const plotId = numericId(req.params.plotId);
+  const id = numericId(req.params.id);
+  const devices = collection('iot-devices');
+  const device = devices.find({ id, plotId }).value();
+  if (!device) return res.status(404).json({ message: 'IoT device not found.' });
+  devices.remove({ id, plotId }).write();
+  res.status(204).end();
+});
+
+// ─── Agronomic: monitoring summary and statistics series (nested paths) ───
+
+app.get('/api/v1/monitoring-summaries/current', (req, res) => {
+  res.json(collection('monitoring-summaries-current').value());
+});
+
+app.get('/api/v1/agronomic-statistics/series', (req, res) => {
+  let series = collection('agronomic-statistics-series').value();
+  const plotId = req.query.plotId != null ? String(req.query.plotId) : null;
+  const timeRange = req.query.timeRange != null ? String(req.query.timeRange) : null;
+  if (plotId != null) series = series.filter((s) => String(s.plotId) === plotId);
+  if (timeRange != null) series = series.filter((s) => s.timeRange === timeRange);
+  res.json(series);
+});
+
+app.get('/api/v1/dynamic-nutrition-plans/active', (req, res) => {
+  const plans = collection('dynamic-nutrition-plans-active').value();
+  const plotId = req.query.plotId != null ? numericId(req.query.plotId) : null;
+  const plan = plotId != null ? plans.find((p) => p.plotId === plotId) : plans[0];
+  if (!plan) return res.status(404).json({ message: 'No active nutrition plan found.' });
+  res.json(plan);
+});
+
+app.post('/api/v1/dynamic-nutrition-plans', (req, res) => {
+  const plans = collection('dynamic-nutrition-plans-active');
+  const dynamicNutritionPlanId = (plans.map('dynamicNutritionPlanId').max().value() || 0) + 1;
+  const plan = {
+    dynamicNutritionPlanId,
+    userId: req.query.userId ? numericId(req.query.userId) : 1,
+    plotId: req.query.plotId ? numericId(req.query.plotId) : null,
+    status: 'RECOMMENDED',
+    inputRecommendations: [
+      { value: 'Foliar nutrition support', purpose: 'Improve stress response and recovery', dosage: 2, dosageUnit: 'L/ha', status: 'RECOMMENDED' }
+    ],
+    applicationWindow: { startDate: new Date().toISOString().slice(0, 10), endDate: new Date().toISOString().slice(0, 10) },
+    rationale: {
+      summary: 'Plan generated from mock climate and NDVI signals.',
+      triggeringRiskLevel: 'MODERATE',
+      ndviValue: 0.5,
+      temperatureAnomaly: 1.5
+    },
+    generatedDate: new Date().toISOString().slice(0, 10),
+    certificationStatus: 'PENDING',
+    application: null
+  };
+  plans.push(plan).write();
+  res.status(201).json(plan);
+});
+
 app.patch('/api/v1/dynamic-nutrition-plans/:id', (req, res) => {
   const plans = collection('dynamic-nutrition-plans-active');
   const id = numericId(req.params.id);
@@ -119,6 +243,87 @@ app.patch('/api/v1/dynamic-nutrition-plans/:id', (req, res) => {
 app.patch('/api/v1/intervention-outcomes/:id', (req, res) => {
   res.json({ id: numericId(req.params.id), ...req.body, status: req.body.status ?? 'CLOSED' });
 });
+
+app.post('/api/v1/intervention-outcomes', (req, res) => {
+  res.status(201).json({ id: Date.now(), ...req.body, status: req.body.status ?? 'REPORTED' });
+});
+
+app.post('/api/v1/intervention-executions', (req, res) => {
+  res.status(201).json({ id: Date.now(), ...req.body, status: req.body.status ?? 'CERTIFIED', certifiedAt: new Date().toISOString() });
+});
+
+// ─── Surveillance: alert timeline and report linking ───
+
+app.get('/api/v1/alerts/:id', (req, res, next) => {
+  if (req.query.view !== 'timeline') return next();
+  const alert = findById('alerts', req.params.id);
+  if (!alert) return res.status(404).json({ message: 'Alert not found.' });
+  res.json([
+    { id: 1, status: 'Active', note: `${alert.type} reported.`, occurredAt: alert.date },
+    { id: 2, status: alert.status, note: `Current status: ${alert.status}.`, occurredAt: alert.date }
+  ]);
+});
+
+app.put('/api/v1/alerts/:id/report/:reportId', (req, res) => {
+  const alerts = collection('alerts');
+  const id = numericId(req.params.id);
+  const alert = alerts.find({ id }).value();
+  if (!alert) return res.status(404).json({ message: 'Alert not found.' });
+  const updated = { ...alert, reportId: numericId(req.params.reportId) };
+  alerts.find({ id }).assign(updated).write();
+  res.json(updated);
+});
+
+// ─── Intervention (Expert Assistance): custom lookups ───
+
+app.post('/api/v1/intervention-requests', (req, res) => {
+  const requests = collection('intervention-requests');
+  const id = (requests.map('id').max().value() || 0) + 1;
+  const now = new Date().toISOString();
+  const request = {
+    id,
+    referenceCode: `REQ-${1000 + id}`,
+    growerId: req.body.growerId ?? 1,
+    plotId: req.body.plotId ?? null,
+    specialistId: req.body.specialistId ?? null,
+    alertId: req.body.alertId ?? null,
+    reason: req.body.reason ?? '',
+    message: req.body.message ?? '',
+    status: 'PENDING',
+    createdAt: now,
+    updatedAt: now
+  };
+  requests.push(request).write();
+  res.status(201).json(request);
+});
+
+app.get('/api/v1/specialist-candidates', (req, res) => {
+  const alertId = req.query.alertId ? numericId(req.query.alertId) : null;
+  const limit = req.query.limit ? numericId(req.query.limit) : undefined;
+  let candidates = collection('specialist-candidates').value();
+  if (alertId != null) candidates = candidates.filter((c) => c.alertId === alertId);
+  if (limit != null) candidates = candidates.slice(0, limit);
+  res.json(candidates);
+});
+
+app.get('/api/v1/service-proposals', (req, res, next) => {
+  if (!req.query.requestId) return next();
+  const requestId = numericId(req.query.requestId);
+  res.json(collection('service-proposals').filter({ interventionRequestId: requestId }).value());
+});
+
+app.get('/api/v1/specialists/:id/contact', (req, res) => {
+  const specialist = findById('specialists', req.params.id);
+  if (!specialist) return res.status(404).json({ message: 'Specialist not found.' });
+  res.json({
+    specialistId: specialist.id,
+    fullName: specialist.fullName,
+    phone: specialist.phone,
+    email: specialist.email,
+    whatsapp: specialist.whatsapp
+  });
+});
+
 const profileFromUser = (userId, overrides = {}) => {
   const user = findById('users', userId);
   if (!user) return null;
@@ -154,7 +359,9 @@ app.get('/api/v1/referrals/:userId', (req, res) => {
 });
 
 app.get('/api/v1/coupons', (req, res) => {
-  res.json([]);
+  const userId = req.query.userId ? numericId(req.query.userId) : null;
+  const coupons = collection('coupons').value();
+  res.json(userId != null ? coupons.filter((c) => c.userId === userId) : coupons);
 });
 
 const redeemCoupon = (req, res) => {
@@ -187,18 +394,33 @@ app.patch('/api/v1/subscriptions/:userId', (req, res) => {
 });
 
 app.get('/api/v1/invoices', (req, res) => {
-  res.json([]);
+  const userId = req.query.userId ? numericId(req.query.userId) : null;
+  const invoices = collection('invoices').value();
+  res.json(userId != null ? invoices.filter((i) => i.userId === userId) : invoices);
 });
 
 app.get('/api/v1/payment-methods', (req, res) => {
-  res.json([]);
+  const userId = req.query.userId ? numericId(req.query.userId) : null;
+  const methods = collection('payment-methods').value();
+  res.json(userId != null ? methods.filter((m) => m.userId === userId) : methods);
 });
 
 app.post('/api/v1/checkouts', (req, res) => {
   res.status(201).json({ preferenceId: `mock-${Date.now()}`, checkoutUrl: 'https://www.mercadopago.com.pe/checkout/v1/mock' });
 });
 // Mock user endpoints
-app.get('/api/v1/users/:id/sessions', (req, res) => res.json([]));
+app.get('/api/v1/users/:id/sessions', (req, res) => {
+  const userId = numericId(req.params.id);
+  res.json(collection('sessions').filter({ userId }).value());
+});
+
+app.delete('/api/v1/users/:id/sessions/:sessionId', (req, res) => {
+  const userId = numericId(req.params.id);
+  const sessionId = numericId(req.params.sessionId);
+  collection('sessions').remove({ id: sessionId, userId }).write();
+  res.status(204).end();
+});
+
 app.put('/api/v1/users/:id/password', (req, res) => res.json({ message: 'Password updated.' }));
 app.patch('/api/v1/users/:id', (req, res) => {
   const user = db.db.get('users').find({ id: Number(req.params.id) }).value();
