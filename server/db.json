@@ -1533,6 +1533,19 @@
       "status": "PENDING",
       "createdAt": "2026-07-06T15:09:52.298Z",
       "updatedAt": "2026-07-06T15:09:52.298Z"
+    },
+    {
+      "id": 4,
+      "referenceCode": "REQ-1004",
+      "growerId": 1,
+      "plotId": 1,
+      "specialistId": 2,
+      "alertId": 1,
+      "reason": "Recurring mite pressure reported after last treatment window",
+      "message": "Requesting a follow-up field visit before the next spraying cycle.",
+      "status": "PENDING",
+      "createdAt": "2026-07-05T09:20:00Z",
+      "updatedAt": "2026-07-05T09:20:00Z"
     }
   ],
   "service-proposals": [
@@ -1566,6 +1579,64 @@
       "whatsapp": "+51 952 111 222"
     }
   ],
+  "specialist-dashboard": {
+    "resolvedInterventions": 18,
+    "acceptanceRatePercent": 82,
+    "acceptanceRateDeltaPercent": 4,
+    "phytosanitaryEfficiencyPercent": 91,
+    "phytosanitaryStatus": "optimal",
+    "zonalRisks": [
+      {
+        "id": 1,
+        "severity": "HIGH",
+        "title": "Cochinilla outbreak cluster",
+        "distanceKm": 3.2,
+        "sector": "North sector"
+      },
+      {
+        "id": 2,
+        "severity": "MEDIUM",
+        "title": "Water stress pattern",
+        "distanceKm": 7.8,
+        "sector": "Well area"
+      }
+    ],
+    "incomingRequests": [
+      {
+        "id": 4,
+        "referenceCode": "REQ-1004",
+        "plotLabel": "Santa Rosa",
+        "growerLabel": "Carlos Mendoza",
+        "problem": "Recurring mite pressure reported after last treatment window",
+        "createdAt": "2026-07-05T09:20:00Z"
+      }
+    ],
+    "performanceMonthly": [
+      {
+        "label": "MAY",
+        "value": 4
+      },
+      {
+        "label": "JUN",
+        "value": 6
+      },
+      {
+        "label": "JUL",
+        "value": 3
+      }
+    ],
+    "performanceAnnual": [
+      {
+        "label": "2025",
+        "value": 21
+      },
+      {
+        "label": "2026",
+        "value": 18
+      }
+    ],
+    "updatedAt": "2026-07-06T12:00:00Z"
+  },
   "interventions": [
     {
       "code": "INT-1001",
