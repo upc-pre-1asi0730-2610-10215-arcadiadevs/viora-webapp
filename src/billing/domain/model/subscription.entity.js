@@ -11,21 +11,21 @@ import { formatMoney } from './plan.entity.js';
  */
 export class Subscription {
     /** @type {number|string|null} */
-    readonly userId;
+    userId;
     /** @type {string} */
-    readonly planCode;
+    planCode;
     /** @type {string} */
-    readonly planName;
+    planName;
     /** @type {'MONTHLY'|'ANNUAL'} */
-    readonly interval;
+    interval;
     /** @type {SubscriptionStatus} */
-    readonly status;
+    status;
     /** @type {string|null} */
-    readonly currentPeriodEnd;
+    currentPeriodEnd;
     /** @type {number} */
-    readonly priceCents;
+    priceCents;
     /** @type {string} */
-    readonly currency;
+    currency;
 
     /**
      * @param {Object} [props={}]

@@ -1,93 +1,44 @@
 /**
- * @file subscription.entity.js
- * @description Domain entity for a user's subscription.
+ * @file referral-code.entity.js
+ * @description Domain entity for a user's personal referral code (Subscription,
+ * Billing & Referral). Shared as a link/code; when an invited partner registers,
+ * the referrer becomes eligible for the reward coupon.
  */
-import { formatMoney } from './plan.entity.js';
-
-/** @typedef {'ACTIVE' | 'PENDING' | 'CANCELED'} SubscriptionStatus */
 
 /**
- * @class Subscription
+ * @class ReferralCode
  */
-export class Subscription {
+export class ReferralCode {
     /** @type {number|string|null} */
     userId;
     /** @type {string} */
-    planCode;
-    /** @type {string} */
-    planName;
-    /** @type {'MONTHLY'|'ANNUAL'} */
-    interval;
-    /** @type {SubscriptionStatus} */
-    status;
-    /** @type {string|null} */
-    currentPeriodEnd;
+    code;
     /** @type {number} */
-    priceCents;
-    /** @type {string} */
-    currency;
+    rewardPercent;
 
     /**
      * @param {Object} [props={}]
      * @param {number|string|null} [props.userId=null]
-     * @param {string} [props.planCode='']
-     * @param {string} [props.planName='']
-     * @param {'MONTHLY'|'ANNUAL'} [props.interval='MONTHLY']
-     * @param {SubscriptionStatus} [props.status='ACTIVE']
-     * @param {string|null} [props.currentPeriodEnd=null]
-     * @param {number} [props.priceCents=0]
-     * @param {string} [props.currency='USD']
+     * @param {string} [props.code='']
+     * @param {number} [props.rewardPercent=0]
      */
     constructor({
         userId = null,
-        planCode = '',
-        planName = '',
-        interval = 'MONTHLY',
-        status = 'ACTIVE',
-        currentPeriodEnd = null,
-        priceCents = 0,
-        currency = 'USD',
+        code = '',
+        rewardPercent = 0,
     } = {}) {
         this.userId = userId;
-        this.planCode = planCode;
-        this.planName = planName;
-        this.interval = interval;
-        this.status = status;
-        this.currentPeriodEnd = currentPeriodEnd;
-        this.priceCents = priceCents;
-        this.currency = currency;
+        this.code = code;
+        this.rewardPercent = rewardPercent;
     }
 
-    /** @returns {boolean} */
-    get isAnnual() {
-        return this.interval === 'ANNUAL';
+    /** "20% discount coupon" reward caption. */
+    get rewardLabel() {
+        return `${this.rewardPercent}% discount coupon`;
     }
 
-    /** @returns {boolean} */
-    get isCanceled() {
-        return this.status === 'CANCELED';
-    }
-
-    get priceLabel() {
-        return formatMoney(this.priceCents, this.currency);
-    }
-
-    get intervalSuffix() {
-        return this.isAnnual ? '/ year' : '/ month';
-    }
-
-    /** "Jul 01, 2026" renewal date. */
-    get periodEndLabel() {
-        if (!this.currentPeriodEnd) return '';
-        const date = new Date(this.currentPeriodEnd);
-        if (Number.isNaN(date.getTime())) return '';
-        return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-    }
-
-    /** "Renews Jul 01, 2026 · monthly billing" caption. */
-    get renewalCaption() {
-        const cadence = this.isAnnual ? 'annual billing' : 'monthly billing';
-        const verb = this.isCanceled ? 'Ends' : 'Renews';
-        return this.periodEndLabel ? `${verb} ${this.periodEndLabel} · ${cadence}` : cadence;
+    /** Shareable registration link carrying the referral code. */
+    get shareLink() {
+        return `https://viora.app/register?ref=${encodeURIComponent(this.code)}`;
     }
 }
