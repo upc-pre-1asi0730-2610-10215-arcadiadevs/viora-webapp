@@ -17,6 +17,8 @@ import { UserProfile } from '../domain/model/user-profile.entity.js';
 import { ProfileApi } from '../infrastructure/profile-api.js';
 import { useAgronomicStore } from '../../agronomic/application/agronomic.store.js';
 
+export { SPECIALIST_SERVICE_TAGS, parseServiceTags } from '../domain/model/service-tags.catalog.js';
+
 const profileApi = new ProfileApi();
 
 /**

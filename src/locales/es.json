@@ -641,5 +641,44 @@
       "send": "Enviar propuesta",
       "sending": "Enviando..."
     }
+  },
+  "settingsPage": {
+    "profile": {
+      "phoneRequiredError": "El teléfono es obligatorio para perfiles especialistas en el marketplace.",
+      "locationSet": "Ubicación definida",
+      "locationUnset": "Sin ubicación base seleccionada",
+      "setOnMap": "Definir ubicación",
+      "baseLocationHint": "Se usa para priorizar solicitudes de productores cercanos.",
+      "serviceTagsHint": "Elige los servicios que los productores podrán encontrar. Los valores se guardan como keywords del backend.",
+      "serviceRadiusHint": "Los productores dentro de esta distancia podrán descubrir tu perfil especialista.",
+      "marketplaceVisible": "Mostrar mi perfil en el marketplace de especialistas",
+      "marketplaceVisibleHint": "Desactívalo para ocultar tu ficha pública sin borrar los datos del perfil.",
+      "noTagsSelected": "Aún no hay servicios seleccionados",
+      "tags": {
+        "xylella": "Monitoreo de Xylella",
+        "phytosanitary": "Inspección fitosanitaria",
+        "biological": "Control biológico",
+        "pest": "Plagas y síntomas foliares",
+        "treatment": "Tratamiento de plagas",
+        "inspection": "Inspección en campo",
+        "ndvi": "Diagnóstico de bajo vigor / NDVI",
+        "water": "Estrés hídrico e irrigación",
+        "climate": "Riesgo climático y fenológico",
+        "chill": "Déficit de frío",
+        "nutritional": "Deficiencia nutricional"
+      }
+    }
+  },
+  "locationPicker": {
+    "title": "Definir ubicación base",
+    "subtitle": "Busca, haz clic en el mapa o arrastra el marcador para ubicar tu área de servicio.",
+    "close": "Cerrar selector de ubicación",
+    "unavailable": "Configura VITE_MAPBOX_ACCESS_TOKEN para habilitar el mapa interactivo y la búsqueda de lugares.",
+    "searchPlaceholder": "Busca una ciudad, valle o dirección",
+    "search": "Buscar",
+    "resolving": "Resolviendo ubicación...",
+    "pickHint": "Elige un punto en el mapa",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar ubicación"
   }
 }
