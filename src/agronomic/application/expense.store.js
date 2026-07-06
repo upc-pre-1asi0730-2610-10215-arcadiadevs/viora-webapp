@@ -74,6 +74,21 @@ export const useExpenseStore = defineStore('expense', () => {
     }
   }
 
+  async function recordFromSpecialistIntervention({ plotId, interventionReferenceCode, amount, currency, serviceTitle }) {
+    return submitExpense({
+      plotId,
+      type: 'PEST_INTERVENTION',
+      category: 'SPECIALIST',
+      linkedActionCode: interventionReferenceCode || undefined,
+      amount,
+      currency,
+      expenseDate: new Date().toISOString().slice(0, 10),
+      paymentStatus: 'PENDING',
+      note: serviceTitle || undefined,
+      status: 'ALERT_CONFIRMED',
+    });
+  }
+
   return {
     expenses,
     expensesLoaded,
@@ -90,7 +105,8 @@ export const useExpenseStore = defineStore('expense', () => {
     highestCostDriverLabel,
     lastSyncLabel,
     loadExpenses,
-    submitExpense
+    submitExpense,
+    recordFromSpecialistIntervention
   };
 });
 
