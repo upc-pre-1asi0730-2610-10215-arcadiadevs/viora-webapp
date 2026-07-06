@@ -39,7 +39,8 @@
             <div class="kpi-head"><h2>Specialist</h2></div>
             <template v-if="specialist">
               <div class="mini-specialist">
-                <span class="avatar avatar--sm">{{ specialist.initials }}</span>
+                <img v-if="specialist.photoUrl" class="avatar avatar--sm" :src="specialist.photoUrl" :alt="specialist.name" />
+                <span v-else class="avatar avatar--sm">{{ specialist.initials }}</span>
                 <div class="identity-text">
                   <span class="specialist-name">{{ specialist.name }}</span>
                   <span class="specialist-role">{{ specialist.role }}</span>
@@ -197,7 +198,8 @@
 
               <template v-if="specialist">
                 <div class="profile-head">
-                  <span class="avatar">{{ specialist.initials }}</span>
+                  <img v-if="specialist.photoUrl" class="avatar" :src="specialist.photoUrl" :alt="specialist.name" />
+                  <span v-else class="avatar">{{ specialist.initials }}</span>
                   <div class="identity-text">
                     <span class="specialist-name">{{ specialist.name }}</span>
                     <span class="specialist-role">{{ specialist.role }}</span>
@@ -208,7 +210,7 @@
                 <div class="profile-stats">
                   <div class="profile-stat">
                     <span><i class="pi pi-verified"></i> Success rate</span>
-                    <strong>{{ specialist.successRate }}%</strong>
+                    <strong>{{ specialist.successRatePercentLabel }}</strong>
                   </div>
                   <div class="profile-stat">
                     <span><i class="pi pi-history"></i> Cases handled</span>
@@ -236,7 +238,8 @@
                 </div>
 
                 <div class="contact-specialist">
-                  <span class="avatar">{{ specialist?.initials }}</span>
+                  <img v-if="specialist?.photoUrl" class="avatar" :src="specialist.photoUrl" :alt="specialist.name" />
+                  <span v-else class="avatar">{{ specialist?.initials }}</span>
                   <div class="identity-text">
                     <span class="specialist-name">{{ specialist?.name }}</span>
                     <span class="specialist-role">Visit scheduled &middot; {{ contactData.visitScheduled }}</span>

@@ -95,7 +95,8 @@
             </div>
 
             <div class="specialist-identity">
-              <span class="avatar">{{ specialist.initials }}</span>
+              <img v-if="specialist.photoUrl" class="avatar" :src="specialist.photoUrl" :alt="specialist.name" />
+              <span v-else class="avatar">{{ specialist.initials }}</span>
               <div class="identity-text">
                 <span class="specialist-name">{{ specialist.name }}</span>
                 <span class="specialist-role">{{ specialist.role }}</span>
@@ -194,7 +195,8 @@
     </template>
 
     <div class="modal-specialist">
-      <span class="avatar">{{ modalSpecialist.initials }}</span>
+      <img v-if="modalSpecialist.photoUrl" class="avatar" :src="modalSpecialist.photoUrl" :alt="modalSpecialist.name" />
+      <span v-else class="avatar">{{ modalSpecialist.initials }}</span>
       <div class="identity-text">
         <span class="specialist-name">{{ modalSpecialist.name }}</span>
         <span class="specialist-role">
@@ -695,6 +697,7 @@ function severityWeight(severity) {
     background: #2E4A3A;
     color: #ffffff;
     font-size: 15px;
+    object-fit: cover;
     font-weight: 600;
 }
 

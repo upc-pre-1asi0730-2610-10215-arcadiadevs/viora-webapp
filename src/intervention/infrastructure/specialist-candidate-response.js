@@ -6,6 +6,7 @@ import { SpecialistCandidate } from '../domain/model/specialist-candidate.entity
  * @property {number|null} id
  * @property {string|null} name
  * @property {string|null} role
+ * @property {string|null} photoUrl
  * @property {number|null} successRate
  * @property {number|null} caseCount
  * @property {number|null} distanceKm
@@ -45,9 +46,10 @@ export class SpecialistCandidateAssembler {
             id: resource.id ?? null,
             name: resource.name ?? '',
             role: resource.role ?? 'Phytosanitary specialist',
-            successRate: resource.successRate ?? 0,
+            photoUrl: resource.photoUrl ?? '',
+            successRate: resource.successRate ?? null,
             caseCount: resource.caseCount ?? 0,
-            distanceKm: resource.distanceKm ?? 0,
+            distanceKm: resource.distanceKm ?? null,
             tags: resource.tags ?? [],
             availability: toAvailability(resource),
             bestMatch,
