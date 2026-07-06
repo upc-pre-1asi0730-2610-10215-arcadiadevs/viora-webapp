@@ -1,13 +1,17 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import DashboardHeader from '../../../shared/presentation/components/dashboard-header.vue';
 import { useSubscriptionStore } from '../../application/subscription.store.js';
 import { useAgronomicStore } from '../../../agronomic/application/agronomic.store.js';
+import useIamStore from '../../../iam/application/iam.store.js';
 
 const store = useSubscriptionStore();
 const agronomicStore = useAgronomicStore();
+const iamStore = useIamStore();
 const route = useRoute();
+const { t } = useI18n();
 
 /** Result banner shown when MercadoPago redirects back after a payment. */
 const paymentResult = ref(null);
@@ -16,6 +20,13 @@ const breadcrumbs = [
     { label: 'Subscription', disabled: true },
     { label: 'Overview', disabled: true },
 ];
+
+const isSpecialist = computed(() => iamStore.isSpecialist);
+
+const visiblePlans = computed(() => {
+    const prefix = isSpecialist.value ? 'specialist-' : 'grower-';
+    return store.plans.filter((plan) => plan.code.startsWith(prefix));
+});
 
 // Real usage, derived reactively from My Plots / IoT devices.
 const plotsUsed = computed(() => agronomicStore.plots.length);
@@ -38,12 +49,42 @@ const iotUsagePct = computed(() => {
 
 /** The annual plan offered for the "Switch to annual" shortcut. */
 const annualPlan = computed(() =>
-    store.plans.find((p) => p.interval === 'ANNUAL') ?? null,
+    visiblePlans.value.find((p) => p.interval === 'ANNUAL') ?? null,
 );
+
+const currentPlanName = computed(() => {
+    const plan = store.currentPlan;
+    const subscription = store.subscription;
+    if (isSpecialist.value) {
+        if (plan) return specialistPlanName(plan);
+        if (subscription?.planName) {
+            return specialistPlanNameFromParts(
+                subscription.planCode,
+                subscription.planName,
+                subscription.interval,
+            );
+        }
+    }
+    return subscription?.planName || plan?.name || '';
+});
+
+const isSpecialistProPlan = computed(() => {
+    if (!isSpecialist.value) return false;
+    return isProPlan(store.currentPlan?.code, store.currentPlan?.name) ||
+        isProPlan(store.subscription?.planCode, store.subscription?.planName);
+});
+
+const proBadgeStatus = computed(() => {
+    if (!isSpecialist.value) return '';
+    if (!store.subscription && !store.currentPlan) return 'subscriptionPage.specialist.noDataYet';
+    return isSpecialistProPlan.value
+        ? 'subscriptionPage.specialist.proBadgeReady'
+        : 'subscriptionPage.specialist.proBadgeLocked';
+});
 
 onMounted(() => {
     store.load();
-    loadUsage();
+    if (!isSpecialist.value) loadUsage();
     readPaymentReturn();
 });
 
@@ -66,7 +107,7 @@ function dismissPaymentResult() {
 
 function refresh() {
     store.load();
-    loadUsage();
+    if (!isSpecialist.value) loadUsage();
 }
 
 function loadUsage() {
@@ -76,6 +117,50 @@ function loadUsage() {
 
 function isCurrentPlan(plan) {
     return store.subscription?.planCode === plan.code;
+}
+
+function displayPlanName(plan) {
+    return isSpecialist.value ? specialistPlanName(plan) : plan.name;
+}
+
+function displayPlanTagline(plan) {
+    if (!isSpecialist.value) return plan.tagline;
+    return t(isSpecialistPlanPro(plan)
+        ? 'subscriptionPage.specialist.proTagline'
+        : 'subscriptionPage.specialist.plusTagline');
+}
+
+function planFeatureKeys(plan) {
+    if (!isSpecialist.value) return [];
+    const features = [
+        'subscriptionPage.specialist.features.opportunityFeed',
+        'subscriptionPage.specialist.features.prescriptions',
+        'subscriptionPage.specialist.features.visibility',
+        'subscriptionPage.specialist.features.fieldContext',
+        'subscriptionPage.specialist.features.fasterConnection',
+    ];
+    if (isSpecialistPlanPro(plan)) {
+        features.push('subscriptionPage.specialist.features.proBadge');
+    }
+    return features;
+}
+
+function specialistPlanName(plan) {
+    return specialistPlanNameFromParts(plan.code, plan.name, plan.interval);
+}
+
+function specialistPlanNameFromParts(code = '', name = '', interval = 'MONTHLY') {
+    return isProPlan(code, name) || interval === 'ANNUAL'
+        ? 'Specialist Pro'
+        : 'Specialist Plus';
+}
+
+function isSpecialistPlanPro(plan) {
+    return isProPlan(plan?.code, plan?.name) || plan?.interval === 'ANNUAL';
+}
+
+function isProPlan(code, name) {
+    return `${code ?? ''} ${name ?? ''}`.toLowerCase().includes('pro');
 }
 
 // ----- Plan switching -----
@@ -173,7 +258,7 @@ function closePayment() {
                     <div class="plan-hero-head">
                         <i class="pi pi-crown hero-icon"></i>
                         <div>
-                            <h2 class="card-title">{{ store.subscription?.planName || store.currentPlan?.name || 'Your plan' }}</h2>
+                            <h2 class="card-title">{{ currentPlanName || 'Your plan' }}</h2>
                             <p class="hero-sub">{{ store.subscription?.renewalCaption || 'Manage your subscription' }}</p>
                         </div>
                     </div>
@@ -185,7 +270,15 @@ function closePayment() {
                         <span class="money-interval">{{ store.currentPlan?.intervalSuffix || store.subscription?.intervalSuffix }}</span>
                     </div>
 
-                    <div class="usage-list">
+                    <div v-if="isSpecialist" class="specialist-status">
+                        <span class="specialist-status-icon"><i class="pi pi-verified"></i></span>
+                        <div class="specialist-status-copy">
+                            <span>{{ t('subscriptionPage.specialist.proBadgeTitle') }}</span>
+                            <strong>{{ t(proBadgeStatus) }}</strong>
+                        </div>
+                    </div>
+
+                    <div v-if="!isSpecialist" class="usage-list">
                         <div class="usage">
                             <div class="usage-head">
                                 <span class="usage-label">Plots monitored</span>
@@ -225,22 +318,29 @@ function closePayment() {
 
                     <div class="plan-grid">
                         <div
-                            v-for="plan in store.plans"
+                            v-for="plan in visiblePlans"
                             :key="plan.code"
                             class="plan-card"
                             :class="{ 'is-current': isCurrentPlan(plan) }">
                             <span v-if="isCurrentPlan(plan)" class="plan-tag">Current plan</span>
-                            <h3 class="plan-name">{{ plan.name }}</h3>
+                            <h3 class="plan-name">{{ displayPlanName(plan) }}</h3>
                             <div class="plan-price">
                                 <span class="plan-amount">{{ plan.priceLabel }}</span>
                                 <span class="plan-interval">{{ plan.intervalSuffix }}</span>
                             </div>
-                            <p class="plan-tagline">{{ plan.tagline }}</p>
+                            <p class="plan-tagline">{{ displayPlanTagline(plan) }}</p>
 
                             <ul class="plan-features">
-                                <li v-for="feature in plan.features" :key="feature">
-                                    <i class="pi pi-check"></i> {{ feature }}
-                                </li>
+                                <template v-if="isSpecialist">
+                                    <li v-for="featureKey in planFeatureKeys(plan)" :key="featureKey">
+                                        <i class="pi pi-check"></i> {{ t(featureKey) }}
+                                    </li>
+                                </template>
+                                <template v-else>
+                                    <li v-for="feature in plan.features" :key="feature">
+                                        <i class="pi pi-check"></i> {{ feature }}
+                                    </li>
+                                </template>
                             </ul>
 
                             <button
@@ -259,7 +359,7 @@ function closePayment() {
                                 {{ store.checkoutPending === plan.code ? 'Opening\u2026' : 'Switch plan' }}
                             </button>
                         </div>
-                        <p v-if="store.plans.length === 0" class="empty-hint">Plans are unavailable right now.</p>
+                        <p v-if="visiblePlans.length === 0" class="empty-hint">Plans are unavailable right now.</p>
                     </div>
                 </div>
             </div>
@@ -359,14 +459,14 @@ function closePayment() {
         <div class="modal" @click.stop>
             <div class="modal-head">
                 <div>
-                    <h2>Switch to {{ confirmPlan.name }}</h2>
+                    <h2>Switch to {{ displayPlanName(confirmPlan) }}</h2>
                     <p class="modal-subtitle">Changes apply at your next billing cycle.</p>
                 </div>
                 <button type="button" @click="closeSwitch()"><i class="pi pi-times"></i></button>
             </div>
 
             <div class="switch-summary">
-                <div class="summary-row"><span>Plan</span><strong>{{ confirmPlan.name }}</strong></div>
+                <div class="summary-row"><span>Plan</span><strong>{{ displayPlanName(confirmPlan) }}</strong></div>
                 <div class="summary-row"><span>Price</span><strong>{{ confirmPlan.priceLabel }} {{ confirmPlan.intervalSuffix }}</strong></div>
             </div>
 
@@ -546,6 +646,48 @@ function closePayment() {
     background: transparent;
     color: inherit;
     cursor: pointer;
+}
+
+/* ---------- Specialist status ---------- */
+.specialist-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid #d8e7dd;
+    border-radius: 12px;
+    background: #f0f7f4;
+}
+
+.specialist-status-icon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #2e4a3a;
+    color: #ffffff;
+}
+
+.specialist-status-icon i {
+    font-size: 16px;
+}
+
+.specialist-status-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.specialist-status-copy span {
+    font-size: 12px;
+    color: #6f6a62;
+}
+
+.specialist-status-copy strong {
+    font-size: 13px;
+    color: #2e4a3a;
 }
 
 /* ---------- Current plan hero ---------- */

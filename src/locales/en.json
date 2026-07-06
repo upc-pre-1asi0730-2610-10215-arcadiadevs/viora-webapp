@@ -680,5 +680,23 @@
     "pickHint": "Pick a point on the map",
     "cancel": "Cancel",
     "confirm": "Confirm location"
+  },
+  "subscriptionPage": {
+    "specialist": {
+      "plusTagline": "Stay discoverable for nearby growers and manage specialist opportunities from one place.",
+      "proTagline": "Annual specialist plan with stronger marketplace positioning and Pro badge eligibility.",
+      "proBadgeTitle": "Marketplace badge",
+      "proBadgeReady": "Pro badge ready for your specialist profile.",
+      "proBadgeLocked": "Upgrade to Specialist Pro to unlock the Pro badge.",
+      "noDataYet": "No subscription data yet.",
+      "features": {
+        "opportunityFeed": "Opportunity feed for producer assistance requests",
+        "prescriptions": "Prescriptions and field recommendations workspace",
+        "visibility": "Specialist marketplace visibility",
+        "fieldContext": "Producer plot, risk, and field context before contact",
+        "fasterConnection": "Faster connection with producers who need help",
+        "proBadge": "Pro badge on your specialist marketplace card"
+      }
+    }
   }
 }
