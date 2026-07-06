@@ -2,7 +2,7 @@
  * @file subscription.entity.js
  * @description Domain entity for a user's subscription.
  */
-import { formatMoney } from './plan.entity.js';
+import { formatMoney } from '../../../shared/domain/model/money.js';
 
 /** @typedef {'ACTIVE' | 'PENDING' | 'CANCELED'} SubscriptionStatus */
 

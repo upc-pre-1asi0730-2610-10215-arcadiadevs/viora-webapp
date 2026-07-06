@@ -42,7 +42,9 @@ const workspaceRoutes = [
     name: 'specialist-marketplace',
     component: specialistMarketplaceOverview,
     meta: { title: 'sidebar.interventionMarketplace', sectionLabel: 'sidebar.interventionMarketplace' }
-  }
+  },
+  placeholder('/specialist/requests', 'specialist-requests', 'sidebar.myRequests', 'comingSoon.subtitle-specialist-requests'),
+  placeholder('/specialist/field-inspection', 'specialist-field-inspection', 'sidebar.fieldInspection', 'comingSoon.subtitle-specialist-field-inspection')
 ];
 
 export default workspaceRoutes;

@@ -297,7 +297,9 @@
     "mitigationRecommendations": [
       "Keep the current monitoring cadence.",
       "Review chill accumulation trend in plots under review."
-    ]
+    ],
+    "healthyPlotsCount": 1,
+    "reviewPlotsCount": 1
   },
   "agronomic-statistics": [
     {
@@ -1543,9 +1545,36 @@
       "alertId": 1,
       "reason": "Recurring mite pressure reported after last treatment window",
       "message": "Requesting a follow-up field visit before the next spraying cycle.",
-      "status": "PENDING",
+      "status": "ACCEPTED",
       "createdAt": "2026-07-05T09:20:00Z",
-      "updatedAt": "2026-07-05T09:20:00Z"
+      "updatedAt": "2026-07-06T22:47:59.179Z"
+    },
+    {
+      "id": 5,
+      "referenceCode": "REQ-1005",
+      "growerId": null,
+      "plotId": null,
+      "specialistId": 2,
+      "alertId": null,
+      "reason": "Suspected xylella symptoms on leaf margins",
+      "message": "",
+      "status": "PENDING",
+      "createdAt": "2026-07-05T14:10:00Z",
+      "updatedAt": "2026-07-05T14:10:00Z"
+    },
+    {
+      "id": 6,
+      "referenceCode": "REQ-1006",
+      "growerId": 1,
+      "plotId": 1,
+      "specialistId": 2,
+      "alertId": null,
+      "reason": "Low-vigor patch detected after irrigation change",
+      "message": "",
+      "status": "DECLINED",
+      "createdAt": "2026-07-04T09:45:00Z",
+      "updatedAt": "2026-07-06T23:09:24.937Z",
+      "declineReason": ""
     }
   ],
   "service-proposals": [
@@ -1565,6 +1594,24 @@
       "currency": "PEN",
       "proposalDetails": "Includes product application and a 14-day recovery check.",
       "status": "ACCEPTED"
+    },
+    {
+      "id": 1783377961187,
+      "interventionRequestId": 5,
+      "specialistId": 2,
+      "serviceTitle": "Field inspection and phytosanitary evaluation",
+      "durationLabel": "2-3 hours",
+      "scope": [
+        "Inspect the affected zones in the plot",
+        "Validate the symptom report in field",
+        "Review low-vigor areas",
+        "Recommend the next technical action"
+      ],
+      "proposedDate": "2026-07-09T22:46:01.181Z",
+      "amount": 280,
+      "currency": "PEN",
+      "proposalDetails": "The initial visit will focus on confirming the probable biological threat and defining whether a technical prescription is required.",
+      "createdAt": "2026-07-06T22:46:01.187Z"
     }
   ],
   "specialists": [
@@ -1601,16 +1648,7 @@
         "sector": "Well area"
       }
     ],
-    "incomingRequests": [
-      {
-        "id": 4,
-        "referenceCode": "REQ-1004",
-        "plotLabel": "Santa Rosa",
-        "growerLabel": "Carlos Mendoza",
-        "problem": "Recurring mite pressure reported after last treatment window",
-        "createdAt": "2026-07-05T09:20:00Z"
-      }
-    ],
+    "incomingRequests": [],
     "performanceMonthly": [
       {
         "label": "MAY",
@@ -1642,22 +1680,6 @@
     "acceptanceRatePercent": 78,
     "activeCasesCount": 3,
     "cases": [
-      {
-        "id": 5,
-        "referenceCode": "REQ-1005",
-        "specialistId": 2,
-        "severity": "HIGH",
-        "problem": "Suspected xylella symptoms on leaf margins",
-        "ndvi": 0.42,
-        "producerName": "Lucia Fernandez",
-        "producerPhotoUrl": null,
-        "productionType": "Table olives",
-        "plotName": "El Mirador",
-        "location": "Tacna, Peru",
-        "areaHectares": 4.8,
-        "plotCount": 2,
-        "createdAt": "2026-07-05T14:10:00Z"
-      },
       {
         "id": 6,
         "referenceCode": "REQ-1006",

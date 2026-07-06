@@ -433,7 +433,9 @@
     "subtitle-subscription": "Administra los detalles del plan y la configuración de facturación.",
     "subtitle-settings": "Configura tu panel y preferencias del espacio de trabajo.",
     "subtitle-support": "Accede a recursos de ayuda para el panel del productor.",
-    "subtitle-profile": "Administra los detalles y preferencias de tu cuenta."
+    "subtitle-profile": "Administra los detalles y preferencias de tu cuenta.",
+    "subtitle-specialist-requests": "Tu historial de solicitudes se está preparando y estará disponible pronto.",
+    "subtitle-specialist-field-inspection": "Las herramientas de inspección de campo se están preparando y estarán disponibles pronto."
   },
   "cards": {
     "iot": {
