@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.10] - 2026-07-06
+
+### Added
+
+- Role-aware routing for the shared `/dashboard` path (Phase 0 of the specialist-parity roadmap, porting os-viora-webapp's specialist workspace): a new `dashboard-role-view.vue` renders the producer dashboard or a specialist placeholder based on session role, and the sidebar swaps its navigation items for specialist accounts. Foundation for the specialist dashboard/marketplace views coming in later phases.
+
+### Fixed
+
+- `.env.development` had drifted into version control despite matching `.gitignore`, and had picked up a real Mapbox access token in a local WIP commit; untracked it (kept locally, un-versioned going forward).
+
 ## [2.7.9] - 2026-07-06
 
 ### Fixed
