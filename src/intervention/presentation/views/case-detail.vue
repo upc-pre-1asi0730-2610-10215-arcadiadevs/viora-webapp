@@ -595,3 +595,54 @@ function backToOverview() {
     );
 }
 </script>
+<style scoped>
+.mini-specialist {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    flex: 0 0 auto;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #2E4A3A;
+    color: #ffffff;
+    font-size: 15px;
+    object-fit: cover;
+    font-weight: 600;
+}
+
+.avatar--sm {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+}
+
+.avatar--xs {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+}
+
+.identity-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.specialist-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333333;
+}
+
+.specialist-role {
+    font-size: 10px;
+    font-weight: 400;
+    color: #333333;
+}
+</style>

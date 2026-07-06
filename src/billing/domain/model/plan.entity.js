@@ -3,30 +3,9 @@
  * @description Domain entity for a subscription plan (Subscription, Billing &
  * Referral). Amounts are stored in minor units (cents).
  */
+import { formatMoney } from '../../../shared/domain/model/money.js';
 
 /** @typedef {'MONTHLY' | 'ANNUAL'} PlanInterval */
-
-const CURRENCY_SYMBOLS = {
-    USD: '$',
-    PEN: 'S/',
-    ARS: '$',
-    MXN: '$',
-    BRL: 'R$',
-    COP: '$',
-    CLP: '$',
-};
-
-/**
- * "$ 149,00" formatting shared by plans, subscription and invoices.
- * @param {number} cents
- * @param {string} currency
- * @returns {string}
- */
-export function formatMoney(cents, currency) {
-    const symbol = CURRENCY_SYMBOLS[currency?.toUpperCase()] ?? '$';
-    const amount = (cents / 100).toFixed(2).replace('.', ',');
-    return `${symbol} ${amount}`;
-}
 
 /**
  * @class Plan
@@ -90,7 +69,7 @@ export class Plan {
         this.iotLimit = iotLimit;
     }
 
-    /** "$ 149,00" price. */
+    /** "$ 149.00" price. */
     get priceLabel() {
         return formatMoney(this.priceCents, this.currency);
     }

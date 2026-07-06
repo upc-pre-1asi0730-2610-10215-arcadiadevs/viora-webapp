@@ -2,7 +2,7 @@
  * @file invoice.entity.js
  * @description Domain entity for a billing-history invoice.
  */
-import { formatMoney } from './plan.entity.js';
+import { formatMoney } from '../../../shared/domain/model/money.js';
 
 /** @typedef {'PAID' | 'PENDING' | 'FAILED'} InvoiceStatus */
 

@@ -3,14 +3,11 @@
  * response to an intervention request.
  * @class ServiceProposal
  */
+import { formatMajorMoney } from '../../../shared/domain/model/money.js';
+
 
 /** @typedef {'PENDING'|'ACCEPTED'|'REJECTED'} ServiceProposalStatus */
 
-const CURRENCY_SYMBOLS = {
-    PEN: 'S/',
-    USD: '$',
-    EUR: '\u20ac',
-};
 
 export class ServiceProposal {
     /**
@@ -56,8 +53,7 @@ export class ServiceProposal {
     /** Amount formatted with its currency symbol, e.g. "S/ 280.00". @returns {string} */
     get costLabel() {
         if (this.amount == null) return '\u2014';
-        const symbol = this.currency ? CURRENCY_SYMBOLS[this.currency] ?? this.currency : '';
-        return `${symbol} ${this.amount.toFixed(2)}`.trim();
+        return formatMajorMoney(this.amount, this.currency ?? 'PEN');
     }
 
     /** Proposed visit date as a "MMM DD, YYYY" label. @returns {string} */

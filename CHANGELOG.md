@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.0] - 2026-07-06
+
+### Added
+
+- Mock server support for the specialist marketplace: `GET /intervention-marketplace` and `POST /service-proposals` (previously missing entirely, marketplace view always rendered empty).
+- Unified money formatting into `src/shared/domain/model/money.js`, replacing duplicated `CURRENCY_SYMBOLS`/`formatMoney` logic across the expense, plan, invoice, subscription, and service-proposal entities.
+- ComingSoon placeholders for the still-unbuilt "My Requests"/"Field Inspection" sidebar links, replacing dead links found during the specialist-view QA pass.
+
+### Fixed
+
+- `/plans` and `/subscriptions/:userId` in the mock server now use segment-aware (`grower-`/`specialist-` prefixed) plan codes, so the specialist plan filter (Phase 7) actually matches instead of returning nothing.
+- Decline/verify actions on marketplace cases 5 and 6 returned 404 — missing matching `intervention-requests` fixture rows.
+- `settings-overview.vue`: role-aware live-preview copy, and the location preview now gates on `latitude`/`longitude` instead of the raw location string.
+- `subscription-overview.vue`: cancel-subscription copy no longer shows grower-only feature language for specialist accounts.
+- `case-detail.vue`: missing `.avatar--xs` CSS modifier caused a layout break in the decline-proposal modal.
+
+This closes out the specialist-side feature parity QA pass (`docs/specialist-parity-roadmap.md`, Phases 0-8).
+
 ## [2.7.18] - 2026-07-06
 
 ### Added

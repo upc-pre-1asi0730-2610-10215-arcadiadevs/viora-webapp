@@ -413,7 +413,12 @@ function closePayment() {
                     </p>
                     <template v-else>
                         <p class="cancel-note">
-                            You'll lose access to dynamic nutrition, pest surveillance, and expert assistance at the end of the billing period.
+                            <template v-if="isSpecialist">
+                                You'll lose access to the specialist marketplace and incoming case matching at the end of the billing period.
+                            </template>
+                            <template v-else>
+                                You'll lose access to dynamic nutrition, pest surveillance, and expert assistance at the end of the billing period.
+                            </template>
                         </p>
                         <button type="button" class="ghost-button" @click="openCancel()">Cancel subscription</button>
                     </template>
@@ -500,9 +505,16 @@ function closePayment() {
                 <button type="button" @click="closeCancel()"><i class="pi pi-times"></i></button>
             </div>
             <p class="modal-body-text">
-                You'll keep access to {{ store.subscription?.planName || 'your plan' }} until
-                {{ store.subscription?.periodEndLabel || 'the period ends' }}, then lose dynamic nutrition, pest
-                surveillance and expert assistance.
+                <template v-if="isSpecialist">
+                    You'll keep access to {{ store.subscription?.planName || 'your plan' }} until
+                    {{ store.subscription?.periodEndLabel || 'the period ends' }}, then lose the specialist
+                    marketplace and incoming case matching.
+                </template>
+                <template v-else>
+                    You'll keep access to {{ store.subscription?.planName || 'your plan' }} until
+                    {{ store.subscription?.periodEndLabel || 'the period ends' }}, then lose dynamic nutrition, pest
+                    surveillance and expert assistance.
+                </template>
             </p>
             <div class="modal-actions">
                 <button type="button" class="ghost-button" @click="closeCancel()">Keep plan</button>

@@ -433,7 +433,9 @@
     "subtitle-subscription": "Manage plan details and billing configuration.",
     "subtitle-settings": "Configure your dashboard and workspace preferences.",
     "subtitle-support": "Access help resources for the producer dashboard.",
-    "subtitle-profile": "Manage account details and preferences."
+    "subtitle-profile": "Manage account details and preferences.",
+    "subtitle-specialist-requests": "Your request history is being prepared and will be available shortly.",
+    "subtitle-specialist-field-inspection": "Field inspection tools are being prepared and will be available shortly."
   },
   "cards": {
     "iot": {
