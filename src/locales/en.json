@@ -518,5 +518,57 @@
     "intro": "Made with",
     "use": "using",
     "author": "by {brand} Development Team"
+  },
+  "specialistDashboard": {
+    "overview": "Overview",
+    "subtitle": "Review producer requests, zonal risks, and your accepted-cases performance",
+    "noSyncYet": "No sync yet",
+    "noDataYet": "No data yet",
+    "emptyState": {
+      "title": "No data yet",
+      "body": "We could not load your dashboard data. Try refreshing, or check back shortly."
+    },
+    "kpis": {
+      "resolved": "Resolved interventions",
+      "thisMonth": "This month",
+      "acceptance": "Acceptance rate",
+      "phytosanitary": "Phytosanitary efficiency",
+      "status": {
+        "optimal": "Optimal",
+        "watch": "Watch",
+        "critical": "Critical"
+      }
+    },
+    "zonal": {
+      "title": "Zonal risk radar",
+      "subtitle": "Active risks near your assigned zone",
+      "fullMap": "Full map",
+      "kmAway": "km away",
+      "empty": "No zonal risks detected right now."
+    },
+    "severity": {
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low"
+    },
+    "incoming": {
+      "title": "Incoming requests",
+      "new": "new",
+      "plot": "Plot",
+      "problem": "Problem",
+      "date": "Date",
+      "action": "Action",
+      "verify": "Verify",
+      "decline": "Decline",
+      "empty": "No incoming requests right now."
+    },
+    "performance": {
+      "title": "Accepted cases performance",
+      "subtitle": "Accepted cases over time",
+      "monthly": "Monthly",
+      "annual": "Annual",
+      "legend": "Accepted cases",
+      "empty": "Not enough data to render the performance chart yet."
+    }
   }
 }

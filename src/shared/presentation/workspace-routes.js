@@ -9,6 +9,7 @@
  * @type {import('vue-router').RouteRecordRaw[]}
  */
 const comingSoon = () => import('./views/coming-soon.vue');
+const specialistDashboardOverview = () => import('./views/specialist-dashboard-overview.vue');
 
 const placeholder = (path, name, sectionLabel, subtitle) => ({
   path,
@@ -29,7 +30,12 @@ const workspaceRoutes = [
   //   support     → support-routes.js
   placeholder('/agronomic/plots/import', 'my-plots-import', 'plotImport.title', 'plotImport.subtitle'),
   placeholder('/profile', 'profile', 'sidebar.openProfile', 'comingSoon.subtitle-profile'),
-  placeholder('/specialist', 'specialist-workspace', 'Specialist Workspace', 'Review producer requests, cases, and field interventions — coming soon.')
+  {
+    path: '/specialist',
+    name: 'specialist-workspace',
+    component: specialistDashboardOverview,
+    meta: { title: 'Specialist Workspace', sectionLabel: 'Specialist Workspace' }
+  }
 ];
 
 export default workspaceRoutes;
