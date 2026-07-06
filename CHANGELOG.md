@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.12] - 2026-07-06
+
+### Added
+
+- Specialist dashboard overview view (Phase 2 of the specialist-parity roadmap, porting os-viora-webapp): `specialist-dashboard-overview.vue` renders the Phase 1 read model — headline KPIs, zonal risk radar, incoming producer requests with verify/decline actions, and a monthly/annual performance chart (Chart.js, matching `trend-analysis-card.vue`'s charting approach). Wired into the shared `/dashboard` role router, replacing the specialist coming-soon placeholder so specialist accounts now land on a real workspace.
+
 ## [2.7.11] - 2026-07-06
 
 ### Added
