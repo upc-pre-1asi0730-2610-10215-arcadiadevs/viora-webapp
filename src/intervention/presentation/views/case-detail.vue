@@ -118,14 +118,6 @@
                     <i class="pi pi-times"></i> Decline proposal
                   </pv-button>
                 </div>
-                <pv-button
-                  type="button"
-                  class="primary-button block"
-                  :disabled="store.loading.case"
-                  @click="simulateResponse"
-                >
-                  <i class="pi pi-bolt"></i> Simulate specialist response
-                </pv-button>
               </template>
 
               <template v-else-if="phase === 'declined'">
@@ -564,13 +556,6 @@ function registerSpecialistExpense() {
         currency: proposal.currency ?? 'PEN',
         serviceTitle: proposal.serviceTitle,
     });
-}
-
-function simulateResponse() {
-    const code = caseCode.value;
-    if (code) {
-        store.simulateSpecialistResponse(code);
-    }
 }
 
 function openDecline() {

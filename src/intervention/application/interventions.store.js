@@ -88,10 +88,6 @@ export const useInterventionsStore = defineStore('interventions', () => {
         return specialistNames.value[specialistId] ?? `Specialist #${specialistId}`;
     }
 
-    async function simulatePrescription(requestId, onDone) {
-        await runAction(() => interventionApi.simulatePrescription(requestId), onDone);
-    }
-
     async function certifyApplication(request, onDone) {
         await runAction(() => interventionApi.certifyApplication(request), onDone);
     }
@@ -189,7 +185,6 @@ export const useInterventionsStore = defineStore('interventions', () => {
         select,
         clearSelection,
         specialistName,
-        simulatePrescription,
         certifyApplication,
         reportImpact,
         closeIntervention,

@@ -124,29 +124,11 @@ export class InterventionApi extends BaseApi {
     }
 
     /**
-     * Mock-only compatibility shim for local lifecycle demos.
-     * @param {number|string} requestId
-     * @returns {Promise<import('axios').AxiosResponse>}
-     */
-    simulateSpecialistResponse(requestId) {
-        return this.http.post(`${this.#requests.endpointPath}/${requestId}/simulate-specialist-response`, {});
-    }
-
-    /**
      * Lists the active producer's interventions with lifecycle status.
      * @returns {Promise<import('axios').AxiosResponse>}
      */
     getInterventions() {
         return this.#interventions.getAll();
-    }
-
-    /**
-     * Mock-only compatibility shim for local lifecycle demos.
-     * @param {number|string} requestId
-     * @returns {Promise<import('axios').AxiosResponse>}
-     */
-    simulatePrescription(requestId) {
-        return this.http.post(`${this.#interventions.endpointPath}/${requestId}/simulate-prescription`, {});
     }
 
     /**
