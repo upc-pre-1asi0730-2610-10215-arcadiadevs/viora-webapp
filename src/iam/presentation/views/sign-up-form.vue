@@ -10,6 +10,7 @@ const store = useIamStore();
 
 const fullName = ref('');
 const email = ref('');
+const phone = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 const role = ref('ROLE_GROWER');
@@ -24,11 +25,14 @@ onMounted(() => {
   }
 });
 
+const phoneRequired = computed(() => role.value === 'ROLE_SPECIALIST');
+const phoneMissing = computed(() => phoneRequired.value && phone.value.trim().length === 0);
 const passwordsMismatch = computed(() => confirmPassword.value.length > 0 && password.value !== confirmPassword.value);
 
 const canSubmit = computed(() =>
   fullName.value.trim().length > 1 &&
   email.value.trim().length > 3 &&
+  (!phoneRequired.value || phone.value.trim().length > 0) &&
   password.value.length >= 8 &&
   password.value === confirmPassword.value &&
   !store.busy
@@ -41,6 +45,7 @@ async function submit() {
     password: password.value,
     role: role.value,
     fullName: fullName.value.trim(),
+    phone: phone.value.trim(),
     referralCode: referralCode.value.trim() || null
   });
   const result = await store.signUp(command);
@@ -121,6 +126,12 @@ function resend() {
         <label class="field">
           <span>Full name</span>
           <input type="text" autocomplete="name" placeholder="e.g. Maria Torres" v-model="fullName" />
+        </label>
+
+        <label class="field">
+          <span>Phone number</span>
+          <input type="tel" autocomplete="tel" placeholder="Required for specialists" v-model="phone" />
+          <span v-if="phoneMissing" class="field-hint" style="color: #d63b3b">Phone number is required for specialist accounts.</span>
         </label>
 
         <label class="field">

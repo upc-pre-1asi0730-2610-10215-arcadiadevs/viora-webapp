@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.16] - 2026-07-06
+
+### Added
+
+- Phone number required at specialist sign-up (Phase 6 of the specialist-parity roadmap, porting os-viora-webapp): the sign-up form now requires a phone number only when the selected role is specialist, mirroring the reference's `phoneRequired` getter.
+
+### Fixed
+
+- `IamApi.signUp()` was silently dropping `role` and `referralCode` from the sign-up request body — only `username`/`password`/`email`/`fullName` were ever sent to the backend. Now all fields (plus the new `phone`) are forwarded.
+
 ## [2.7.15] - 2026-07-06
 
 ### Added
