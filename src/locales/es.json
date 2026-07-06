@@ -680,5 +680,23 @@
     "pickHint": "Elige un punto en el mapa",
     "cancel": "Cancelar",
     "confirm": "Confirmar ubicación"
+  },
+  "subscriptionPage": {
+    "specialist": {
+      "plusTagline": "Mantente visible para productores cercanos y gestiona oportunidades especialistas desde un solo lugar.",
+      "proTagline": "Plan anual especialista con mejor posicionamiento en el marketplace y elegibilidad para insignia Pro.",
+      "proBadgeTitle": "Insignia marketplace",
+      "proBadgeReady": "Insignia Pro lista para tu perfil especialista.",
+      "proBadgeLocked": "Actualiza a Specialist Pro para desbloquear la insignia Pro.",
+      "noDataYet": "Aún no hay datos de suscripción.",
+      "features": {
+        "opportunityFeed": "Feed de oportunidades para solicitudes de asistencia",
+        "prescriptions": "Espacio de prescripciones y recomendaciones de campo",
+        "visibility": "Visibilidad en el marketplace de especialistas",
+        "fieldContext": "Contexto de parcela, riesgo y campo antes del contacto",
+        "fasterConnection": "Conexión más rápida con productores que necesitan ayuda",
+        "proBadge": "Insignia Pro en tu tarjeta del marketplace especialista"
+      }
+    }
   }
 }
