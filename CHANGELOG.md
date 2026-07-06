@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.17] - 2026-07-06
+
+### Added
+
+- Specialist variant of the subscription overview (Phase 7 of the specialist-parity roadmap, porting os-viora-webapp): plans are filtered by segment (`grower-`/`specialist-` code prefix), specialist plans display as "Specialist Plus"/"Specialist Pro" with dedicated taglines and feature lists, and a Pro-badge status card shows eligibility. The plot/IoT usage section and its data fetch are now skipped for specialist accounts, which have neither.
+
 ## [2.7.16] - 2026-07-06
 
 ### Added
