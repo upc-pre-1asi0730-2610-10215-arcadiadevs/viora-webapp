@@ -24,6 +24,7 @@ export const useInterventionsStore = defineStore('interventions', () => {
     const prescription = ref(null);
     const specialistNames = ref({});
     const loading = ref({ list: false, action: false });
+    const errors = ref([]);
     const lastSyncedAt = ref(null);
 
     // ── Computed (Getters) ─────────────────────────────────────────────
@@ -65,8 +66,8 @@ export const useInterventionsStore = defineStore('interventions', () => {
             }
             await loadPrescriptionFor(selected.value);
             await loadSpecialistNames(interventions.value);
-        } catch {
-            // Error silently ignored — keeps current state
+        } catch (error) {
+            errors.value.push(error);
         } finally {
             loading.value.list = false;
         }
@@ -111,7 +112,8 @@ export const useInterventionsStore = defineStore('interventions', () => {
             await actionFn();
             await loadInterventions();
             onDone?.(true);
-        } catch {
+        } catch (error) {
+            errors.value.push(error);
             onDone?.(false);
         } finally {
             loading.value.action = false;
@@ -132,7 +134,8 @@ export const useInterventionsStore = defineStore('interventions', () => {
             } else {
                 prescription.value = null;
             }
-        } catch {
+        } catch (error) {
+            errors.value.push(error);
             prescription.value = null;
         }
     }
@@ -158,8 +161,8 @@ export const useInterventionsStore = defineStore('interventions', () => {
                 }
             });
             specialistNames.value = next;
-        } catch {
-            // Best-effort: names remain as fallback "#id"
+        } catch (error) {
+            errors.value.push(error);
         }
     }
 
@@ -174,6 +177,7 @@ export const useInterventionsStore = defineStore('interventions', () => {
         prescription,
         specialistNames,
         loading,
+        errors,
         lastSyncedAt,
         selected,
         totalAmount,
