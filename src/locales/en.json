@@ -641,5 +641,44 @@
       "send": "Send proposal",
       "sending": "Sending..."
     }
+  },
+  "settingsPage": {
+    "profile": {
+      "phoneRequiredError": "Phone number is required for specialist marketplace profiles.",
+      "locationSet": "Location set",
+      "locationUnset": "No base location selected",
+      "setOnMap": "Set location",
+      "baseLocationHint": "Used to rank nearby producer assistance requests.",
+      "serviceTagsHint": "Choose the services producers can match against. Values are saved as backend keywords.",
+      "serviceRadiusHint": "Producers inside this distance can discover your specialist profile.",
+      "marketplaceVisible": "Show my profile in the specialist marketplace",
+      "marketplaceVisibleHint": "Turn this off to hide your public specialist listing without deleting your profile data.",
+      "noTagsSelected": "No services selected yet",
+      "tags": {
+        "xylella": "Xylella monitoring",
+        "phytosanitary": "Phytosanitary inspection",
+        "biological": "Biological control",
+        "pest": "Pest & leaf symptoms",
+        "treatment": "Pest treatment",
+        "inspection": "Field inspection",
+        "ndvi": "Low-vigor / NDVI diagnosis",
+        "water": "Water stress & irrigation",
+        "climate": "Climate & phenological risk",
+        "chill": "Chill deficit",
+        "nutritional": "Nutritional deficiency"
+      }
+    }
+  },
+  "locationPicker": {
+    "title": "Set base location",
+    "subtitle": "Search, click the map, or drag the marker to place your specialist service area.",
+    "close": "Close location picker",
+    "unavailable": "Set VITE_MAPBOX_ACCESS_TOKEN to enable the interactive map and place search.",
+    "searchPlaceholder": "Search a city, valley, or address",
+    "search": "Search",
+    "resolving": "Resolving location...",
+    "pickHint": "Pick a point on the map",
+    "cancel": "Cancel",
+    "confirm": "Confirm location"
   }
 }

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.15] - 2026-07-06
+
+### Added
+
+- Specialist marketplace fields on the account profile (Phase 5 of the specialist-parity roadmap, porting os-viora-webapp): `UserProfile` gains `latitude`/`longitude`, `serviceRadiusKm` (25-500, default 150), `serviceTags`, and `marketplaceVisible`; a fixed service-tag catalogue (`service-tags.catalog.js`) with `parseServiceTags()`; a reusable `location-picker-modal.vue` (Mapbox search, click-to-place, drag marker, reverse geocoding, graceful fallback without `VITE_MAPBOX_ACCESS_TOKEN`) reusing the existing `mapboxService`; and specialist-only fields wired into Settings (service-tag chips, radius control, marketplace-visibility toggle). Phone is now mandatory when saving a specialist profile.
+
 ## [2.7.14] - 2026-07-06
 
 ### Added
