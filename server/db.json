@@ -1637,6 +1637,46 @@
     ],
     "updatedAt": "2026-07-06T12:00:00Z"
   },
+  "intervention-marketplace": {
+    "newCasesCount": 2,
+    "acceptanceRatePercent": 78,
+    "activeCasesCount": 3,
+    "cases": [
+      {
+        "id": 5,
+        "referenceCode": "REQ-1005",
+        "specialistId": 2,
+        "severity": "HIGH",
+        "problem": "Suspected xylella symptoms on leaf margins",
+        "ndvi": 0.42,
+        "producerName": "Lucia Fernandez",
+        "producerPhotoUrl": null,
+        "productionType": "Table olives",
+        "plotName": "El Mirador",
+        "location": "Tacna, Peru",
+        "areaHectares": 4.8,
+        "plotCount": 2,
+        "createdAt": "2026-07-05T14:10:00Z"
+      },
+      {
+        "id": 6,
+        "referenceCode": "REQ-1006",
+        "specialistId": 2,
+        "severity": "MEDIUM",
+        "problem": "Low-vigor patch detected after irrigation change",
+        "ndvi": 0.55,
+        "producerName": "Carlos Mendoza",
+        "producerPhotoUrl": null,
+        "productionType": "Olive oil",
+        "plotName": "Santa Rosa",
+        "location": "Ica, Peru",
+        "areaHectares": 7.2,
+        "plotCount": 1,
+        "createdAt": "2026-07-04T09:45:00Z"
+      }
+    ],
+    "updatedAt": "2026-07-06T12:00:00Z"
+  },
   "interventions": [
     {
       "code": "INT-1001",

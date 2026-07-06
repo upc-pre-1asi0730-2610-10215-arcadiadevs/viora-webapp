@@ -344,6 +344,36 @@ app.get('/api/v1/service-proposals', (req, res, next) => {
   res.json(collection('service-proposals').filter({ interventionRequestId: requestId }).value());
 });
 
+app.get('/api/v1/intervention-marketplace', (req, res) => {
+  res.json(collection('intervention-marketplace').value());
+});
+
+app.post('/api/v1/service-proposals', (req, res) => {
+  const proposals = collection('service-proposals');
+  const proposal = {
+    id: Date.now(),
+    interventionRequestId: req.body.interventionRequestId,
+    specialistId: req.body.specialistId,
+    serviceTitle: req.body.serviceTitle ?? '',
+    durationLabel: req.body.durationLabel ?? '',
+    scope: req.body.scope ?? [],
+    proposedDate: req.body.proposedDate ?? null,
+    amount: req.body.amount ?? 0,
+    currency: req.body.currency ?? 'PEN',
+    proposalDetails: req.body.proposalDetails ?? '',
+    createdAt: new Date().toISOString(),
+  };
+  proposals.push(proposal).write();
+
+  const marketplace = collection('intervention-marketplace');
+  const requestId = numericId(req.body.interventionRequestId);
+  marketplace.assign({
+    cases: marketplace.value().cases.filter((item) => item.id !== requestId),
+  }).write();
+
+  res.status(201).json(proposal);
+});
+
 app.get('/api/v1/specialists/:id/contact', (req, res) => {
   const specialist = findById('specialists', req.params.id);
   if (!specialist) return res.status(404).json({ message: 'Specialist not found.' });
@@ -412,17 +442,27 @@ app.post('/api/v1/coupons/redeem', redeemCoupon);
 
 app.get('/api/v1/plans', (req, res) => {
   res.json([
-    { id: 1, code: 'BASIC', name: 'Basic', priceCents: 0, currency: 'USD', interval: 'MONTHLY', tagline: 'Start monitoring', features: ['Plot monitoring'], plotLimit: 2, iotLimit: 1 },
-    { id: 2, code: 'PRO', name: 'Pro', priceCents: 14900, currency: 'USD', interval: 'MONTHLY', tagline: 'Scale operations', features: ['Unlimited plots', 'IoT support'], plotLimit: 20, iotLimit: 10 },
+    { id: 1, code: 'grower-basic', name: 'Basic', priceCents: 0, currency: 'USD', interval: 'MONTHLY', tagline: 'Start monitoring', features: ['Plot monitoring'], plotLimit: 2, iotLimit: 1 },
+    { id: 2, code: 'grower-pro', name: 'Pro', priceCents: 14900, currency: 'USD', interval: 'MONTHLY', tagline: 'Scale operations', features: ['Unlimited plots', 'IoT support'], plotLimit: 20, iotLimit: 10 },
+    { id: 3, code: 'specialist-plus', name: 'Specialist Plus', priceCents: 7900, currency: 'PEN', interval: 'MONTHLY', tagline: 'Stay discoverable and manage opportunities', features: [], plotLimit: 0, iotLimit: 0 },
+    { id: 4, code: 'specialist-pro', name: 'Specialist Pro', priceCents: 79000, currency: 'PEN', interval: 'ANNUAL', tagline: 'Stronger marketplace positioning and Pro badge', features: [], plotLimit: 0, iotLimit: 0 },
   ]);
 });
 
+const subscriptionForUser = (userId) => {
+  const user = findById('users', userId);
+  const isSpecialist = user?.role === 'ROLE_SPECIALIST';
+  return isSpecialist
+    ? { planCode: 'specialist-pro', planName: 'Specialist Pro', interval: 'ANNUAL', priceCents: 79000, currency: 'PEN' }
+    : { planCode: 'grower-pro', planName: 'Pro', interval: 'MONTHLY', priceCents: 14900, currency: 'USD' };
+};
+
 app.get('/api/v1/subscriptions/:userId', (req, res) => {
-  res.json({ userId: numericId(req.params.userId), planCode: 'PRO', planName: 'Pro', interval: 'MONTHLY', status: 'ACTIVE', currentPeriodEnd: '2026-12-31', priceCents: 14900, currency: 'USD' });
+  res.json({ userId: numericId(req.params.userId), ...subscriptionForUser(req.params.userId), status: 'ACTIVE', currentPeriodEnd: '2026-12-31' });
 });
 
 app.patch('/api/v1/subscriptions/:userId', (req, res) => {
-  res.json({ userId: numericId(req.params.userId), planCode: 'PRO', planName: 'Pro', interval: 'MONTHLY', status: req.body.status ?? 'ACTIVE', currentPeriodEnd: '2026-12-31', priceCents: 14900, currency: 'USD' });
+  res.json({ userId: numericId(req.params.userId), ...subscriptionForUser(req.params.userId), status: req.body.status ?? 'ACTIVE', currentPeriodEnd: '2026-12-31' });
 });
 
 app.get('/api/v1/invoices', (req, res) => {
