@@ -4,6 +4,8 @@ import { BaseEndpoint } from '../../shared/infrastructure/base-endpoint.js';
 const authPath = import.meta.env.VITE_AUTH_ENDPOINT_PATH || '/authentication';
 const usersPath = import.meta.env.VITE_USERS_ENDPOINT_PATH || '/users';
 
+const toBackendRoleName = (role) => role === 'ROLE_SPECIALIST' ? 'Specialist' : 'Grower';
+
 export class IamApi extends BaseApi {
   #authEndpoint;
   #usersEndpoint;
@@ -28,7 +30,7 @@ export class IamApi extends BaseApi {
       password: request.password,
       email,
       fullName: request.fullName,
-      role: request.role,
+      role: toBackendRoleName(request.role),
       referralCode: request.referralCode,
       phone: request.phone
     });
