@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.11.4] - 2026-07-07
+
+### Fixed
+
+- IAM: sign-up sent the frontend's internal role constant (`ROLE_GROWER`/`ROLE_SPECIALIST`) straight through to the backend, which rejected it with `400 Iam.InvalidRoleName` — the backend's own sign-in JWT uses unprefixed role claims (`Grower`/`Specialist`). No new account could be created against the real backend.
+
 ## [2.11.3] - 2026-07-07
 
 ### Fixed
