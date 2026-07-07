@@ -13,6 +13,8 @@
     "loading-telemetry": "Synchronizing satellite telemetry...",
     "recent-alerts-title": "Recent Alerts",
     "plot-overview-title": "Plot Overview",
+    "weather-title": "Weather",
+    "weather-description": "Detailed forecast and indicators for the selected plot.",
     "weather-summary-title": "Weather Summary",
     "table-header-type": "Alert Type",
     "table-header-plot": "Plot",
@@ -202,6 +204,26 @@
       "registering": "Registering plot…",
       "tooSmallTitle": "Area too small",
       "tooSmallBody": "This boundary is {area} ha. Satellite monitoring requires a plot of at least 1 hectare, so draw a larger area before registering."
+    },
+    "guide": {
+      "title": "Plot Boundary Tutorial",
+      "subtitle": "Learn how to draw your plot boundary in three simple steps.",
+      "reopen": "Reopen boundary tutorial",
+      "step1": {
+        "title": "Orient with compass",
+        "desc": "Use the map compass to orient yourself. Rotate the map to better visualize your plot's geographic location."
+      },
+      "step2": {
+        "title": "Mark the corners",
+        "desc": "Click on the map to place markers at each corner of your plot boundary. Each click adds a boundary point."
+      },
+      "step3": {
+        "title": "Confirm the boundary",
+        "desc": "Once all corners are marked, close the polygon to calculate the area and register your plot."
+      },
+      "reassure": "You can edit the boundary anytime after registration.",
+      "skip": "Skip tutorial",
+      "start": "Start drawing"
     },
     "confirm": {
       "title": "Plot registered successfully",
@@ -704,8 +726,8 @@
   "onboardingChecklist": {
     "eyebrow": "Setup guide",
     "title": "Get started with Viora",
-    "progress": "{{done}} / {{total}}",
-    "launcher": "Setup {{done}}/{{total}}",
+    "progress": "{done} / {total}",
+    "launcher": "Setup {done}/{total}",
     "steps": {
       "plot": {
         "title": "Register your first plot",
@@ -788,5 +810,66 @@
       "done": "Done",
       "skip": "Skip dashboard tour"
     }
+  },
+  "auth": {
+    "language-toggle-label": "Switch language",
+    "language-toggle-to-spanish": "Switch to Spanish",
+    "language-toggle-to-english": "Switch to English",
+    "login-headline-satellite": "See every plot, alert and intervention in one view",
+    "login-headline-soil": "Track soil health and field visits without leaving your dashboard",
+    "login-headline-intervention": "Plan interventions before risk becomes damage",
+    "page-title-sign-in": "Sign in",
+    "page-title-sign-up": "Create account",
+    "page-title-verify": "Verify email",
+    "page-title-plans": "Choose your plan",
+    "login-title": "Welcome back",
+    "login-subtitle": "Sign in to monitor your groves, alerts and interventions.",
+    "email-label": "Email",
+    "email-placeholder": "you\\@yourfarm.com",
+    "password-label": "Password",
+    "login-password-placeholder": "Your password",
+    "resend-verification": "Resend the verification email",
+    "signing-in": "Signing in…",
+    "sign-in-button": "Sign in",
+    "no-account-yet": "New to Viora?",
+    "create-account-link": "Create an account",
+    "register-title": "Create your account",
+    "register-subtitle": "Join Viora to monitor groves or assist producers in the field.",
+    "selected-plan": "Selected plan:",
+    "role-producer": "Producer",
+    "role-producer-desc": "Monitor plots, IoT devices and alerts",
+    "role-specialist": "Specialist",
+    "role-specialist-desc": "Assist producers with field expertise",
+    "full-name-label": "Full name",
+    "full-name-placeholder": "e.g. Maria Torres",
+    "phone-label": "Phone number",
+    "phone-placeholder": "Required for specialists",
+    "phone-required-error": "Phone number is required for specialist accounts.",
+    "register-password-placeholder": "At least 8 characters",
+    "password-rule-length": "At least 8 characters",
+    "password-rule-upper": "One uppercase letter",
+    "password-rule-lower": "One lowercase letter",
+    "password-rule-number": "One number",
+    "password-rule-special": "One special character",
+    "confirm-password-label": "Confirm password",
+    "confirm-password-placeholder": "Repeat your password",
+    "passwords-mismatch": "Passwords do not match.",
+    "referral-code-label": "Referral code (optional)",
+    "referral-code-placeholder": "e.g. VIORA-4JYFFQ",
+    "referral-code-hint": "Invited by a partner? Their code rewards them when you join.",
+    "redirecting-to-payment": "Redirecting to payment…",
+    "creating-account": "Creating account…",
+    "create-account-and-continue": "Create account and continue",
+    "create-account-button": "Create account",
+    "already-have-account": "Already have an account?",
+    "sign-in-link": "Sign in",
+    "check-email-title": "Check your email",
+    "check-email-body": "We sent a verification link to {email}. Open it to activate your account — the link expires in 24 hours.",
+    "resend-email": "Resend email",
+    "sending": "Sending…",
+    "already-verified": "Verified already?",
+    "register-story-eyebrow": "Built for the field",
+    "register-story-headline": "One account, two ways to help groves thrive",
+    "register-story-body": "Producers track their own plots. Specialists assist producers with expert field visits."
   }
 }

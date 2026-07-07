@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useIamStore } from '../../iam/application/iam.store.js';
 
 /**
@@ -75,6 +75,21 @@ export const useOnboardingStore = defineStore('onboarding', () => {
 
   // Restore on init.
   restore();
+
+  // Watch for user changes and reset state to avoid cross-user data leaks.
+  // When currentUserId changes (login, logout, or user switch), reset the in-memory state
+  // and restore from the new user's localStorage.
+  watch(
+    () => iamStore.currentUserId,
+    () => {
+      // Reset to default state first to avoid mixing data
+      minimized.value = DEFAULT_STATE.minimized;
+      dismissed.value = DEFAULT_STATE.dismissed;
+      completed.value = { ...DEFAULT_STATE.completed };
+      // Then restore the new user's onboarding state
+      restore();
+    }
+  );
 
   // --- Public actions ---
 

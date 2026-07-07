@@ -1,7 +1,15 @@
 <script setup>
+import { watch } from 'vue';
 import {useI18n} from "vue-i18n";
 const { locale, availableLocales } = useI18n();
 
+// Persist to the same key the pre-login language toggle reads/writes, so the
+// choice made here also survives a reload before the user reaches this screen again.
+watch(locale, (next) => {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('viora-language', next);
+  }
+});
 </script>
 
 <template>

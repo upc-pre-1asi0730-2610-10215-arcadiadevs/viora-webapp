@@ -1,19 +1,22 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import useIamStore from '../../application/iam.store.js';
 import { SignInCommand } from '../../domain/model/sign-in.command.js';
+import LanguageToggle from '../../../shared/presentation/components/language-toggle.vue';
 
 const router = useRouter();
 const store = useIamStore();
+const { t } = useI18n();
 
 const email = ref('');
 const password = ref('');
 
 const carouselSlides = [
-  { src: '/assets/images/onboarding/carrusel_1.png', label: 'Satellite monitoring landscape' },
-  { src: '/assets/images/onboarding/carrusel_2.png', label: 'Field observation detail' },
-  { src: '/assets/images/onboarding/carrusel_3.png', label: 'Farm intervention planning' }
+  { src: '/assets/images/onboarding/carrusel_1.png', label: 'Satellite monitoring landscape', headlineKey: 'auth.login-headline-satellite' },
+  { src: '/assets/images/onboarding/carrusel_2.png', label: 'Field observation detail', headlineKey: 'auth.login-headline-soil' },
+  { src: '/assets/images/onboarding/carrusel_3.png', label: 'Farm intervention planning', headlineKey: 'auth.login-headline-intervention' }
 ];
 const activeSlide = ref(0);
 const carouselDelayMs = 5000;
@@ -38,13 +41,63 @@ function selectSlide(index) {
   startCarousel();
 }
 
+// Typewriter headline: retypes the active slide's headline whenever the slide
+// changes (auto-advance or dot click), with a blinking caret via CSS.
+const typedHeadline = ref('');
+const typeSpeedMs = 45;
+const deleteSpeedMs = 22;
+let typeTimer = null;
+
+function clearTypeTimer() {
+  if (typeTimer !== null) {
+    clearTimeout(typeTimer);
+    typeTimer = null;
+  }
+}
+
+function typeIn(target) {
+  let count = 0;
+  const step = () => {
+    count += 1;
+    typedHeadline.value = target.slice(0, count);
+    if (count < target.length) {
+      typeTimer = setTimeout(step, typeSpeedMs);
+    }
+  };
+  step();
+}
+
+function deleteAllThen(next) {
+  const step = () => {
+    const current = typedHeadline.value;
+    if (current.length === 0) {
+      next();
+      return;
+    }
+    typedHeadline.value = current.slice(0, -1);
+    typeTimer = setTimeout(step, deleteSpeedMs);
+  };
+  step();
+}
+
+watch(activeSlide, (index) => {
+  clearTypeTimer();
+  deleteAllThen(() => typeIn(t(carouselSlides[index].headlineKey)));
+});
+
 onMounted(() => {
   store.clearMessages();
   startCarousel();
+  typeIn(t(carouselSlides[activeSlide.value].headlineKey));
+  // The login is a fixed-height, full-viewport layout with a pinned backdrop,
+  // so lock page scroll while it's shown (restored on leave).
+  document.body.style.overflow = 'hidden';
 });
 
 onUnmounted(() => {
   stopCarousel();
+  clearTypeTimer();
+  document.body.style.overflow = '';
 });
 
 const canSubmit = () => email.value.trim().length > 3 && password.value.length >= 8 && !store.busy;
@@ -65,6 +118,20 @@ function resend() {
 
 <template>
   <section class="auth-shell login-shell">
+    <div class="login-backdrop" aria-hidden="true">
+      <img
+        v-for="(slide, index) in carouselSlides"
+        :key="slide.src"
+        :src="slide.src"
+        alt=""
+        class="login-backdrop-slide"
+        :class="{ 'is-active': activeSlide === index }"
+      />
+      <div class="login-backdrop-tint"></div>
+    </div>
+
+    <LanguageToggle class="login-lang" />
+
     <div class="login-stage">
       <aside class="login-story" aria-label="Viora monitoring highlights">
         <div class="login-story-slides" aria-hidden="true">
@@ -79,14 +146,13 @@ function resend() {
         </div>
 
         <div class="login-story-brand">
-          <img src="/assets/icons/dashboard/viora-isotipo-white.png" alt="" />
+          <img src="/assets/brand/viora-isotipo-svg-white.svg" alt="" />
           <strong>Viora</strong>
         </div>
 
         <div class="login-story-copy">
           <span class="login-story-eyebrow">Grove intelligence</span>
-          <h2>See every plot, alert and intervention in one view</h2>
-          <p>Track soil health, weather risk and field visits without leaving your dashboard.</p>
+          <h2 class="login-story-headline" aria-live="polite">{{ typedHeadline }}<span class="login-caret" aria-hidden="true"></span></h2>
           <div class="login-story-dots" role="tablist" aria-label="Carousel images">
             <button
               v-for="(slide, index) in carouselSlides"
@@ -104,32 +170,32 @@ function resend() {
 
       <form class="auth-card auth-form login-card" @submit.prevent="submit">
         <div class="auth-brand">
-          <img src="/assets/icons/dashboard/viora-isotipo-green.png" alt="Viora" />
+          <img src="/assets/brand/viora-isotipo-svg.svg" alt="Viora" />
           <strong>Viora</strong>
         </div>
 
-        <h1 class="auth-title">Welcome back</h1>
-        <p class="auth-subtitle">Sign in to monitor your groves, alerts and interventions.</p>
+        <h1 class="auth-title">{{ t('auth.login-title') }}</h1>
+        <p class="auth-subtitle">{{ t('auth.login-subtitle') }}</p>
 
       <p v-if="store.error" class="auth-error">&#x26A0; {{ store.error }}</p>
       <p v-if="store.info" class="auth-info">&#x2714; {{ store.info }}</p>
 
       <label class="field">
-        <span>Email</span>
+        <span>{{ t('auth.email-label') }}</span>
         <input
           type="email"
           autocomplete="email"
-          placeholder="you@yourfarm.com"
+          :placeholder="t('auth.email-placeholder')"
           v-model="email"
         />
       </label>
 
       <label class="field">
-        <span>Password</span>
+        <span>{{ t('auth.password-label') }}</span>
         <input
           type="password"
           autocomplete="current-password"
-          placeholder="Your password"
+          :placeholder="t('auth.login-password-placeholder')"
           v-model="password"
         />
       </label>
@@ -140,14 +206,14 @@ function resend() {
         class="auth-link-button"
         @click="resend"
       >
-        Resend the verification email
+        {{ t('auth.resend-verification') }}
       </button>
 
       <button type="submit" class="auth-submit" :disabled="!canSubmit()">
-        {{ store.busy ? 'Signing in\u2026' : 'Sign in' }}
+        {{ store.busy ? t('auth.signing-in') : t('auth.sign-in-button') }}
       </button>
 
-      <p class="auth-foot">New to Viora? <router-link to="/plans">Create an account</router-link></p>
+      <p class="auth-foot">{{ t('auth.no-account-yet') }} <router-link to="/plans">{{ t('auth.create-account-link') }}</router-link></p>
       </form>
     </div>
   </section>
@@ -163,14 +229,62 @@ function resend() {
   font-family: 'Poppins', sans-serif;
 }
 
-.login-shell { padding: 0; }
+.login-shell {
+  position: relative;
+  padding: 32px;
+  overflow: hidden;
+  background: #1f2523;
+}
+
+/* Blurred backdrop: the same active carousel slide, scaled up and blurred, with
+   a dark tint so the crisp split-card floats over its own blurred backdrop. */
+.login-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.login-backdrop-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.12);
+  filter: blur(26px) saturate(1.05);
+  opacity: 0;
+  transition: opacity 1.1s ease;
+}
+
+.login-backdrop-slide.is-active { opacity: 1; }
+
+.login-backdrop-tint {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 28, 24, 0.28);
+}
+
+.login-lang {
+  position: absolute;
+  top: 22px;
+  right: 24px;
+  z-index: 2;
+}
 
 .login-stage {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  min-height: 100vh;
+  max-width: 1160px;
+  margin: 0 auto;
+  min-height: calc(100vh - 64px);
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 460px);
   align-items: stretch;
+  border-radius: 30px;
+  overflow: hidden;
+  background: #f7f3ec;
+  box-shadow: 0 40px 90px rgba(15, 22, 18, 0.45);
 }
 
 .login-story {
@@ -181,6 +295,9 @@ function resend() {
   padding: 40px;
   overflow: hidden;
   background: #1f2523;
+  /* Thin frame so the crisp visual panel reads as a "window" joined to the card. */
+  border: 5px solid #f7f3ec;
+  border-radius: 26px;
 }
 
 .login-story-slides {
@@ -237,8 +354,30 @@ function resend() {
   color: #a7e0c4;
 }
 
-.login-story-copy h2 { margin: 0; font-size: 26px; font-weight: 600; line-height: 1.3; }
-.login-story-copy p { margin: 0; font-size: 14px; font-weight: 400; line-height: 1.55; color: rgba(255, 255, 255, 0.82); }
+.login-story-headline {
+  margin: 0;
+  /* Reserve space for ~2 lines so the card doesn't jump while retyping. */
+  min-height: 2.6em;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.login-caret {
+  display: inline-block;
+  width: 3px;
+  height: 0.9em;
+  margin-left: 4px;
+  vertical-align: -0.05em;
+  background: #a7e0c4;
+  border-radius: 1px;
+  animation: login-caret-blink 1s steps(1, end) infinite;
+}
+
+@keyframes login-caret-blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
 
 .login-story-dots {
   display: flex;
@@ -358,7 +497,8 @@ function resend() {
 .auth-foot a:hover { text-decoration: underline; }
 
 @media (max-width: 960px) {
-  .login-stage { grid-template-columns: 1fr; }
+  .login-shell { padding: 16px; }
+  .login-stage { grid-template-columns: 1fr; min-height: auto; }
   .login-story { display: none; }
   .login-card { padding: 36px 24px; }
 }
