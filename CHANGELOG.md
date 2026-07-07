@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.11.6] - 2026-07-07
+
+### Fixed
+
+- Agronomic: `iot-device-summaries` (fixed demo data, read-only) is now served as a static JSON asset bundled with the frontend instead of pointing `VITE_MOCK_API_URL` at `localhost:3000`, which was unreachable for real users in production.
+
 ## [2.11.5] - 2026-07-07
 
 ### Fixed
