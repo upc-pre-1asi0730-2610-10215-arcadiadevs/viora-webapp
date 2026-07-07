@@ -102,12 +102,23 @@ export const useSubscriptionStore = defineStore('subscription', () => {
     }
 
     /**
+     * Loads only the plan catalog — usable from the public /plans screen,
+     * before a session exists, unlike `load()` which needs an active user.
+     */
+    function loadPlans() {
+        return subscriptionApi.getPlans().then((response) => {
+            plans.value = PlanAssembler.toEntities(response.data ?? []);
+        });
+    }
+
+    /**
      * Opens a MercadoPago checkout for the target plan and redirects the browser
      * to the hosted checkout on success.
      * @param {string} planCode
      * @param {'MONTHLY'|'ANNUAL'} interval
+     * @param {() => void} [onError]
      */
-    function startCheckout(planCode, interval) {
+    function startCheckout(planCode, interval, onError) {
         checkoutPending.value = planCode;
         error.value = null;
 
@@ -118,11 +129,13 @@ export const useSubscriptionStore = defineStore('subscription', () => {
                     window.location.href = session.checkoutUrl;
                 } else {
                     error.value = 'Could not open the payment checkout.';
+                    onError?.();
                 }
             })
             .catch((err) => {
                 error.value =
                     err?.response?.data?.message ?? 'Payments are not available yet. Please try again later.';
+                onError?.();
             })
             .finally(() => {
                 checkoutPending.value = null;
@@ -165,6 +178,7 @@ export const useSubscriptionStore = defineStore('subscription', () => {
         defaultPaymentMethod,
         currentPlan,
         load,
+        loadPlans,
         startCheckout,
         cancel,
         clearError,

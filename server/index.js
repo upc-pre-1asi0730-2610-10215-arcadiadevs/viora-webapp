@@ -440,29 +440,34 @@ const redeemCoupon = (req, res) => {
 app.post('/api/v1/coupon-redemptions', redeemCoupon);
 app.post('/api/v1/coupons/redeem', redeemCoupon);
 
+const PLANS = [
+  { id: 1, code: 'grower-basic', name: 'Basic', priceCents: 0, currency: 'USD', interval: 'MONTHLY', tagline: 'Start monitoring', features: ['Plot monitoring'], plotLimit: 2, iotLimit: 1 },
+  { id: 2, code: 'grower-pro', name: 'Pro', priceCents: 14900, currency: 'USD', interval: 'MONTHLY', tagline: 'Scale operations', features: ['Unlimited plots', 'IoT support'], plotLimit: 20, iotLimit: 10 },
+  { id: 3, code: 'specialist-plus', name: 'Specialist Plus', priceCents: 7900, currency: 'PEN', interval: 'MONTHLY', tagline: 'Stay discoverable and manage opportunities', features: [], plotLimit: 0, iotLimit: 0 },
+  { id: 4, code: 'specialist-pro', name: 'Specialist Pro', priceCents: 79000, currency: 'PEN', interval: 'ANNUAL', tagline: 'Stronger marketplace positioning and Pro badge', features: [], plotLimit: 0, iotLimit: 0 },
+];
+
 app.get('/api/v1/plans', (req, res) => {
-  res.json([
-    { id: 1, code: 'grower-basic', name: 'Basic', priceCents: 0, currency: 'USD', interval: 'MONTHLY', tagline: 'Start monitoring', features: ['Plot monitoring'], plotLimit: 2, iotLimit: 1 },
-    { id: 2, code: 'grower-pro', name: 'Pro', priceCents: 14900, currency: 'USD', interval: 'MONTHLY', tagline: 'Scale operations', features: ['Unlimited plots', 'IoT support'], plotLimit: 20, iotLimit: 10 },
-    { id: 3, code: 'specialist-plus', name: 'Specialist Plus', priceCents: 7900, currency: 'PEN', interval: 'MONTHLY', tagline: 'Stay discoverable and manage opportunities', features: [], plotLimit: 0, iotLimit: 0 },
-    { id: 4, code: 'specialist-pro', name: 'Specialist Pro', priceCents: 79000, currency: 'PEN', interval: 'ANNUAL', tagline: 'Stronger marketplace positioning and Pro badge', features: [], plotLimit: 0, iotLimit: 0 },
-  ]);
+  res.json(PLANS);
 });
 
-const subscriptionForUser = (userId) => {
-  const user = findById('users', userId);
-  const isSpecialist = user?.role === 'ROLE_SPECIALIST';
-  return isSpecialist
-    ? { planCode: 'specialist-pro', planName: 'Specialist Pro', interval: 'ANNUAL', priceCents: 79000, currency: 'PEN' }
-    : { planCode: 'grower-pro', planName: 'Pro', interval: 'MONTHLY', priceCents: 14900, currency: 'USD' };
-};
-
 app.get('/api/v1/subscriptions/:userId', (req, res) => {
-  res.json({ userId: numericId(req.params.userId), ...subscriptionForUser(req.params.userId), status: 'ACTIVE', currentPeriodEnd: '2026-12-31' });
+  const subscription = collection('subscriptions').find({ userId: numericId(req.params.userId) }).value();
+  if (!subscription) return res.status(404).json({ message: 'No subscription found for this user.' });
+  res.json(subscription);
 });
 
 app.patch('/api/v1/subscriptions/:userId', (req, res) => {
-  res.json({ userId: numericId(req.params.userId), ...subscriptionForUser(req.params.userId), status: req.body.status ?? 'ACTIVE', currentPeriodEnd: '2026-12-31' });
+  const userId = numericId(req.params.userId);
+  const subscriptions = collection('subscriptions');
+  const existing = subscriptions.find({ userId }).value();
+  const updated = { ...existing, userId, ...req.body };
+  if (existing) {
+    subscriptions.find({ userId }).assign(updated).write();
+  } else {
+    subscriptions.push(updated).write();
+  }
+  res.json(updated);
 });
 
 app.get('/api/v1/invoices', (req, res) => {
@@ -478,7 +483,30 @@ app.get('/api/v1/payment-methods', (req, res) => {
 });
 
 app.post('/api/v1/checkouts', (req, res) => {
-  res.status(201).json({ preferenceId: `mock-${Date.now()}`, checkoutUrl: 'https://www.mercadopago.com.pe/checkout/v1/mock' });
+  const { userId, planCode, interval } = req.body;
+  const plan = PLANS.find((p) => p.code === planCode);
+  if (userId && plan) {
+    const subscriptions = collection('subscriptions');
+    const existing = subscriptions.find({ userId: numericId(userId) }).value();
+    const updated = {
+      userId: numericId(userId),
+      planCode: plan.code,
+      interval: interval || plan.interval,
+      priceCents: plan.priceCents,
+      currency: plan.currency,
+      status: 'ACTIVE',
+      currentPeriodEnd: '2026-12-31'
+    };
+    if (existing) {
+      subscriptions.find({ userId: numericId(userId) }).assign(updated).write();
+    } else {
+      subscriptions.push(updated).write();
+    }
+  }
+  // Mock-only: approves the checkout instantly and points straight back at the
+  // dashboard instead of a real MercadoPago redirect round-trip. Revisit once
+  // the real gateway contract is defined.
+  res.status(201).json({ preferenceId: `mock-${Date.now()}`, checkoutUrl: '/dashboard' });
 });
 // Mock user endpoints
 app.get('/api/v1/users/:id/sessions', (req, res) => {
