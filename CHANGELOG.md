@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.1] - 2026-07-06
+
+### Fixed
+
+- `plot-boundary-map.vue`: boundary vertices are now ordered by angle around their centroid before being drawn or saved, so clicking corners out of sequence no longer produces a self-intersecting (bow-tie) plot polygon. Markers still show the raw click position. Ported from `os-viora-webapp@1f0c785` (Parity Roadmap v2, cluster 1).
+
 ## [2.8.0] - 2026-07-06
 
 ### Added
