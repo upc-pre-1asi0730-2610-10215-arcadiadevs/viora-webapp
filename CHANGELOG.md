@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.11.1] - 2026-07-07
+
+### Fixed
+
+- Auth: signed-in users with a valid session were stuck on `/plans` because `main.js` registered the IAM auth interceptor after other eagerly-imported modules (App.vue's Layout → NavigationSidebar/OnboardingChecklist → iam.store.js → subscription-access.store.js) had already built their `BaseApi` client, so those requests never got the `Authorization` header.
+- i18n: the language toggle on `/login` and `/register` switched the active locale but most of the form copy was hardcoded English, never wired to vue-i18n. Also fixes a `SyntaxError` from an unescaped `@` in a translation string, which vue-i18n's message compiler parses as linked-message syntax.
+- Agronomic: the dashboard's weather widget always requested plot id `1` instead of the signed-in user's own plot, causing a 404 for any account whose plots don't include id 1.
+- Billing: `/plans` filtered plan codes by a `grower-`/`specialist-` prefix the real backend doesn't use, hiding all producer plans; plan prices also rendered as `0.00` because the assembler read the wrong response field.
+
 ## [2.11.0] - 2026-07-06
 
 ### Added
