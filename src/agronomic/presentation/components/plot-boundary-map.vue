@@ -61,10 +61,11 @@ const emptyCollection = () => ({ type: 'FeatureCollection', features: [] });
 /** Emits the current boundary state to the parent. */
 const emitState = () => {
   closedState.value = closed;
+  const ordered = orderedPoints();
   emit('boundaryChange', {
-    points: [...points],
+    points: [...ordered],
     closed,
-    areaHectares: points.length >= 3 ? polygonAreaHectares(points) : 0,
+    areaHectares: ordered.length >= 3 ? polygonAreaHectares(ordered) : 0,
     addMode
   });
 };
@@ -72,6 +73,23 @@ const emitState = () => {
 const clearMarkers = () => {
   markers.forEach((marker) => marker.remove());
   markers = [];
+};
+
+/**
+ * Orders the vertices by angle around their centroid so the polygon can never
+ * self-intersect — clicking corners in a crossing order (e.g. A-C-B-D) would
+ * otherwise draw a bow-tie. Markers stay at the raw click positions; only the
+ * connecting geometry (and the saved polygon) uses this order.
+ */
+const orderedPoints = () => {
+  if (points.length < 3) return points;
+
+  const cx = points.reduce((sum, point) => sum + point[0], 0) / points.length;
+  const cy = points.reduce((sum, point) => sum + point[1], 0) / points.length;
+
+  return [...points].sort(
+      (a, b) => Math.atan2(a[1] - cy, a[0] - cx) - Math.atan2(b[1] - cy, b[0] - cx)
+  );
 };
 
 const applyCursor = () => {
@@ -107,7 +125,8 @@ const renderGeometry = () => {
   map.setPaintProperty(lineLayer, 'line-color', closed ? CLOSED_COLOR : OPEN_COLOR);
   map.setPaintProperty(lineLayer, 'line-dasharray', closed ? [1] : [2, 1.5]);
 
-  const lineCoords = closed && points.length >= 3 ? [...points, points[0]] : points;
+  const ordered = orderedPoints();
+  const lineCoords = closed && ordered.length >= 3 ? [...ordered, ordered[0]] : ordered;
 
   map.getSource(LINE_SOURCE).setData(
       lineCoords.length >= 2
@@ -116,11 +135,11 @@ const renderGeometry = () => {
   );
 
   map.getSource(FILL_SOURCE).setData(
-      closed && points.length >= 3
+      closed && ordered.length >= 3
           ? {
             type: 'Feature',
             properties: {},
-            geometry: { type: 'Polygon', coordinates: [[...points, points[0]]] }
+            geometry: { type: 'Polygon', coordinates: [[...ordered, ordered[0]]] }
           }
           : emptyCollection()
   );
