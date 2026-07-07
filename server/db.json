@@ -99,6 +99,7 @@
     {
       "userId": 1,
       "planCode": "grower-pro",
+      "planName": "Pro",
       "interval": "MONTHLY",
       "priceCents": 14900,
       "currency": "USD",
@@ -108,6 +109,7 @@
     {
       "userId": 2,
       "planCode": "specialist-pro",
+      "planName": "Specialist Pro",
       "interval": "ANNUAL",
       "priceCents": 79000,
       "currency": "PEN",

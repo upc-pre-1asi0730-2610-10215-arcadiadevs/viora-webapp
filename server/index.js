@@ -491,6 +491,7 @@ app.post('/api/v1/checkouts', (req, res) => {
     const updated = {
       userId: numericId(userId),
       planCode: plan.code,
+      planName: plan.name,
       interval: interval || plan.interval,
       priceCents: plan.priceCents,
       currency: plan.currency,

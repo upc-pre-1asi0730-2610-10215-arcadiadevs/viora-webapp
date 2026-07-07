@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.1] - 2026-07-06
+
+### Fixed
+
+- Mock subscriptions now include `planName`, matching the real `SubscriptionResource` contract from `os-viora-webapp`/`os-viora-platform`. `subscription-overview.vue` already had a fallback so nothing visibly broke, but the mock data shape was incomplete.
+
 ## [2.9.0] - 2026-07-06
 
 ### Added
