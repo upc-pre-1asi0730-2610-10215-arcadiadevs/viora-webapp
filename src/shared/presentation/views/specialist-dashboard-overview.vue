@@ -25,6 +25,7 @@ import {
 import { useSpecialistDashboardStore } from '../../../intervention/application/specialist-dashboard.store.js';
 import { DateTimeFormatter } from '../../infrastructure/date-time.formatter.js';
 import DashboardHeader from '../components/dashboard-header.vue';
+import DashboardCoachmarks from '../components/dashboard-coachmarks.vue';
 
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip, Legend);
 
@@ -134,13 +135,13 @@ onMounted(() => {
     <template v-else>
       <!-- KPI cards -->
       <section class="kpi-grid">
-        <article class="card kpi-card">
+        <article class="card kpi-card" data-onboarding-target="sp-resolved">
           <span class="kpi-label">{{ t('specialistDashboard.kpis.resolved') }}</span>
           <strong class="kpi-value">{{ specialistDashboardStore.kpis.resolvedInterventions ?? 0 }}</strong>
           <span class="kpi-foot">{{ t('specialistDashboard.kpis.thisMonth') }}</span>
         </article>
 
-        <article class="card kpi-card">
+        <article class="card kpi-card" data-onboarding-target="sp-acceptance">
           <span class="kpi-label">{{ t('specialistDashboard.kpis.acceptance') }}</span>
           <template v-if="specialistDashboardStore.kpis.acceptanceRatePercent !== null">
             <strong class="kpi-value">{{ specialistDashboardStore.kpis.acceptanceRatePercent }}%</strong>
@@ -155,7 +156,7 @@ onMounted(() => {
           </template>
         </article>
 
-        <article class="card kpi-card">
+        <article class="card kpi-card" data-onboarding-target="sp-phyto">
           <span class="kpi-label">{{ t('specialistDashboard.kpis.phytosanitary') }}</span>
           <template v-if="specialistDashboardStore.kpis.phytosanitaryEfficiencyPercent !== null">
             <strong class="kpi-value">{{ specialistDashboardStore.kpis.phytosanitaryEfficiencyPercent }}%</strong>
@@ -179,7 +180,7 @@ onMounted(() => {
 
       <!-- Zonal radar + incoming requests -->
       <section class="mid-grid">
-        <article class="card zonal-card">
+        <article class="card zonal-card" data-onboarding-target="sp-zonal">
           <header class="card-head">
             <div>
               <h3>{{ t('specialistDashboard.zonal.title') }}</h3>
@@ -207,7 +208,7 @@ onMounted(() => {
           </ul>
         </article>
 
-        <article class="card incoming-card">
+        <article class="card incoming-card" data-onboarding-target="sp-incoming">
           <header class="card-head">
             <h3>{{ t('specialistDashboard.incoming.title') }}</h3>
             <span v-if="incomingCount > 0" class="new-badge">
@@ -279,6 +280,8 @@ onMounted(() => {
     <div v-if="specialistDashboardStore.errors.length > 0" class="error-box">
       <strong>{{ t('errors.occurred') }}</strong>
     </div>
+
+    <DashboardCoachmarks />
   </div>
 </template>
 

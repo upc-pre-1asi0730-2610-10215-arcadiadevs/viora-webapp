@@ -12,6 +12,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAgronomicStore } from '../../application/agronomic.store.js';
+import { useIamStore } from '../../../iam/application/iam.store.js';
 import PlotBoundaryMap from '../components/plot-boundary-map.vue';
 import LanguageSwitcher from '../../../shared/presentation/components/language-switcher.vue';
 
@@ -19,6 +20,7 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const agronomicStore = useAgronomicStore();
+const iamStore = useIamStore();
 
 /** AgroMonitoring rejects polygons below 1 ha (no satellite/NDVI coverage). */
 const MIN_AREA_HECTARES = 1;
@@ -28,6 +30,45 @@ const isEditMode = computed(() => editPlotId !== null && editPlotId !== undefine
 
 const boundaryMapRef = ref(null);
 const boundaryToLoad = ref(null);
+
+// --- Boundary drawing guide (first-visit modal) ---
+const showGuide = ref(false);
+const guideSteps = [
+  { icon: 'pi pi-compass', titleKey: 'plotCreate.guide.step1.title', descKey: 'plotCreate.guide.step1.desc' },
+  { icon: 'pi pi-map-marker', titleKey: 'plotCreate.guide.step2.title', descKey: 'plotCreate.guide.step2.desc' },
+  { icon: 'pi pi-check-circle', titleKey: 'plotCreate.guide.step3.title', descKey: 'plotCreate.guide.step3.desc' },
+];
+
+function guideStorageKey() {
+  const userId = iamStore?.currentUserId ?? 'anonymous';
+  return `viora.plotGuideSeen.${userId}`;
+}
+
+function guideSeen() {
+  try {
+    return localStorage.getItem(guideStorageKey()) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function openGuide() {
+  showGuide.value = true;
+}
+
+function dismissGuide() {
+  showGuide.value = false;
+  try {
+    localStorage.setItem(guideStorageKey(), '1');
+  } catch {
+    // Private browsing / storage limits should not block plot creation.
+  }
+}
+
+// Show the guide for new producers on first visit.
+if (!isEditMode.value && !guideSeen()) {
+  showGuide.value = true;
+}
 
 const form = ref({ name: '', cropType: '', campaign: '', location: '', notes: '' });
 const nameTouched = ref(false);
@@ -394,7 +435,18 @@ onMounted(preloadForEdit);
 
       <!-- Right: Boundary -->
       <article class="boundary-card">
-        <h2 class="card-title">{{ t('plotCreate.boundary.title') }}</h2>
+        <div class="boundary-head">
+          <h2 class="card-title">{{ t('plotCreate.boundary.title') }}</h2>
+          <button
+            type="button"
+            class="guide-reopen"
+            :aria-label="t('plotCreate.guide.reopen')"
+            :title="t('plotCreate.guide.reopen')"
+            @click="openGuide"
+          >
+            <i class="pi pi-question-circle"></i>
+          </button>
+        </div>
         <p class="card-subtitle">{{ t('plotCreate.boundary.subtitle') }}</p>
 
         <div class="map-wrap">
@@ -466,6 +518,49 @@ onMounted(preloadForEdit);
     <section v-if="errors.length > 0 && !registration" class="error-box">
       <strong>{{ errorMessage }}</strong>
     </section>
+
+    <!-- First-visit boundary drawing tutorial -->
+    <Teleport to="body">
+      <div v-if="showGuide" class="guide-overlay" @click.self="dismissGuide">
+        <div class="guide-modal" role="dialog" aria-modal="true" @click.stop>
+          <div class="guide-illustration" aria-hidden="true">
+            <svg class="guide-svg" viewBox="0 0 220 120">
+              <rect class="gs-field" x="8" y="8" width="204" height="104" rx="14" />
+              <polygon class="gs-poly" points="48,34 176,28 182,92 52,96" />
+              <circle class="gs-dot gs-d1" cx="48" cy="34" r="7" />
+              <circle class="gs-dot gs-d2" cx="176" cy="28" r="7" />
+              <circle class="gs-dot gs-d3" cx="182" cy="92" r="7" />
+              <circle class="gs-dot gs-d4" cx="52" cy="96" r="7" />
+            </svg>
+          </div>
+
+          <h2 class="guide-title">{{ t('plotCreate.guide.title') }}</h2>
+          <p class="guide-sub">{{ t('plotCreate.guide.subtitle') }}</p>
+
+          <div class="guide-steps">
+            <div v-for="(step, idx) in guideSteps" :key="step.titleKey" class="guide-step">
+              <span class="guide-step-icon"><i :class="step.icon"></i></span>
+              <span class="guide-step-num">{{ idx + 1 }}</span>
+              <strong>{{ t(step.titleKey) }}</strong>
+              <span class="guide-step-desc">{{ t(step.descKey) }}</span>
+            </div>
+          </div>
+
+          <p class="guide-reassure">
+            <i class="pi pi-star"></i> {{ t('plotCreate.guide.reassure') }}
+          </p>
+
+          <div class="guide-actions">
+            <button type="button" class="guide-skip" @click="dismissGuide">
+              {{ t('plotCreate.guide.skip') }}
+            </button>
+            <button type="button" class="guide-start" @click="dismissGuide">
+              <i class="pi pi-pencil"></i> {{ t('plotCreate.guide.start') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </section>
 </template>
 
@@ -992,6 +1087,298 @@ onMounted(preloadForEdit);
   background: #fdecea;
   color: #b3261e;
   font-size: 13px;
+}
+
+/* ---------- Boundary header + guide reopen button ---------- */
+.boundary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.guide-reopen {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #e2ddd4;
+  border-radius: 999px;
+  background: #fff;
+  color: #2e4a3a;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.guide-reopen:hover {
+  border-color: #2e4a3a;
+  background: #f0f7f4;
+}
+
+.guide-reopen i {
+  font-size: 18px;
+}
+
+/* ---------- First-visit boundary tutorial modal ---------- */
+.guide-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(18, 26, 22, 0.55);
+  backdrop-filter: blur(3px);
+  animation: guide-fade 0.2s ease;
+}
+
+.guide-modal {
+  box-sizing: border-box;
+  width: min(680px, 100%);
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  padding: 28px clamp(22px, 4vw, 36px) 24px;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 30px 70px rgba(15, 22, 18, 0.4);
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  animation: guide-pop 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.guide-illustration {
+  display: grid;
+  place-items: center;
+  margin-bottom: 14px;
+}
+
+.guide-svg {
+  width: min(240px, 70%);
+  height: auto;
+}
+
+.gs-field {
+  fill: #eef3ec;
+  stroke: #d7e2d3;
+  stroke-width: 2;
+}
+
+.gs-poly {
+  fill: rgba(46, 74, 58, 0.16);
+  stroke: #2e4a3a;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-dasharray: 620;
+  stroke-dashoffset: 620;
+  animation: gs-draw 2.6s ease-in-out infinite;
+}
+
+.gs-dot {
+  fill: #fff;
+  stroke: #2e4a3a;
+  stroke-width: 3;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: gs-pop 2.6s ease-in-out infinite;
+}
+
+.gs-d1 { animation-delay: 0s; }
+.gs-d2 { animation-delay: 0.28s; }
+.gs-d3 { animation-delay: 0.56s; }
+.gs-d4 { animation-delay: 0.84s; }
+
+@keyframes gs-draw {
+  0%, 12% { stroke-dashoffset: 620; }
+  55%, 88% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes gs-pop {
+  0% { opacity: 0; transform: scale(0.2); }
+  16% { opacity: 1; transform: scale(1.15); }
+  24%, 92% { opacity: 1; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.guide-title {
+  margin: 0;
+  color: #16281f;
+  font-size: clamp(20px, 3vw, 25px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.guide-sub {
+  margin: 8px auto 0;
+  max-width: 460px;
+  color: #6b716d;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.guide-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 22px 0 18px;
+}
+
+.guide-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 14px 16px;
+  border-radius: 16px;
+  background: #f7f4ee;
+  text-align: center;
+}
+
+.guide-step-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: #2e4a3a;
+  color: #fff;
+}
+
+.guide-step-icon i {
+  font-size: 22px;
+}
+
+.guide-step-num {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #fff;
+  color: #2e4a3a;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(31, 37, 35, 0.12);
+}
+
+.guide-step strong {
+  margin-top: 4px;
+  color: #16281f;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.guide-step-desc {
+  color: #6f756f;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.guide-reassure {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #eef3ec;
+  color: #2e4a3a;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.guide-reassure i {
+  font-size: 16px;
+}
+
+.guide-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.guide-skip {
+  border: 0;
+  background: transparent;
+  color: #6b716d;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.guide-skip:hover {
+  color: #2e4a3a;
+  text-decoration: underline;
+}
+
+.guide-start {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border: 0;
+  border-radius: 13px;
+  background: #2e4a3a;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(46, 74, 58, 0.22);
+  transition: background 0.18s ease, transform 0.15s ease;
+}
+
+.guide-start:hover {
+  background: #24382c;
+  transform: translateY(-1px);
+}
+
+.guide-start i {
+  font-size: 16px;
+}
+
+@keyframes guide-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes guide-pop {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 560px) {
+  .guide-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .guide-step {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: 12px;
+  }
+
+  .guide-step-num {
+    top: 10px;
+    right: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-poly { animation: none; stroke-dashoffset: 0; }
+  .gs-dot { animation: none; opacity: 1; }
 }
 
 /* ---------- Responsive ---------- */

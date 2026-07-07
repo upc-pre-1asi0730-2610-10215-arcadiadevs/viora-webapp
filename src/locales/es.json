@@ -1,4 +1,4 @@
-﻿{
+{
   "option": {
     "home": "Inicio",
     "dashboard": "Dashboard",
@@ -699,6 +699,94 @@
         "fasterConnection": "Conexión más rápida con productores que necesitan ayuda",
         "proBadge": "Insignia Pro en tu tarjeta del marketplace especialista"
       }
+    }
+  },
+  "onboardingChecklist": {
+    "eyebrow": "Guía de configuración",
+    "title": "Empieza con Viora",
+    "progress": "{{done}} / {{total}}",
+    "launcher": "Setup {{done}}/{{total}}",
+    "steps": {
+      "plot": {
+        "title": "Registra tu primera parcela",
+        "description": "Dibuja el límite de tu campo para iniciar el monitoreo."
+      },
+      "dashboard": {
+        "title": "Vuelve al Dashboard",
+        "description": "Revisa la salud de tu parcela y el resumen climático."
+      },
+      "expert": {
+        "title": "Visita Asistencia Experta",
+        "description": "Ubica dónde solicitar apoyo de especialistas."
+      },
+      "profile": {
+        "title": "Completa tu perfil de especialista",
+        "description": "Define tu ubicación y tags de servicio para que los productores te encuentren."
+      },
+      "spDashboard": {
+        "title": "Revisa tu dashboard",
+        "description": "Revisa tus KPIs, el radar zonal y las solicitudes entrantes."
+      },
+      "marketplace": {
+        "title": "Explora el Marketplace",
+        "description": "Descubre solicitudes de productores y envía tus propuestas."
+      }
+    },
+    "actions": {
+      "continue": "Continuar setup",
+      "finish": "Finalizar setup",
+      "minimize": "Minimizar onboarding",
+      "open": "Abrir guía de setup"
+    }
+  },
+  "dashboardCoachmarks": {
+    "steps": {
+      "overall": {
+        "title": "Salud general de parcelas",
+        "description": "Resume el estado general de tus parcelas registradas para detectar rápido si la finca está estable o requiere revisión."
+      },
+      "ndvi": {
+        "title": "Estado NDVI",
+        "description": "Muestra el vigor vegetal desde imágenes satelitales. Ayuda a notar señales de estrés antes de que sean visibles en campo."
+      },
+      "chill": {
+        "title": "Acumulación de frío",
+        "description": "Sigue el progreso de horas frías de la campaña, útil para entender riesgo de floración y desarrollo estacional."
+      },
+      "yield": {
+        "title": "Pronóstico de rendimiento",
+        "description": "Estima la proyección productiva y el riesgo para conectar las señales de monitoreo con el desempeño esperado de cosecha."
+      },
+      "plotOverview": {
+        "title": "Vista de parcela",
+        "description": "Es el área principal de trabajo de la parcela seleccionada: mapa, salud, riesgo fenológico, último NDVI y acciones recomendadas."
+      },
+      "spResolved": {
+        "title": "Intervenciones resueltas",
+        "description": "Cuántos casos cerraste este mes: tu actividad principal como especialista en la plataforma."
+      },
+      "spAcceptance": {
+        "title": "Tasa de aceptación",
+        "description": "El porcentaje de tus propuestas que los productores aceptan. Una tasa alta indica que tus ofertas encajan bien."
+      },
+      "spPhyto": {
+        "title": "Eficiencia fitosanitaria",
+        "description": "Qué tan efectivas son tus intervenciones para controlar las amenazas reportadas en los campos que atiendes."
+      },
+      "spZonal": {
+        "title": "Radar de riesgo zonal",
+        "description": "Brotes y riesgos cercanos ordenados por distancia, para saber dónde crece la demanda de tu experiencia."
+      },
+      "spIncoming": {
+        "title": "Solicitudes entrantes",
+        "description": "Nuevas solicitudes de productores: vérificalas o recházalas aquí, o abre el Marketplace para enviar una propuesta."
+      }
+    },
+    "actions": {
+      "back": "Atrás",
+      "next": "Siguiente",
+      "done": "Listo",
+      "skip": "Saltar tour del dashboard"
     }
   }
 }
