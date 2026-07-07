@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.0] - 2026-07-06
+
+### Added
+
+- Payment-first onboarding: a public `/plans` screen (grower/specialist segments), a `subscriptionGuard` on every workspace route, and a registration flow that requires a chosen plan before creating an account. Ported from `os-viora-webapp@3ffa140..661fbf3` (Parity Roadmap v2, cluster 2).
+- `subscription-access.store.js` caches whether the signed-in user has an active subscription; sign-out resets it.
+- Mock server now tracks subscriptions per user (`db.json`), so new sign-ups start unsubscribed and `POST /checkouts` approves instantly, pointing back at `/dashboard` — a simplified stand-in for the real MercadoPago redirect until `wa-viora-platform`'s checkout contract is finalized.
+
 ## [2.8.1] - 2026-07-06
 
 ### Fixed
