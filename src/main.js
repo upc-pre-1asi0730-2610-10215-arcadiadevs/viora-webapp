@@ -1,3 +1,9 @@
+// Register IAM auth interceptor before any other import can construct a
+// BaseApi — App.vue's own import graph (Layout -> NavigationSidebar /
+// OnboardingChecklist -> iam.store.js -> subscription-access.store.js)
+// instantiates a SubscriptionApi eagerly, so this must come first.
+import './iam/infrastructure/iam.interceptor.js';
+
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
@@ -15,9 +21,6 @@ import i18n from "./i18n.js"
 import pinia from "./pinia.js";
 import Chart from "primevue/chart";
 import router from "./router.js";
-
-// Register IAM auth interceptor before any BaseApi is constructed.
-import './iam/infrastructure/iam.interceptor.js';
 
 createApp(App)
     .use(pinia)

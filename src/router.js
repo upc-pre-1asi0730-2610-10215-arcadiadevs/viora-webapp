@@ -28,25 +28,25 @@ const routes = [
         path: '/login',
         name: 'iam-sign-in',
         component: signInForm,
-        meta: { title: 'Sign in', public: true, guest: true }
+        meta: { title: 'auth.page-title-sign-in', public: true, guest: true }
     },
     {
         path: '/register',
         name: 'iam-sign-up',
         component: signUpForm,
-        meta: { title: 'Create account', public: true, guest: true }
+        meta: { title: 'auth.page-title-sign-up', public: true, guest: true }
     },
     {
         path: '/verify',
         name: 'iam-verify',
         component: verifyPage,
-        meta: { title: 'Verify email', public: true }
+        meta: { title: 'auth.page-title-verify', public: true }
     },
     {
         path: '/plans',
         name: 'billing-plans',
         component: plansOverview,
-        meta: { title: 'Choose your plan', public: true }
+        meta: { title: 'auth.page-title-plans', public: true }
     },
     {
         path: '/dashboard',
