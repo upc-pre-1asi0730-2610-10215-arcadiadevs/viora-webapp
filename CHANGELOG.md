@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.10.1] - 2026-07-06
+
+### Changed
+
+- Removed the "Simulate specialist prescription" action from the interventions overview. Prescriptions now come from the specialist's real Field Inspection screen; the accepted-but-not-prescribed state shows a static "waiting for specialist" banner. Ported from `os-viora-webapp@152103c` (Parity Roadmap v2, cluster 4).
+
 ## [2.10.0] - 2026-07-06
 
 ### Added
