@@ -724,8 +724,8 @@
   "onboardingChecklist": {
     "eyebrow": "Setup guide",
     "title": "Get started with Viora",
-    "progress": "{{done}} / {{total}}",
-    "launcher": "Setup {{done}}/{{total}}",
+    "progress": "{done} / {total}",
+    "launcher": "Setup {done}/{total}",
     "steps": {
       "plot": {
         "title": "Register your first plot",
