@@ -1,7 +1,6 @@
-// Register IAM auth interceptor before any other import can construct a
-// BaseApi — App.vue's own import graph (Layout -> NavigationSidebar /
-// OnboardingChecklist -> iam.store.js -> subscription-access.store.js)
-// instantiates a SubscriptionApi eagerly, so this must come first.
+// Registers the IAM auth interceptor. BaseApi resolves registered
+// interceptors per-request rather than at construction time, so import
+// order relative to eagerly-instantiated API clients doesn't matter.
 import './iam/infrastructure/iam.interceptor.js';
 
 import { createApp } from 'vue'
