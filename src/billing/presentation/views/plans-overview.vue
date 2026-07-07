@@ -20,9 +20,8 @@ const checkoutError = computed(() => subscriptionStore.error);
 
 /** The two plans for the active segment, monthly first, annual ("Pro") last. */
 const segmentPlans = computed(() => {
-  const prefix = isSpecialist.value ? 'specialist-' : 'grower-';
   return subscriptionStore.plans
-    .filter((plan) => plan.code.startsWith(prefix))
+    .filter((plan) => plan.code.toLowerCase().startsWith('specialist') === isSpecialist.value)
     .sort((a, b) => (a.isAnnual === b.isAnnual ? 0 : a.isAnnual ? 1 : -1));
 });
 
