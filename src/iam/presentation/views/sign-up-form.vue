@@ -47,11 +47,32 @@ const phoneRequired = computed(() => role.value === 'ROLE_SPECIALIST');
 const phoneMissing = computed(() => phoneRequired.value && phone.value.trim().length === 0);
 const passwordsMismatch = computed(() => confirmPassword.value.length > 0 && password.value !== confirmPassword.value);
 
+const passwordRules = computed(() => ({
+  length: password.value.length >= 8,
+  upper: /[A-Z]/.test(password.value),
+  lower: /[a-z]/.test(password.value),
+  number: /[0-9]/.test(password.value),
+  special: /[^A-Za-z0-9]/.test(password.value),
+}));
+
+const passwordChecklist = computed(() => {
+  const rules = passwordRules.value;
+  return [
+    { met: rules.length, label: 'At least 8 characters' },
+    { met: rules.upper, label: 'One uppercase letter' },
+    { met: rules.lower, label: 'One lowercase letter' },
+    { met: rules.number, label: 'One number' },
+    { met: rules.special, label: 'One special character' },
+  ];
+});
+
+const passwordValid = computed(() => Object.values(passwordRules.value).every(Boolean));
+
 const canSubmit = computed(() =>
   fullName.value.trim().length > 1 &&
   email.value.trim().length > 3 &&
   (!phoneRequired.value || phone.value.trim().length > 0) &&
-  password.value.length >= 8 &&
+  passwordValid.value &&
   password.value === confirmPassword.value &&
   !store.busy
 );
@@ -189,6 +210,13 @@ function resend() {
           <span>Password</span>
           <input type="password" autocomplete="new-password" placeholder="At least 8 characters" v-model="password" />
         </label>
+
+        <ul v-if="password.length > 0" class="pwd-rules" aria-live="polite">
+          <li v-for="rule in passwordChecklist" :key="rule.label" :class="{ 'is-met': rule.met }">
+            <i :class="rule.met ? 'pi pi-check-circle' : 'pi pi-circle'" aria-hidden="true"></i>
+            {{ rule.label }}
+          </li>
+        </ul>
 
         <label class="field">
           <span>Confirm password</span>
@@ -460,6 +488,34 @@ function resend() {
 .auth-foot { margin: 4px 0 0; text-align: center; font-size: 13px; font-weight: 400; color: #6f6a62; }
 .auth-foot a { color: #2e4a3a; font-weight: 600; text-decoration: none; }
 .auth-foot a:hover { text-decoration: underline; }
+
+.pwd-rules {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 16px;
+  margin: -4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pwd-rules li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #8a827a;
+  transition: color 0.15s ease;
+}
+
+.pwd-rules li.is-met { color: #2e7d55; }
+
+.pwd-rules i {
+  font-size: 15px;
+  color: #c2bbb0;
+  transition: color 0.15s ease;
+}
+
+.pwd-rules li.is-met i { color: #2e7d55; }
 
 .status-icon {
   align-self: center;
