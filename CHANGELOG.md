@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.11.3] - 2026-07-07
+
+### Fixed
+
+- Billing: signed-in users with an active subscription were bounced to `/plans` because several stores (agronomic, profile, subscription-access, etc.) build their `BaseApi` client eagerly at module scope, racing against `main.js`'s auth interceptor registration depending on Vite's chunk evaluation order — whichever client lost the race never got the `Authorization` header. `BaseApi` now resolves registered interceptors per-request instead of at construction time, so import/chunk order no longer matters.
+
 ## [2.11.2] - 2026-07-07
 
 ### Fixed
