@@ -84,7 +84,7 @@ export class PlanAssembler {
             id: resource.id ?? null,
             code: resource.code ?? '',
             name: resource.name ?? '',
-            priceCents: resource.priceCents ?? 0,
+            priceCents: Math.round((resource.priceAmount ?? 0) * 100),
             currency: resource.currency ?? 'USD',
             interval: toInterval(resource.interval),
             tagline: resource.tagline ?? '',
