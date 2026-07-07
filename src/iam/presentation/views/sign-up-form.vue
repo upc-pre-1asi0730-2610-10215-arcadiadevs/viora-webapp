@@ -313,7 +313,6 @@ function resend() {
   width: 100%;
   max-width: 1220px;
   margin: 0 auto;
-  min-height: calc(100vh - 64px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
   align-items: stretch;
@@ -335,8 +334,8 @@ function resend() {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 24px;
+  justify-content: center;
+  gap: 32px;
   padding: 40px;
   background: linear-gradient(160deg, #2e4a3a 0%, #1f2523 100%);
   color: #fff;
@@ -345,12 +344,17 @@ function resend() {
   border-radius: 26px;
 }
 
+.register-story-brand {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+}
+
 .register-story-brand { display: flex; align-items: center; gap: 10px; }
 .register-story-brand img { width: 32px; height: 32px; }
 .register-story-brand strong { font-size: 18px; font-weight: 600; color: #fff; }
 
 .register-character-wrap {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
