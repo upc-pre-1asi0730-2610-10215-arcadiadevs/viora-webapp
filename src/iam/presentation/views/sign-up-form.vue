@@ -119,10 +119,15 @@ function resend() {
 
 <template>
   <section class="auth-shell register-shell">
+    <div class="register-backdrop" aria-hidden="true">
+      <img src="/assets/images/onboarding/carrusel_1.png" alt="" class="register-backdrop-slide" />
+      <div class="register-backdrop-tint"></div>
+    </div>
+
     <div class="register-stage" :class="{ 'register-stage--success': submitted }">
       <aside v-if="!submitted" class="register-story" aria-label="Viora account types">
         <div class="register-story-brand">
-          <img src="/assets/icons/dashboard/viora-isotipo-white.png" alt="" />
+          <img src="/assets/brand/viora-isotipo-svg-white.svg" alt="" />
           <strong>Viora</strong>
         </div>
 
@@ -147,7 +152,7 @@ function resend() {
     <template v-if="!submitted">
       <form class="auth-card auth-form register-card" @submit.prevent="submit">
         <div class="auth-brand">
-          <img src="/assets/icons/dashboard/viora-isotipo-green.png" alt="Viora" />
+          <img src="/assets/brand/viora-isotipo-svg.svg" alt="Viora" />
           <strong>Viora</strong>
         </div>
 
@@ -270,14 +275,52 @@ function resend() {
   font-family: 'Poppins', sans-serif;
 }
 
-.register-shell { padding: 0; }
+.register-shell {
+  position: relative;
+  padding: 32px;
+  overflow: hidden;
+  background: #1f2523;
+}
+
+/* Blurred backdrop behind the split card, for visual consistency with the
+   redesigned login screen — same treatment, static image (register has no
+   carousel to drive it). */
+.register-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.register-backdrop-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.12);
+  filter: blur(26px) saturate(1.05);
+}
+
+.register-backdrop-tint {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 28, 24, 0.28);
+}
 
 .register-stage {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  min-height: 100vh;
+  max-width: 1220px;
+  margin: 0 auto;
+  min-height: calc(100vh - 64px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
   align-items: stretch;
+  border-radius: 30px;
+  overflow: hidden;
+  background: #f7f3ec;
+  box-shadow: 0 40px 90px rgba(15, 22, 18, 0.45);
 }
 
 .register-stage--success {
@@ -297,6 +340,9 @@ function resend() {
   padding: 40px;
   background: linear-gradient(160deg, #2e4a3a 0%, #1f2523 100%);
   color: #fff;
+  /* Thin frame so the panel reads as a "window" joined to the card, matching login. */
+  border: 5px solid #f7f3ec;
+  border-radius: 26px;
 }
 
 .register-story-brand { display: flex; align-items: center; gap: 10px; }
@@ -530,7 +576,8 @@ function resend() {
 }
 
 @media (max-width: 960px) {
-  .register-stage { grid-template-columns: 1fr; }
+  .register-shell { padding: 16px; }
+  .register-stage { grid-template-columns: 1fr; min-height: auto; }
   .register-story { display: none; }
   .register-card { padding: 32px 22px; }
 }
