@@ -507,7 +507,7 @@ h2 {
   }
 
   .onboarding-card {
-    width: 100%;
+    width: auto;
   }
 }
 
