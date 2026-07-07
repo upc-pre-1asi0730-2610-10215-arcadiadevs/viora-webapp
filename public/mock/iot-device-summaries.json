@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "totalOnlineDevices": 3,
+    "plotsWithIot": 2,
+    "lastSync": "2026-05-09T13:20:00Z",
+    "sensorCards": [
+      {
+        "id": 1,
+        "plotId": 1,
+        "title": "Water Stress",
+        "sourceLabel": "IoT",
+        "metricLabel": "Soil moisture",
+        "metricValue": 28,
+        "metricUnit": "%",
+        "trend": "up",
+        "riskLevel": "Medium",
+        "recommendation": "Preventive irrigation suggested"
+      },
+      {
+        "id": 2,
+        "plotId": 1,
+        "title": "Water Stress",
+        "sourceLabel": "IoT",
+        "metricLabel": "Soil temperature",
+        "metricValue": 24,
+        "metricUnit": "°",
+        "trend": "up",
+        "riskLevel": "Medium",
+        "recommendation": "Preventive irrigation suggested"
+      }
+    ]
+  }
+]
