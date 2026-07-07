@@ -52,7 +52,7 @@ const passwordRules = computed(() => ({
   upper: /[A-Z]/.test(password.value),
   lower: /[a-z]/.test(password.value),
   number: /[0-9]/.test(password.value),
-  special: /[^A-Za-z0-9]/.test(password.value),
+  special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password.value),
 }));
 
 const passwordChecklist = computed(() => {
