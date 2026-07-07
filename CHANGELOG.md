@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.11.0] - 2026-07-06
+
+### Added
+
+- Onboarding UX: role-aware dashboard coachmarks (tooltip tour for both grower and specialist KPI cards), floating onboarding checklist widget (grower: plot → dashboard → expert; specialist: profile → dashboard → marketplace), and a first-visit boundary drawing tutorial modal with SVG animation on the plot-create screen. Ported from `os-viora-webapp@a105a07`, `9c5346a`, `68f583e` (Parity Roadmap v2, cluster 5).
+
 ## [2.10.1] - 2026-07-06
 
 ### Changed
