@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - i18n: the language toggle on `/login` and `/register` switched the active locale but most of the form copy was hardcoded English, never wired to vue-i18n. Also fixes a `SyntaxError` from an unescaped `@` in a translation string, which vue-i18n's message compiler parses as linked-message syntax.
 - Agronomic: the dashboard's weather widget always requested plot id `1` instead of the signed-in user's own plot, causing a 404 for any account whose plots don't include id 1.
 - Billing: `/plans` filtered plan codes by a `grower-`/`specialist-` prefix the real backend doesn't use, hiding all producer plans; plan prices also rendered as `0.00` because the assembler read the wrong response field.
+- Judgment Day fixes for the parity roadmap v2 clusters 3-5, previously merged to `develop` but not yet released: missing i18n keys for the plot boundary tutorial, broken producer coachmark targets, dead onboarding checklist fallback flags, cross-user onboarding state leak, and an overly permissive password special-character regex.
 
 ## [2.11.0] - 2026-07-06
 
