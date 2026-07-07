@@ -9,6 +9,7 @@ import {
   readActiveSession,
   startActiveSession
 } from '../../shared/infrastructure/active-session.js';
+import { useSubscriptionAccessStore } from '../../billing/application/subscription-access.store.js';
 
 export const useIamStore = defineStore('iam', () => {
   const restoredSession = readActiveSession();
@@ -162,6 +163,7 @@ export const useIamStore = defineStore('iam', () => {
     clearActiveSession();
     isSignedIn.value = false;
     clearMessages();
+    useSubscriptionAccessStore().reset();
   }
 
   return {

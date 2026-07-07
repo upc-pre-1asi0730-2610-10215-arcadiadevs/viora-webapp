@@ -8,11 +8,13 @@ import supportRoutes from "./support/presentation/support-routes.js";
 import workspaceRoutes from "./shared/presentation/workspace-routes.js";
 import iamRoutes from "./iam/presentation/iam-routes.js";
 import { authenticationGuard } from "./iam/infrastructure/authentication.guard.js";
+import { subscriptionGuard } from "./billing/presentation/subscription.guard.js";
 import i18n from "./i18n.js";
 
 const signInForm = () => import('./iam/presentation/views/sign-in-form.vue');
 const signUpForm = () => import('./iam/presentation/views/sign-up-form.vue');
 const verifyPage = () => import('./iam/presentation/views/verify-page.vue');
+const plansOverview = () => import('./billing/presentation/views/plans-overview.vue');
 const dashboardRoleView = () => import('./shared/presentation/views/dashboard-role-view.vue');
 const myPlotsOverviewPage = () => import('./agronomic/presentation/views/my-plots-overview.vue');
 const plotFormPage = () => import('./agronomic/presentation/views/plot-form-page.vue');
@@ -39,6 +41,12 @@ const routes = [
         name: 'iam-verify',
         component: verifyPage,
         meta: { title: 'Verify email', public: true }
+    },
+    {
+        path: '/plans',
+        name: 'billing-plans',
+        component: plansOverview,
+        meta: { title: 'Choose your plan', public: true }
     },
     {
         path: '/dashboard',
@@ -178,10 +186,14 @@ const router = createRouter({
     routes: routes
 });
 
-router.beforeEach((to, from) => {
+router.beforeEach(async (to, from) => {
     const rawTitle = to.meta.title ?? to.name;
     document.title = `Dashboard - ${i18n.global.t(rawTitle)}`;
-    return authenticationGuard(to, from);
+
+    const authResult = authenticationGuard(to, from);
+    if (authResult !== true) return authResult;
+
+    return subscriptionGuard(to, from);
 });
 
 export default router;
