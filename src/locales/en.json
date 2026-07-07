@@ -808,5 +808,13 @@
       "done": "Done",
       "skip": "Skip dashboard tour"
     }
+  },
+  "auth": {
+    "language-toggle-label": "Switch language",
+    "language-toggle-to-spanish": "Switch to Spanish",
+    "language-toggle-to-english": "Switch to English",
+    "login-headline-satellite": "See every plot, alert and intervention in one view",
+    "login-headline-soil": "Track soil health and field visits without leaving your dashboard",
+    "login-headline-intervention": "Plan interventions before risk becomes damage"
   }
 }

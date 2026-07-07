@@ -808,5 +808,13 @@
       "done": "Listo",
       "skip": "Saltar tour del dashboard"
     }
+  },
+  "auth": {
+    "language-toggle-label": "Cambiar idioma",
+    "language-toggle-to-spanish": "Cambiar a español",
+    "language-toggle-to-english": "Cambiar a inglés",
+    "login-headline-satellite": "Visualiza cada parcela, alerta e intervención en una sola vista",
+    "login-headline-soil": "Monitorea la salud del suelo y las visitas de campo sin salir del panel",
+    "login-headline-intervention": "Planifica intervenciones antes de que el riesgo se convierta en daño"
   }
 }
