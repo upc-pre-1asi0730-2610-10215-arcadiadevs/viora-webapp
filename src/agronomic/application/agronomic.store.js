@@ -452,13 +452,18 @@ export const useAgronomicStore = defineStore('agronomic', () => {
         });
     }
 
-    function fetchWeather(city = 'Tacna') {
-        agronomicApi.getWeather({ city }).then(response => {
+    async function fetchWeather(city = 'Tacna') {
+        if (!plotsLoaded.value) await fetchPlots();
+        const plotId = selectedPlotId.value || plots.value[0]?.id;
+        if (!plotId) return;
+
+        try {
+            const response = await agronomicApi.getWeather({ city, plotId });
             const entities = WeatherSummaryAssembler.toEntitiesFromResponse(response);
             weatherSummary.value = entities.length > 0 ? entities[0] : null;
-        }).catch(error => {
+        } catch (error) {
             errors.value.push(error);
-        });
+        }
     }
 
     function fetchYieldForecast(plotId) {
