@@ -203,6 +203,26 @@
       "tooSmallTitle": "Área demasiado pequeña",
       "tooSmallBody": "Este límite tiene {area} ha. El monitoreo satelital requiere una parcela de al menos 1 hectárea; dibuja un área más grande antes de registrar."
     },
+    "guide": {
+      "title": "Tutorial del Límite de la Parcela",
+      "subtitle": "Aprende a dibujar el límite de tu parcela en tres pasos simples.",
+      "reopen": "Reabre el tutorial de límite",
+      "step1": {
+        "title": "Oriéntate con la brújula",
+        "desc": "Utiliza la brújula del mapa para orientarte. Rota el mapa para visualizar mejor la ubicación geográfica de tu parcela."
+      },
+      "step2": {
+        "title": "Marca las esquinas",
+        "desc": "Haz clic en el mapa para colocar marcadores en cada esquina del límite de tu parcela. Cada clic añade un punto del límite."
+      },
+      "step3": {
+        "title": "Confirma el límite",
+        "desc": "Una vez marcadas todas las esquinas, cierra el polígono para calcular el área y registrar tu parcela."
+      },
+      "reassure": "Puedes editar el límite en cualquier momento después del registro.",
+      "skip": "Omitir tutorial",
+      "start": "Comenzar a dibujar"
+    },
     "confirm": {
       "title": "Parcela registrada con éxito",
       "subtitle": "{name} se registró y vinculó al monitoreo climático para el área geográfica seleccionada.",
