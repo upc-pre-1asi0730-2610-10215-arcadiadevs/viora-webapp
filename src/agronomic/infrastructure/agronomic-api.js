@@ -175,8 +175,7 @@ export class AgronomicApi extends BaseApi {
     }
 
     getWeather(params = {}) {
-        const plotId = params.plotId || 1;
-        return this.getPlotWeatherForecast(plotId);
+        return this.getPlotWeatherForecast(params.plotId);
     }
 
     getPlotWeatherForecast(plotId) {
