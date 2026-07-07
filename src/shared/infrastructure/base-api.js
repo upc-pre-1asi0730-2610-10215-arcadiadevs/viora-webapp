@@ -20,6 +20,10 @@ const createClient = (baseURL) => {
         return config;
     });
 
+    client.interceptors.request.use((config) => {
+        return getRequestInterceptors().reduce((cfg, interceptor) => interceptor(cfg) ?? cfg, config);
+    });
+
     return client;
 };
 
@@ -38,11 +42,6 @@ export class BaseApi {
     constructor() {
         this.#http = createClient(platformApi);
         this.#mockHttp = createClient(mockApi);
-
-        for (const interceptor of getRequestInterceptors()) {
-            this.#http.interceptors.request.use(interceptor);
-        }
-
     }
 
     /**
