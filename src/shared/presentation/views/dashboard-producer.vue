@@ -120,26 +120,34 @@ onMounted(() => {
     </div>
 
     <section v-if="agronomicStore.summaryLoaded" class="kpi-grid-container">
-      <OverallPlotHealthCard
-          :status="agronomicStore.adaptiveHealth?.status || 'Stable'"
-          :is-healthy="!(agronomicStore.adaptiveHealth?.isCritical)"
-          :healthy-plots-count="agronomicStore.adaptiveHealth?.healthyPlotsCount || 0"
-          :review-plots-count="agronomicStore.adaptiveHealth?.reviewPlotsCount || 0"
-      />
-      <NdviStatusCard
-          :value="agronomicStore.adaptiveNdvi?.ndviIndex || 0"
-          :trend="agronomicStore.adaptiveNdvi?.ndviTrend || 'stable'"
-          :status-label="agronomicStore.adaptiveNdvi?.ndviStatusLabel || ''"
-      />
-      <ChillAccumulationCard
-          :value="agronomicStore.adaptiveChill?.accumulatedChillPortions || 0"
-          :weekly-diff="agronomicStore.adaptiveChill?.weeklyDiff || 0"
-          :threshold="agronomicStore.adaptiveChill?.threshold || 600"
-      />
-      <YieldForecastCard
-          :tonnes="agronomicStore.adaptiveYield?.tonnes || 0"
-          :risk-level="agronomicStore.adaptiveYield?.riskLevel || 'Low'"
-      />
+      <div data-onboarding-target="overall-health">
+        <OverallPlotHealthCard
+            :status="agronomicStore.adaptiveHealth?.status || 'Stable'"
+            :is-healthy="!(agronomicStore.adaptiveHealth?.isCritical)"
+            :healthy-plots-count="agronomicStore.adaptiveHealth?.healthyPlotsCount || 0"
+            :review-plots-count="agronomicStore.adaptiveHealth?.reviewPlotsCount || 0"
+        />
+      </div>
+      <div data-onboarding-target="ndvi-status">
+        <NdviStatusCard
+            :value="agronomicStore.adaptiveNdvi?.ndviIndex || 0"
+            :trend="agronomicStore.adaptiveNdvi?.ndviTrend || 'stable'"
+            :status-label="agronomicStore.adaptiveNdvi?.ndviStatusLabel || ''"
+        />
+      </div>
+      <div data-onboarding-target="chill-accumulation">
+        <ChillAccumulationCard
+            :value="agronomicStore.adaptiveChill?.accumulatedChillPortions || 0"
+            :weekly-diff="agronomicStore.adaptiveChill?.weeklyDiff || 0"
+            :threshold="agronomicStore.adaptiveChill?.threshold || 600"
+        />
+      </div>
+      <div data-onboarding-target="yield-forecast">
+        <YieldForecastCard
+            :tonnes="agronomicStore.adaptiveYield?.tonnes || 0"
+            :risk-level="agronomicStore.adaptiveYield?.riskLevel || 'Low'"
+        />
+      </div>
     </section>
 
     <section class="iot-grid">
@@ -158,12 +166,13 @@ onMounted(() => {
     </section>
 
     <section class="lower-grid" :style="{ marginBottom : '26px' }">
-      <PlotOverviewWidget
-          v-if="agronomicStore.plotsLoaded"
-          :plots="agronomicStore.plots"
-          :selected-plot="agronomicStore.selectedPlot"
-          @update:selected-plot="(plot) => agronomicStore.selectPlot(plot.id)"
-      />
+      <div v-if="agronomicStore.plotsLoaded" data-onboarding-target="plot-overview">
+        <PlotOverviewWidget
+            :plots="agronomicStore.plots"
+            :selected-plot="agronomicStore.selectedPlot"
+            @update:selected-plot="(plot) => agronomicStore.selectPlot(plot.id)"
+        />
+      </div>
       <div id="weather-section" class="weather-container">
         <WeatherSummary />
       </div>

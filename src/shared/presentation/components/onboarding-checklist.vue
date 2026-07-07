@@ -11,43 +11,39 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useIamStore } from '../../../iam/application/iam.store.js';
 import { useOnboardingStore } from '../../application/onboarding.store.js';
+import { useAgronomicStore } from '../../../agronomic/application/agronomic.store.js';
+import { useProfileStore } from '../../../profile/application/profile.store.js';
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const iamStore = useIamStore();
 const onboardingStore = useOnboardingStore();
+const agronomicStore = useAgronomicStore();
+const profileStore = useProfileStore();
 
 const isSpecialist = computed(() => iamStore.isSpecialist);
 const totalSteps = 3;
 
 // --- Plot detection (producers) ---
-// We use a simple heuristic: the agronomic store's plots list. If loaded and non-empty,
-// or if the onboarding store already marks 'plot' as done, the step is complete.
-// A full parity port would import useAgronomicStore and check myPlotsOverview, but
-// to keep the component self-contained and avoid circular deps, we check the store
-// and a localStorage fallback.
+// Check if the producer has registered at least one plot.
+// Primary source: onboarding store completion flag.
+// Fallback: agronomic store plots list (if loaded and non-empty).
 const hasRegisteredPlot = computed(() => {
   if (onboardingStore.isCompleted('plot')) return true;
-  try {
-    const raw = localStorage.getItem('viora.plotRegistered');
-    return raw === 'true';
-  } catch {
-    return false;
-  }
+  // Fallback to agronomic store: if plots are loaded and at least one exists
+  return agronomicStore.plotsLoaded && agronomicStore.plots.length > 0;
 });
 
 // --- Specialist profile detection ---
+// Check if the specialist has completed their profile (service tags + location).
+// Primary source: onboarding store completion flag.
+// Fallback: profile store has both location and service tags set.
 const hasSpecialistProfile = computed(() => {
   if (onboardingStore.isCompleted('profile')) return true;
-  // Profile store may not be loaded here; rely on the onboarding store's own state
-  // and a localStorage flag set when the profile is saved with service tags + location.
-  try {
-    const raw = localStorage.getItem('viora.specialistProfileReady');
-    return raw === 'true';
-  } catch {
-    return false;
-  }
+  // Fallback to profile store: check if both location and service tags are set
+  const profile = profileStore.profile;
+  return !!(profile.location && profile.location.trim() && profile.serviceTags && profile.serviceTags.trim());
 });
 
 function buildProducerSteps() {

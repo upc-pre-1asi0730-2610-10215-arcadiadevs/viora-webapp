@@ -203,6 +203,26 @@
       "tooSmallTitle": "Area too small",
       "tooSmallBody": "This boundary is {area} ha. Satellite monitoring requires a plot of at least 1 hectare, so draw a larger area before registering."
     },
+    "guide": {
+      "title": "Plot Boundary Tutorial",
+      "subtitle": "Learn how to draw your plot boundary in three simple steps.",
+      "reopen": "Reopen boundary tutorial",
+      "step1": {
+        "title": "Orient with compass",
+        "desc": "Use the map compass to orient yourself. Rotate the map to better visualize your plot's geographic location."
+      },
+      "step2": {
+        "title": "Mark the corners",
+        "desc": "Click on the map to place markers at each corner of your plot boundary. Each click adds a boundary point."
+      },
+      "step3": {
+        "title": "Confirm the boundary",
+        "desc": "Once all corners are marked, close the polygon to calculate the area and register your plot."
+      },
+      "reassure": "You can edit the boundary anytime after registration.",
+      "skip": "Skip tutorial",
+      "start": "Start drawing"
+    },
     "confirm": {
       "title": "Plot registered successfully",
       "subtitle": "{name} has been registered and linked to climate monitoring for the selected geographic area.",
