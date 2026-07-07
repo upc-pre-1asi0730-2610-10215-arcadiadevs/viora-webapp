@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import NavigationSidebar from "./navigation-sidebar.vue";
+import OnboardingChecklist from "./onboarding-checklist.vue";
 
 const sidebarCollapsed = ref(false);
 </script>
@@ -17,6 +18,8 @@ const sidebarCollapsed = ref(false);
         <router-view />
       </main>
     </section>
+
+    <OnboardingChecklist />
   </section>
 </template>
 
