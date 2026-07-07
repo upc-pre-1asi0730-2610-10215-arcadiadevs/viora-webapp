@@ -174,28 +174,28 @@ function resend() {
           <strong>Viora</strong>
         </div>
 
-        <h1 class="auth-title">Welcome back</h1>
-        <p class="auth-subtitle">Sign in to monitor your groves, alerts and interventions.</p>
+        <h1 class="auth-title">{{ t('auth.login-title') }}</h1>
+        <p class="auth-subtitle">{{ t('auth.login-subtitle') }}</p>
 
       <p v-if="store.error" class="auth-error">&#x26A0; {{ store.error }}</p>
       <p v-if="store.info" class="auth-info">&#x2714; {{ store.info }}</p>
 
       <label class="field">
-        <span>Email</span>
+        <span>{{ t('auth.email-label') }}</span>
         <input
           type="email"
           autocomplete="email"
-          placeholder="you@yourfarm.com"
+          :placeholder="t('auth.email-placeholder')"
           v-model="email"
         />
       </label>
 
       <label class="field">
-        <span>Password</span>
+        <span>{{ t('auth.password-label') }}</span>
         <input
           type="password"
           autocomplete="current-password"
-          placeholder="Your password"
+          :placeholder="t('auth.login-password-placeholder')"
           v-model="password"
         />
       </label>
@@ -206,14 +206,14 @@ function resend() {
         class="auth-link-button"
         @click="resend"
       >
-        Resend the verification email
+        {{ t('auth.resend-verification') }}
       </button>
 
       <button type="submit" class="auth-submit" :disabled="!canSubmit()">
-        {{ store.busy ? 'Signing in\u2026' : 'Sign in' }}
+        {{ store.busy ? t('auth.signing-in') : t('auth.sign-in-button') }}
       </button>
 
-      <p class="auth-foot">New to Viora? <router-link to="/plans">Create an account</router-link></p>
+      <p class="auth-foot">{{ t('auth.no-account-yet') }} <router-link to="/plans">{{ t('auth.create-account-link') }}</router-link></p>
       </form>
     </div>
   </section>

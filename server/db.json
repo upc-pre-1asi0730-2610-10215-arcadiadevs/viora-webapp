@@ -93,6 +93,14 @@
       "password": "demo1234",
       "fullName": "Demo Specialist",
       "role": "ROLE_SPECIALIST"
+    },
+    {
+      "id": 3,
+      "username": "playwright.test@viora.com",
+      "email": "playwright.test@viora.com",
+      "password": "Test1234!",
+      "fullName": "Playwright Test",
+      "role": "ROLE_GROWER"
     }
   ],
   "subscriptions": [
@@ -113,6 +121,16 @@
       "interval": "ANNUAL",
       "priceCents": 79000,
       "currency": "PEN",
+      "status": "ACTIVE",
+      "currentPeriodEnd": "2026-12-31"
+    },
+    {
+      "userId": 3,
+      "planCode": "grower-basic",
+      "planName": "Basic",
+      "interval": "MONTHLY",
+      "priceCents": 0,
+      "currency": "USD",
       "status": "ACTIVE",
       "currentPeriodEnd": "2026-12-31"
     }

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import useIamStore from '../../application/iam.store.js';
 import { SignUpCommand } from '../../domain/model/sign-up.command.js';
 import { SignInCommand } from '../../domain/model/sign-in.command.js';
@@ -8,6 +9,7 @@ import { useSubscriptionStore } from '../../../billing/application/subscription.
 
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n();
 const store = useIamStore();
 const subscriptionStore = useSubscriptionStore();
 
@@ -58,11 +60,11 @@ const passwordRules = computed(() => ({
 const passwordChecklist = computed(() => {
   const rules = passwordRules.value;
   return [
-    { met: rules.length, label: 'At least 8 characters' },
-    { met: rules.upper, label: 'One uppercase letter' },
-    { met: rules.lower, label: 'One lowercase letter' },
-    { met: rules.number, label: 'One number' },
-    { met: rules.special, label: 'One special character' },
+    { met: rules.length, label: t('auth.password-rule-length') },
+    { met: rules.upper, label: t('auth.password-rule-upper') },
+    { met: rules.lower, label: t('auth.password-rule-lower') },
+    { met: rules.number, label: t('auth.password-rule-number') },
+    { met: rules.special, label: t('auth.password-rule-special') },
   ];
 });
 
@@ -134,18 +136,18 @@ function resend() {
         <div class="register-character-wrap" aria-hidden="true">
           <div class="register-character-card is-producer" :class="{ 'is-active': role === 'ROLE_GROWER' }">
             <img src="/assets/images/general/olive-producer-character.png" alt="" />
-            <span>Producer</span>
+            <span>{{ t('auth.role-producer') }}</span>
           </div>
           <div class="register-character-card is-specialist" :class="{ 'is-active': role === 'ROLE_SPECIALIST' }">
             <img src="/assets/images/general/phytosanitary-specialist-character.png" alt="" />
-            <span>Specialist</span>
+            <span>{{ t('auth.role-specialist') }}</span>
           </div>
         </div>
 
         <div class="register-story-copy">
-          <span class="login-story-eyebrow">Built for the field</span>
-          <h2>One account, two ways to help groves thrive</h2>
-          <p>Producers track their own plots. Specialists assist producers with expert field visits.</p>
+          <span class="login-story-eyebrow">{{ t('auth.register-story-eyebrow') }}</span>
+          <h2>{{ t('auth.register-story-headline') }}</h2>
+          <p>{{ t('auth.register-story-body') }}</p>
         </div>
       </aside>
 
@@ -156,14 +158,14 @@ function resend() {
           <strong>Viora</strong>
         </div>
 
-        <h1 class="auth-title">Create your account</h1>
-        <p class="auth-subtitle">Join Viora to monitor groves or assist producers in the field.</p>
+        <h1 class="auth-title">{{ t('auth.register-title') }}</h1>
+        <p class="auth-subtitle">{{ t('auth.register-subtitle') }}</p>
 
         <p v-if="store.error" class="auth-error">&#x26A0; {{ store.error }}</p>
         <p v-if="subscriptionStore.error" class="auth-error">&#x26A0; {{ subscriptionStore.error }}</p>
 
         <p v-if="selectedPlan" class="plan-banner">
-          <i class="pi pi-verified"></i> Selected plan: <strong>{{ selectedPlan }}</strong>
+          <i class="pi pi-verified"></i> {{ t('auth.selected-plan') }} <strong>{{ selectedPlan }}</strong>
         </p>
 
         <div class="role-grid" :class="{ 'is-locked': roleLocked }">
@@ -177,8 +179,8 @@ function resend() {
             <span class="role-visual">
               <img src="/assets/images/general/olive-producer-character-2.png" alt="" />
             </span>
-            <strong>Producer</strong>
-            <span>Monitor plots, IoT devices and alerts</span>
+            <strong>{{ t('auth.role-producer') }}</strong>
+            <span>{{ t('auth.role-producer-desc') }}</span>
           </button>
           <button
             type="button"
@@ -190,30 +192,30 @@ function resend() {
             <span class="role-visual">
               <img src="/assets/images/general/phytosanitary-specialist-character-2.png" alt="" />
             </span>
-            <strong>Specialist</strong>
-            <span>Assist producers with field expertise</span>
+            <strong>{{ t('auth.role-specialist') }}</strong>
+            <span>{{ t('auth.role-specialist-desc') }}</span>
           </button>
         </div>
 
         <label class="field">
-          <span>Full name</span>
-          <input type="text" autocomplete="name" placeholder="e.g. Maria Torres" v-model="fullName" />
+          <span>{{ t('auth.full-name-label') }}</span>
+          <input type="text" autocomplete="name" :placeholder="t('auth.full-name-placeholder')" v-model="fullName" />
         </label>
 
         <label class="field">
-          <span>Phone number</span>
-          <input type="tel" autocomplete="tel" placeholder="Required for specialists" v-model="phone" />
-          <span v-if="phoneMissing" class="field-hint" style="color: #d63b3b">Phone number is required for specialist accounts.</span>
+          <span>{{ t('auth.phone-label') }}</span>
+          <input type="tel" autocomplete="tel" :placeholder="t('auth.phone-placeholder')" v-model="phone" />
+          <span v-if="phoneMissing" class="field-hint" style="color: #d63b3b">{{ t('auth.phone-required-error') }}</span>
         </label>
 
         <label class="field">
-          <span>Email</span>
-          <input type="email" autocomplete="email" placeholder="you@yourfarm.com" v-model="email" />
+          <span>{{ t('auth.email-label') }}</span>
+          <input type="email" autocomplete="email" :placeholder="t('auth.email-placeholder')" v-model="email" />
         </label>
 
         <label class="field">
-          <span>Password</span>
-          <input type="password" autocomplete="new-password" placeholder="At least 8 characters" v-model="password" />
+          <span>{{ t('auth.password-label') }}</span>
+          <input type="password" autocomplete="new-password" :placeholder="t('auth.register-password-placeholder')" v-model="password" />
         </label>
 
         <ul v-if="password.length > 0" class="pwd-rules" aria-live="polite">
@@ -224,41 +226,40 @@ function resend() {
         </ul>
 
         <label class="field">
-          <span>Confirm password</span>
-          <input type="password" autocomplete="new-password" placeholder="Repeat your password" v-model="confirmPassword" />
-          <span v-if="passwordsMismatch" class="field-hint" style="color: #d63b3b">Passwords do not match.</span>
+          <span>{{ t('auth.confirm-password-label') }}</span>
+          <input type="password" autocomplete="new-password" :placeholder="t('auth.confirm-password-placeholder')" v-model="confirmPassword" />
+          <span v-if="passwordsMismatch" class="field-hint" style="color: #d63b3b">{{ t('auth.passwords-mismatch') }}</span>
         </label>
 
         <label class="field">
-          <span>Referral code (optional)</span>
-          <input type="text" placeholder="e.g. VIORA-4JYFFQ" v-model="referralCode" />
-          <span class="field-hint">Invited by a partner? Their code rewards them when you join.</span>
+          <span>{{ t('auth.referral-code-label') }}</span>
+          <input type="text" :placeholder="t('auth.referral-code-placeholder')" v-model="referralCode" />
+          <span class="field-hint">{{ t('auth.referral-code-hint') }}</span>
         </label>
 
         <button type="submit" class="auth-submit" :disabled="!canSubmit || redirecting">
-          {{ redirecting ? 'Redirecting to payment\u2026' : (store.busy ? 'Creating account\u2026' : (selectedPlan ? 'Create account and continue' : 'Create account')) }}
+          {{ redirecting ? t('auth.redirecting-to-payment') : (store.busy ? t('auth.creating-account') : (selectedPlan ? t('auth.create-account-and-continue') : t('auth.create-account-button'))) }}
         </button>
 
-        <p class="auth-foot">Already have an account? <router-link to="/login">Sign in</router-link></p>
+        <p class="auth-foot">{{ t('auth.already-have-account') }} <router-link to="/login">{{ t('auth.sign-in-link') }}</router-link></p>
       </form>
     </template>
 
     <template v-else>
       <div class="auth-card">
         <span class="status-icon">&#x2709;</span>
-        <h1 class="auth-title">Check your email</h1>
+        <h1 class="auth-title">{{ t('auth.check-email-title') }}</h1>
         <p class="auth-subtitle">
-          We sent a verification link to <strong>{{ email }}</strong>. Open it to activate your
-          account — the link expires in 24 hours.
+          {{ t('auth.check-email-body', { email }) }}
         </p>
 
         <p v-if="store.info" class="auth-info">&#x2714; {{ store.info }}</p>
         <p v-if="store.error" class="auth-error">&#x26A0; {{ store.error }}</p>
 
         <button type="button" class="auth-submit" :disabled="store.busy" @click="resend">
-          {{ store.busy ? 'Sending\u2026' : 'Resend email' }}
+          {{ store.busy ? t('auth.sending') : t('auth.resend-email') }}
         </button>
-        <p class="auth-foot">Verified already? <router-link to="/login">Sign in</router-link></p>
+        <p class="auth-foot">{{ t('auth.already-verified') }} <router-link to="/login">{{ t('auth.sign-in-link') }}</router-link></p>
       </div>
     </template>
     </div>
@@ -314,7 +315,7 @@ function resend() {
   max-width: 1220px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
   align-items: stretch;
   border-radius: 30px;
   overflow: hidden;
