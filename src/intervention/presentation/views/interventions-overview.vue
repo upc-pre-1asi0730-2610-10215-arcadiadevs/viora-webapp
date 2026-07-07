@@ -185,7 +185,10 @@
                 <span>{{ nextActionLabel }}</span>
               </div>
 
-              <template v-if="nextAction === 'certify'">
+              <template v-if="nextAction === 'awaiting'">
+                <div class="waiting-banner"><i class="pi pi-hourglass"></i> Waiting for the specialist's prescription.</div>
+              </template>
+              <template v-else-if="nextAction === 'certify'">
                 <pv-button type="button" class="primary-button block" @click="openModal('certify')">
                   <i class="pi pi-verified"></i> Certify application
                 </pv-button>
@@ -452,7 +455,7 @@ const linkedAlert = computed(() => {
 const nextAction = computed(() => {
     const item = selected.value;
     if (!item) return null;
-    if (item.needsPrescription) return 'simulate';
+    if (item.needsPrescription) return 'awaiting';
     if (item.needsCertification) return 'certify';
     if (item.inRecovery) return 'impact';
     if (item.readyToClose) return 'close';
@@ -461,7 +464,7 @@ const nextAction = computed(() => {
 
 const nextActionLabel = computed(() => {
     switch (nextAction.value) {
-        case 'simulate': return 'Next: the specialist issues the technical prescription.';
+        case 'awaiting': return 'Waiting for the specialist to issue the technical prescription.';
         case 'certify': return 'Next required action: certify the application after field execution.';
         case 'impact': return 'Under recovery monitoring \u2014 report the impact after the grace period.';
         case 'close': return 'Ready to close \u2014 evaluate the service and finalize.';
@@ -869,6 +872,18 @@ function submitClose() {
     border-radius: 12px;
     background: rgba(87, 235, 161, 0.18);
     color: #2e7d55;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.waiting-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #f4f1ea;
+    color: #6f6a62;
     font-size: 13px;
     font-weight: 500;
 }
