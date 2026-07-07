@@ -147,7 +147,7 @@ function resend() {
         {{ store.busy ? 'Signing in\u2026' : 'Sign in' }}
       </button>
 
-      <p class="auth-foot">New to Viora? <router-link to="/register">Create an account</router-link></p>
+      <p class="auth-foot">New to Viora? <router-link to="/plans">Create an account</router-link></p>
       </form>
     </div>
   </section>

@@ -3,10 +3,13 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import useIamStore from '../../application/iam.store.js';
 import { SignUpCommand } from '../../domain/model/sign-up.command.js';
+import { SignInCommand } from '../../domain/model/sign-in.command.js';
+import { useSubscriptionStore } from '../../../billing/application/subscription.store.js';
 
 const route = useRoute();
 const router = useRouter();
 const store = useIamStore();
+const subscriptionStore = useSubscriptionStore();
 
 const fullName = ref('');
 const email = ref('');
@@ -16,15 +19,30 @@ const confirmPassword = ref('');
 const role = ref('ROLE_GROWER');
 const referralCode = ref('');
 const submitted = ref(false);
+const redirecting = ref(false);
+
+const selectedPlan = ref(null);
+let selectedInterval = 'MONTHLY';
 
 onMounted(() => {
   store.clearMessages();
   const refCode = route.query.ref;
-  if (refCode) {
-    referralCode.value = refCode.toUpperCase();
+  if (refCode) referralCode.value = refCode.toUpperCase();
+
+  const queryRole = route.query.role;
+  if (queryRole === 'ROLE_SPECIALIST' || queryRole === 'ROLE_GROWER') role.value = queryRole;
+
+  const plan = route.query.plan;
+  if (plan) {
+    selectedPlan.value = plan;
+    selectedInterval = route.query.interval === 'ANNUAL' ? 'ANNUAL' : 'MONTHLY';
+  } else {
+    // Payment-first: you can't register without first choosing a plan.
+    router.replace({ path: '/plans', query: refCode ? { ref: refCode } : {} });
   }
 });
 
+const roleLocked = computed(() => selectedPlan.value !== null);
 const phoneRequired = computed(() => role.value === 'ROLE_SPECIALIST');
 const phoneMissing = computed(() => phoneRequired.value && phone.value.trim().length === 0);
 const passwordsMismatch = computed(() => confirmPassword.value.length > 0 && password.value !== confirmPassword.value);
@@ -38,18 +56,39 @@ const canSubmit = computed(() =>
   !store.busy
 );
 
+function selectRole(value) {
+  if (roleLocked.value) return;
+  role.value = value;
+}
+
 async function submit() {
   if (!canSubmit.value) return;
+  const accountEmail = email.value.trim().toLowerCase();
+  const accountPassword = password.value;
   const command = new SignUpCommand({
-    email: email.value,
-    password: password.value,
+    email: accountEmail,
+    password: accountPassword,
     role: role.value,
     fullName: fullName.value.trim(),
     phone: phone.value.trim(),
     referralCode: referralCode.value.trim() || null
   });
   const result = await store.signUp(command);
-  if (result.success) submitted.value = true;
+  if (!result.success) return;
+
+  const plan = selectedPlan.value;
+  if (!plan) {
+    submitted.value = true;
+    return;
+  }
+
+  redirecting.value = true;
+  const signInResult = await store.signIn(new SignInCommand({ email: accountEmail, password: accountPassword }));
+  if (!signInResult.success) {
+    redirecting.value = false;
+    return;
+  }
+  subscriptionStore.startCheckout(plan, selectedInterval, () => { redirecting.value = false; });
 }
 
 function resend() {
@@ -95,13 +134,19 @@ function resend() {
         <p class="auth-subtitle">Join Viora to monitor groves or assist producers in the field.</p>
 
         <p v-if="store.error" class="auth-error">&#x26A0; {{ store.error }}</p>
+        <p v-if="subscriptionStore.error" class="auth-error">&#x26A0; {{ subscriptionStore.error }}</p>
 
-        <div class="role-grid">
+        <p v-if="selectedPlan" class="plan-banner">
+          <i class="pi pi-verified"></i> Selected plan: <strong>{{ selectedPlan }}</strong>
+        </p>
+
+        <div class="role-grid" :class="{ 'is-locked': roleLocked }">
           <button
             type="button"
             class="role-card is-producer"
             :class="{ 'is-active': role === 'ROLE_GROWER' }"
-            @click="role = 'ROLE_GROWER'"
+            :disabled="roleLocked"
+            @click="selectRole('ROLE_GROWER')"
           >
             <span class="role-visual">
               <img src="/assets/images/general/olive-producer-character-2.png" alt="" />
@@ -113,7 +158,8 @@ function resend() {
             type="button"
             class="role-card is-specialist"
             :class="{ 'is-active': role === 'ROLE_SPECIALIST' }"
-            @click="role = 'ROLE_SPECIALIST'"
+            :disabled="roleLocked"
+            @click="selectRole('ROLE_SPECIALIST')"
           >
             <span class="role-visual">
               <img src="/assets/images/general/phytosanitary-specialist-character-2.png" alt="" />
@@ -156,8 +202,8 @@ function resend() {
           <span class="field-hint">Invited by a partner? Their code rewards them when you join.</span>
         </label>
 
-        <button type="submit" class="auth-submit" :disabled="!canSubmit">
-          {{ store.busy ? 'Creating account\u2026' : 'Create account' }}
+        <button type="submit" class="auth-submit" :disabled="!canSubmit || redirecting">
+          {{ redirecting ? 'Redirecting to payment\u2026' : (store.busy ? 'Creating account\u2026' : (selectedPlan ? 'Create account and continue' : 'Create account')) }}
         </button>
 
         <p class="auth-foot">Already have an account? <router-link to="/login">Sign in</router-link></p>
@@ -323,7 +369,22 @@ function resend() {
 .field input::placeholder { color: #a7a29a; }
 .field-hint { font-size: 12px; font-weight: 400; color: #a7a29a; }
 
+.plan-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(46, 74, 58, 0.08);
+  color: #2e4a3a;
+  font-size: 13px;
+  font-weight: 500;
+}
+
 .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.role-grid.is-locked .role-card:not(.is-active) { opacity: 0.5; }
+.role-card:disabled { cursor: not-allowed; }
 
 .role-card {
   display: flex;

@@ -95,6 +95,26 @@
       "role": "ROLE_SPECIALIST"
     }
   ],
+  "subscriptions": [
+    {
+      "userId": 1,
+      "planCode": "grower-pro",
+      "interval": "MONTHLY",
+      "priceCents": 14900,
+      "currency": "USD",
+      "status": "ACTIVE",
+      "currentPeriodEnd": "2026-12-31"
+    },
+    {
+      "userId": 2,
+      "planCode": "specialist-pro",
+      "interval": "ANNUAL",
+      "priceCents": 79000,
+      "currency": "PEN",
+      "status": "ACTIVE",
+      "currentPeriodEnd": "2026-12-31"
+    }
+  ],
   "plots": [
     {
       "id": 1,
